@@ -30,4 +30,8 @@ public class Admin {
 
     @Column(name = "ProfilePhoto")
     private String profilePhoto; // Assuming URL is stored as a String
+
+    public String getPassword() {
+        return password;
+    }
 }

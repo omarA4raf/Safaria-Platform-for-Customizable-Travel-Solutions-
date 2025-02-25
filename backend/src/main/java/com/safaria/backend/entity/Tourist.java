@@ -5,14 +5,19 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.springframework.http.HttpStatus;
 
 //import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "tourist")
-@Data
 @NoArgsConstructor
+@Data
+@Table(name = "tourist")
 @AllArgsConstructor
 public class Tourist {
 
@@ -43,4 +48,8 @@ public class Tourist {
     @CollectionTable(name = "tourist_tourism_types", joinColumns = @JoinColumn(name = "UserID"))
     @Column(name = "TourismType")
     private List<String> tourismTypes;
+
+    public String getPassword() {
+        return password;
+    }
 }

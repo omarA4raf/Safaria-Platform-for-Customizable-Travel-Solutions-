@@ -3,7 +3,10 @@ package com.safaria.backend.repository;
 import com.safaria.backend.entity.Tourist;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
+import java.util.Optional;
+import java.util.OptionalInt;
 @Repository
 public interface TouristRepository extends JpaRepository<Tourist, Integer> {
 
@@ -15,4 +18,8 @@ public interface TouristRepository extends JpaRepository<Tourist, Integer> {
     // List<Tourist> findByCountry(String country);
 
     // Spring Data JPA will automatically generate the basic CRUD methods.
+    Optional <Tourist> findByUsername(String username);
+
+    @Override
+    void deleteById(Integer aLong);
 }

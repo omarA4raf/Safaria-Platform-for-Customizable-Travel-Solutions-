@@ -46,4 +46,8 @@ public class TourGuide {
 
     @Column(name = "ApprovmentDocument")
     private String approvalDocument; // Assuming URL is stored as a String
+
+    public String getPassword() {
+        return password;
+    }
 }
