@@ -1,14 +1,16 @@
 package com.safaria.backend.controller;
 
 import com.safaria.backend.entity.*;
-import com.safaria.backend.service.services;
+import com.safaria.backend.service.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:3306")
+@CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/login")
 public class LoginController {
-    services serv;
+    @Autowired
+    Iservices serv;
     @GetMapping("/")
     String sayHello(){
         return "Hello ,World! :) ";

@@ -33,7 +33,10 @@ public class services implements Iservices {
 
     @Override
     public Tourist touristlogin(String username, String password) {
+        System.out.println(username+" "+password);
         Optional<Tourist> tourist = touristRepository.findByUsername(username);
+        System.out.println(tourist.isPresent());
+
         if (tourist.isPresent()) {
                 if (passwordEncoder.matches(password, tourist.get().getPassword())) {
                     return tourist.get();
