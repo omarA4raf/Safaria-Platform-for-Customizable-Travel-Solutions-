@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
-public class services {
+public class services implements Iservices {
 
     @Autowired
     private TouristRepository touristRepository;
@@ -28,6 +29,9 @@ public class services {
     private AdminRepository adminRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+
+    @Override
     public Tourist touristlogin(String username, String password) {
         Optional<Tourist> tourist = touristRepository.findByUsername(username);
         if (tourist.isPresent()) {
@@ -40,7 +44,7 @@ public class services {
         }
         return null;
     }
-
+    @Override
     public TourGuide tourguidelogin(String username, String password) {
         Optional<TourGuide> tourguide = tourGuideRepository.findByUsername(username);
         if (tourguide.isPresent()) {
@@ -53,7 +57,7 @@ public class services {
         }
         return null;
     }
-
+    @Override
     public Admin adminlogin(String username, String password) {
         Optional<Admin> admin = adminRepository.findByUsername(username);
         if (admin.isPresent()) {
@@ -65,5 +69,14 @@ public class services {
 
         }
         return null;
+    }
+    @Override
+    public Tourist savetourist(Tourist tourist) {
+        Optional<Tourist> old_tourist_1 = touristRepository.findByUsername(tourist.getUsername());
+        if (old_tourist_1.isPresent()) {
+            return null;
+        }
+        tourist.setPassword(passwordEncoder.encode(tourist.getPassword()));
+        return touristRepository.save(tourist);
     }
 }
