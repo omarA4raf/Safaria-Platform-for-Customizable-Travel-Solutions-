@@ -44,9 +44,13 @@ body {
 .first-third{
     /* height: 100vh; */
     margin-top: 0 !important;
-    padding-top: 0 !important;
+    /* padding-top: 0 !important; */
 }
 
+img {
+    width: 100%;
+    max-width: auto;
+}
 .second-other{
         background-color: #D0DEDF;
 }

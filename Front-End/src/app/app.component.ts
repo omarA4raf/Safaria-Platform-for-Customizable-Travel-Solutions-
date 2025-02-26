@@ -5,7 +5,9 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-root',
   imports: [],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
+  host: { 'ngSkipHydration': '' }  // This tells Angular to skip the hydration process for this component
+
 })
 export class AppComponent {
   title = 'Safaria';
