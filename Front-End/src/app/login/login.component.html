@@ -1,0 +1,41 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-50 fixed-top">
+    <div class="container">
+      <a class="navbar-brand text-white fw-bold" href="#">Safaria</a>
+    </div>
+  </nav>
+  
+  <!-- Login Section -->
+  <section class="login-section">
+    <div class="overlay"></div>
+    <div class="login-container">
+      <div class="login-card">
+        <h4 class="mb-4 text-center">Login</h4>
+        <form id="loginForm" novalidate (ngSubmit)="onSubmit()">
+          <!-- Username -->
+          <div class="mb-3">
+            <label class="form-label"><i class="fa fa-user"></i> Username</label>
+            <input type="text" class="form-control" id="username" placeholder="Enter username" [(ngModel)]="username" name="username" required>
+            <div class="invalid-feedback">Username is required.</div>
+          </div>
+  
+          <!-- Password -->
+          <div class="mb-3">
+            <label class="form-label"><i class="fa fa-lock"></i> Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Enter password" [(ngModel)]="password" name="password" required>
+            <div class="invalid-feedback">Password must meet the strength requirements.</div>
+            <small class="text-muted">Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.</small>
+          </div>
+  
+          <!-- Forgot Password & Login Button -->
+          <div class="d-flex justify-content-between mb-3">
+            <a href="#" class="text-primary small">Forgot Password?</a>
+          </div>
+          <button type="submit" class="btn btn-primary w-100"><i class="fa fa-sign-in-alt"></i> Login</button>
+  
+          <!-- Sign Up Link -->
+          <p class="text-center mt-3">Don't have an account? <a routerLink="/signup" class="text-primary">Sign Up</a></p>
+        </form>
+      </div>
+    </div>
+  </section>

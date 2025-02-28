@@ -1,4 +1,16 @@
 package com.safaria.backend.DTO;
 
-public class TouristDto {
+import lombok.Data;
+import java.util.List;
+
+@Data
+public class TouristDTO {
+
+    private Integer userId;
+    private String username;
+    private String email;
+    private String country;
+    private String phone;
+    private String profilePhoto;
+    private List<String> tourismTypes;
 }

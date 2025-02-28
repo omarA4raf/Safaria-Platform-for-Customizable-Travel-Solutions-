@@ -1,14 +1,17 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common'; // Import CommonModule
+import { RouterModule } from '@angular/router'; // Import RouterModule for routing
 
 @Component({
   selector: 'app-root',
-  imports: [],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
-  host: { 'ngSkipHydration': '' }  // This tells Angular to skip the hydration process for this component
-
+  standalone: true, // Mark the component as standalone
+  imports: [CommonModule, RouterModule], // Import necessary modules
+  templateUrl: './app.component.html', // Link to the template
+  styleUrls: ['./app.component.css'] // Link to the styles
 })
 export class AppComponent {
-  title = 'Safaria';
-}
+  title(title: any) {
+    throw new Error('Method not implemented.');
+  }
+  // Component logic here
+};
