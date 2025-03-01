@@ -1,1 +1,62 @@
-<p>company-sign-up works!</p>
+<div class="container-fluid w-75 p-5">
+    <div class="row w-100 gap-4">
+        <!-- Left Side Image -->
+        <div class="col-md-5 py-1">
+            <div class="left-section"></div>
+        </div>
+
+        <!-- Right Side Signup Form -->
+        <div class="col-md-6 right-section">
+            <div class="signup-form text-center">
+                <h2 class="mb-4">Create Account</h2>
+                <form (submit)="onSubmit()">
+
+                    <!-- Company Name -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-building"></i></span>
+                        <input type="text" [(ngModel)]="companyName" name="companyName" class="form-control"
+                            placeholder="Company Name" required>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                        <input type="email" [(ngModel)]="companyemail" name="companyemail" class="form-control"
+                            placeholder="Email" required>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                        <input type="password" [(ngModel)]="companypassword" name="companypassword" class="form-control"
+                            placeholder="Password" required>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                        <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" class="form-control"
+                            placeholder="Confirm Password" required>
+                    </div>
+
+                    <!-- business license(just number) -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                        <input type="number" [(ngModel)]="businessLicense" name="businessLicense" class="form-control"
+                            placeholder="Business License Number" required>
+                    </div>
+
+                    <!-- Business License document -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                        <input type="file" [(ngModel)]="businesslicenseDocument" name="businesslicenseDocument"
+                            class="form-control" placeholder="Business License Document" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">Sign Up</button>
+                </form>
+                <p class="mt-3">Already have an account? <a routerLink="/login">Login</a></p>
+            </div>
+        </div>
+    </div>
+</div>

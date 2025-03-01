@@ -1,1 +1,81 @@
-<p>tourist-sign-up works!</p>
+<div class="container-fluid w-75 p-5">
+    <div class="row w-100 gap-4">
+        <!-- Left Side Image -->
+        <div class="col-md-5 py-1">
+            <div class="left-section"></div>
+        </div>
+
+        <!-- Right Side Signup Form -->
+        <div class="col-md-6 right-section">
+            <div class="signup-form text-center">
+                <h2 class="mb-4">Create Account</h2>
+                <form (submit)="onSubmit()">
+
+                    <!-- Email -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                        <input type="email" [(ngModel)]="touristemail" name="touristemail" class="form-control" placeholder="Email"
+                            required>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                        <input type="password" [(ngModel)]="touristpassword" name="touristpassword" class="form-control"
+                            placeholder="Password" required
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                            #passwordInput="ngModel">
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                        <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" class="form-control"
+                            placeholder="Confirm Password" required>
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                        <input type="tel" [(ngModel)]="touristphone" name="touristphone" class="form-control"
+                            placeholder="Phone Number" required>
+                    </div>
+
+                    <!-- Tourism Type (Checkboxes) -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Select Tourism Type:</label>
+                        <div class="checkbox-container">
+                            <label class="checkbox-inline"
+                                *ngFor="let type of ['cultural', 'adventure', 'beach', 'historical', 'luxury', 'wildlife', 'religious']">
+                                <input type="checkbox" [value]="type" (change)="toggleTourismType(type, $event)">
+                                <i class="fa" [ngClass]="{
+                                    'fa-landmark': type === 'cultural',
+                                    'fa-hiking': type === 'adventure',
+                                    'fa-umbrella-beach': type === 'beach',
+                                    'fa-monument': type === 'historical',
+                                    'fa-gem': type === 'luxury',
+                                    'fa-paw': type === 'wildlife',
+                                    'fa-praying-hands': type === 'religious'
+                                }"></i> {{ type | titlecase }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Tourist Country -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-globe"></i></span>
+                        <select [(ngModel)]="touristCountry" name="touristCountry" class="form-control" required>
+                            <option value="" disabled selected>Select Your Country</option>
+                            <option *ngFor="let country of countrySlugs" [value]="country.slug">
+                                {{ country.name }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">Sign Up</button>
+                </form>
+                <p class="mt-3">Already have an account? <a routerLink="/login">Login</a></p>
+            </div>
+        </div>
+    </div>
+</div>
