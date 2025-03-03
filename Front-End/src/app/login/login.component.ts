@@ -13,17 +13,24 @@ import { FormsModule } from '@angular/forms'; // Import FormsModule for form han
 })
 export class LoginComponent {
   // Variables to store form data
-  username: string = '';
+  selectedUserKind: string = '';
+  email: string = '';
   password: string = '';
 
   // Inject HttpClient and Router
   constructor(private http: HttpClient, private router: Router) {}
 
+  // Method to update the selected user kind
+  selectUserKind(kind: string) {
+    this.selectedUserKind = kind;
+  }
+
   // Method to handle form submission
   onSubmit() {
     // Create the payload to send to the backend
     const payload = {
-      username: this.username,
+      userKind: this.selectedUserKind,
+      email: this.email,
       password: this.password
     };
 
@@ -36,16 +43,16 @@ export class LoginComponent {
         next: (response: any) => {
           console.log('Login successful:', response);
 
-          // Navigate to the appropriate page based on the user role returned by the backend
-          if (response.role === 'tourist') {
+          // Navigate to the appropriate page based on the user kind
+          if (this.selectedUserKind === 'Tourist') {
             this.router.navigate(['/tourist-dashboard']);
-          } else if (response.role === 'tourguide') {
+          } else if (this.selectedUserKind === 'Tour Guide') {
             this.router.navigate(['/tourguide-dashboard']);
-          } else if (response.role === 'admin') {
-            this.router.navigate(['/admin-dashboard']);
+          } else if (this.selectedUserKind === 'Company') {
+            this.router.navigate(['/company-dashboard']);
           } else {
-            console.error('Unknown role:', response.role);
-            alert('Unknown user role. Please contact support.');
+            console.error('Unknown user kind:', this.selectedUserKind);
+            alert('Unknown user kind. Please contact support.');
           }
         },
         error: (error) => {
