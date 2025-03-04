@@ -10,4 +10,5 @@ public interface Iservices {
     public TourGuide tourguidelogin(String username, String password);
     public Admin adminlogin(String username, String password);
     public Tourist savetourist(Tourist tourist);
+
 }

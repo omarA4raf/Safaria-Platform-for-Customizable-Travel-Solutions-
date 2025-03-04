@@ -67,4 +67,9 @@ public class Tourist {
     public int getId(){
         return this.userId;
     }
+    public String getEmail(){return this.email;}
+    public void setEmail(String e){this.email=e;}
+    public void setPhone(String contact){this.phone=contact;}
+    public String getPhone(){return this.phone;}
+    public void setCountry(String country){this.country=country;}
 }

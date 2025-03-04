@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { Tourist } from '../objects/Tourist';
+import { SignUpServices } from '../services/signup_sevices';
 
 @Component({
   selector: 'app-tourist-sign-up',
@@ -12,6 +14,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './tourist-sign-up.component.css',
 })
 export class TouristSignUpComponent implements OnInit {
+  constructor(private signup_services:SignUpServices){}
   touristName: string = '';
   touristemail: string = '';
   touristpassword: string = '';
@@ -21,7 +24,7 @@ export class TouristSignUpComponent implements OnInit {
   touristCountry: string = '';
   countries: string[] = []; // Dynamic country list
   countrySlugs: { name: string; slug: string }[] | undefined;
-
+  tourist=new Tourist();
   isPasswordStrong(touristpassword: string): boolean {
     const strongPasswordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -127,16 +130,29 @@ export class TouristSignUpComponent implements OnInit {
       );
       return;
     }
-
+    
     const formData = {
       touristName: this.touristName,
       touristemail: this.touristemail,
       touristpassword: this.touristpassword,
       touristphone: this.touristphone,
       selectedTourismTypes: this.selectedTourismTypes,
-      touristCountry: this.touristCountry,
+      country: this.touristCountry,
     };
-
+    this.tourist.email=this.touristemail;
+    this.tourist.password=this.touristpassword;
+    this.tourist.username=this.touristName;
+    this.tourist.phone=this.touristphone;
+    this.tourist.tourismTypes=this.selectedTourismTypes
+    this.tourist.country=this.touristCountry;
+    this.signup_services.signup(this.tourist,'Tourist').subscribe((data) => {
+      if (data == null) {
+        alert('Email or Username already exists');
+      }
+      else{
+        alert("You have successfully sign up, please verify your mail!");
+      }
+    });
     console.log('Form Data:', formData);
   }
 }
