@@ -11,6 +11,13 @@
                 <h2 class="mb-4">Create Account</h2>
                 <form (submit)="onSubmit()">
 
+                    <!-- Tourguide Name -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                        <input type="text" [(ngModel)]="tourguideName" name="tourguideName" class="form-control"
+                            placeholder="Tourguide Name" required>
+                    </div>
+
                     <!-- Email -->
                     <div class="input-group mb-3">
                         <span class="input-group-text"><i class="fa fa-envelope"></i></span>

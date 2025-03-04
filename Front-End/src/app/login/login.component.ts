@@ -50,11 +50,11 @@ export class LoginComponent {
           console.log('Login successful:', response);
           // Navigate to the appropriate page based on the user kind
           if (this.selectedUserKind === 'Tourist') {
-            this.router.navigate(['/tourist-dashboard']);
+            this.router.navigate(['/touristdashboardhome']);
           } else if (this.selectedUserKind === 'Tour Guide') {
-            this.router.navigate(['/tourguide-dashboard']);
+            this.router.navigate(['/tourguidesdashboard']);
           } else if (this.selectedUserKind === 'Company') {
-            this.router.navigate(['/company-dashboard']);
+            this.router.navigate(['/companydashboard']);
           } else {
             console.error('Unknown user kind:', this.selectedUserKind);
             alert('Unknown user kind. Please contact support.');

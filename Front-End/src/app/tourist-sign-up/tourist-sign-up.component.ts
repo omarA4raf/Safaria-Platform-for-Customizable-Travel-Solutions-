@@ -14,7 +14,7 @@ import { SignUpServices } from '../services/signup_sevices';
   styleUrl: './tourist-sign-up.component.css',
 })
 export class TouristSignUpComponent implements OnInit {
-  constructor(private signup_services:SignUpServices){}
+  touristName: string = '';
   touristemail: string = '';
   touristpassword: string = '';
   confirmPassword: string = '';
@@ -131,9 +131,10 @@ export class TouristSignUpComponent implements OnInit {
     }
     
     const formData = {
-      email: this.touristemail,
-      password: this.touristpassword,
-      phone: this.touristphone,
+      touristName: this.touristName,
+      touristemail: this.touristemail,
+      touristpassword: this.touristpassword,
+      touristphone: this.touristphone,
       selectedTourismTypes: this.selectedTourismTypes,
       country: this.touristCountry,
     };
