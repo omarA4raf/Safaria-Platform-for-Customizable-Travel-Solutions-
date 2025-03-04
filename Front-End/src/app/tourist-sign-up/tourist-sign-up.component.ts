@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './tourist-sign-up.component.css',
 })
 export class TouristSignUpComponent implements OnInit {
+  touristName: string = '';
   touristemail: string = '';
   touristpassword: string = '';
   confirmPassword: string = '';
@@ -128,6 +129,7 @@ export class TouristSignUpComponent implements OnInit {
     }
 
     const formData = {
+      touristName: this.touristName,
       touristemail: this.touristemail,
       touristpassword: this.touristpassword,
       touristphone: this.touristphone,

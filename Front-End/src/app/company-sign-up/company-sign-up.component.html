@@ -47,11 +47,18 @@
                     </div>
 
                     <!-- Business License document -->
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><i class="fa fa-id-card"></i></span>
-                        <input type="file" [(ngModel)]="businesslicenseDocument" name="businesslicenseDocument"
-                            class="form-control" placeholder="Business License Document" required>
-                    </div>
+                    <div class="mb-3">
+                        <!-- Label aligned to the left -->
+                        <label for="businesslicenseDocument" class="form-label text-start d-block">
+                          Enter your business license document
+                        </label>
+                        <!-- File input with input group -->
+                        <div class="input-group">
+                          <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                          <input type="file" id="businesslicenseDocument" [(ngModel)]="businesslicenseDocument"
+                                 name="businesslicenseDocument" class="form-control" required>
+                        </div>
+                      </div>
 
                     <button type="submit" class="btn btn-success w-100">Sign Up</button>
                 </form>

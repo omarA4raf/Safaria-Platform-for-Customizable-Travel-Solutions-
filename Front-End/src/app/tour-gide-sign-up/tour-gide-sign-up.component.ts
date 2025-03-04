@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class TourGideSignUpComponent {
 
+  tourguideName: string = '';
   tourguideemail: string = '';
   tourguidepassword: string = '';
   confirmPassword: string = '';
@@ -118,6 +119,7 @@ export class TourGideSignUpComponent {
     }
 
     const formData = {
+      tourguideName: this.tourguideName,
       tourguideemail: this.tourguideemail,
       tourguidepassword: this.tourguidepassword,
       tourguidephone: this.tourguidephone,

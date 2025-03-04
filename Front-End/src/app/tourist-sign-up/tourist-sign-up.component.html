@@ -11,6 +11,13 @@
                 <h2 class="mb-4">Create Account</h2>
                 <form (submit)="onSubmit()">
 
+                    <!-- Tourist Name -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                        <input type="text" [(ngModel)]="touristName" name="touristName" class="form-control"
+                            placeholder="Tourist Name" required>
+                    </div>
+
                     <!-- Email -->
                     <div class="input-group mb-3">
                         <span class="input-group-text"><i class="fa fa-envelope"></i></span>
@@ -46,14 +53,13 @@
                         <label class="form-label fw-bold">Select Tourism Type:</label>
                         <div class="checkbox-container">
                             <label class="checkbox-inline"
-                                *ngFor="let type of ['cultural', 'adventure', 'beach', 'historical', 'luxury', 'wildlife', 'religious']">
+                                *ngFor="let type of ['cultural', 'adventure', 'beach', 'historical', 'wildlife', 'religious']">
                                 <input type="checkbox" [value]="type" (change)="toggleTourismType(type, $event)">
                                 <i class="fa" [ngClass]="{
                                     'fa-landmark': type === 'cultural',
                                     'fa-hiking': type === 'adventure',
                                     'fa-umbrella-beach': type === 'beach',
                                     'fa-monument': type === 'historical',
-                                    'fa-gem': type === 'luxury',
                                     'fa-paw': type === 'wildlife',
                                     'fa-praying-hands': type === 'religious'
                                 }"></i> {{ type | titlecase }}
