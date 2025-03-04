@@ -14,6 +14,7 @@ import { SignUpServices } from '../services/signup_sevices';
   styleUrl: './tourist-sign-up.component.css',
 })
 export class TouristSignUpComponent implements OnInit {
+  constructor(private signup_services:SignUpServices){}
   touristName: string = '';
   touristemail: string = '';
   touristpassword: string = '';
@@ -140,6 +141,7 @@ export class TouristSignUpComponent implements OnInit {
     };
     this.tourist.email=this.touristemail;
     this.tourist.password=this.touristpassword;
+    this.tourist.username=this.touristName;
     this.tourist.phone=this.touristphone;
     this.tourist.tourismTypes=this.selectedTourismTypes
     this.tourist.country=this.touristCountry;
