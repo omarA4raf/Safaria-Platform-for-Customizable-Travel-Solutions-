@@ -19,7 +19,7 @@ public interface TouristRepository extends JpaRepository<Tourist, Integer> {
 
     // Spring Data JPA will automatically generate the basic CRUD methods.
     Optional <Tourist> findByUsername(String username);
-
+    Optional<Tourist> findByEmail(String email);
     @Override
     void deleteById(Integer aLong);
 }

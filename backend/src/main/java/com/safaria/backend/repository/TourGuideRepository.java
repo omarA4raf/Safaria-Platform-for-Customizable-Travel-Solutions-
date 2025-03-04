@@ -15,7 +15,7 @@ public interface TourGuideRepository extends JpaRepository<TourGuide, Integer> {
     // List<TourGuide> findByCountry(String country);
 
     Optional<TourGuide> findByUsername(String username);
-
+    Optional<TourGuide> findByEmail(String email);
     @Override
     void deleteById(Integer aLong);
 }
