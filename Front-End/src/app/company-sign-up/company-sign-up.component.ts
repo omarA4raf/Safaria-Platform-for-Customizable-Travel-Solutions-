@@ -19,6 +19,7 @@ export class CompanySignUpComponent implements OnInit {
   companypassword: string = '';
   confirmPassword: string = '';
   businessLicense: string = '';
+  phoneNumber: string = '';
   businesslicenseDocument: string | null = null; // Store Base64 string
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -76,6 +77,7 @@ export class CompanySignUpComponent implements OnInit {
       companyemail: this.companyemail,
       companypassword: this.companypassword,
       businessLicense: this.businessLicense,
+      phoneNumber: this.phoneNumber,
       businesslicenseDocument: this.businesslicenseDocument,
     };
 

@@ -53,9 +53,9 @@ img {
     width: 100%;
     max-width: auto;
 }
-.second-other{
-        /* background-color: #ffff; */
-}
+/* .second-other{
+        background-color: #ffff;
+} */
 .content {
     position: relative;
     z-index: 2;
