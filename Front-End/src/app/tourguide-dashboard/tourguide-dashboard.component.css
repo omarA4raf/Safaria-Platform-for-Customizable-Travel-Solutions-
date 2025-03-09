@@ -1,0 +1,93 @@
+/* General Styles */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "Arial", sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* Navbar Styles */
+.navbar {
+  background-color: #040a15; /* Dark background for navbar */
+}
+
+.navbar-brand {
+  color: #ffa500; /* Orange color for brand name */
+  font-weight: bold;
+}
+
+.nav-link {
+  color: white !important; /* White text for navbar links */
+}
+
+/* information part */
+
+.masked-password {
+    letter-spacing: 2px;
+}
+
+.edit-btn {
+    float: right;
+    font-size: 0.9rem;
+}
+
+.profile-word {
+color: #040A15 !important;
+}
+
+.edit-btn {
+    color: #ffa500;
+}
+
+.profile-img {
+    width: 280px;
+    height: 100%;
+}
+
+/* Footer Styles */
+footer {
+  background-color: #71a7b8; /* Light blue background */
+  color: white;
+}
+
+.social-icons a {
+  color: white;
+  margin-right: 15px;
+}
+
+.social-icons a:hover {
+  opacity: 0.8;
+}
+
+footer h5 {
+  margin-bottom: 15px;
+}
+
+footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+footer ul li {
+  margin-bottom: 10px;
+}
+
+footer ul li a {
+  color: white;
+  text-decoration: none;
+}
+
+footer ul li a:hover {
+  text-decoration: underline;
+}
+
+footer hr {
+  border-color: white;
+}
+
+footer p {
+  margin: 0;
+  text-align: center;
+}
