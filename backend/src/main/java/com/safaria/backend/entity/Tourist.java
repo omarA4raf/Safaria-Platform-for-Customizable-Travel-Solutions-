@@ -1,6 +1,7 @@
 package com.safaria.backend.entity;
 
 
+import com.safaria.backend.DTO.TouristSignUpDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.http.HttpStatus;
+
 
 //import javax.persistence.*;
 import java.util.List;
@@ -64,7 +66,17 @@ public class Tourist {
     public void setId(int id){
         this.userId=id;
     }
+
     public int getId(){
         return this.userId;
+    }
+
+    public Tourist(TouristSignUpDTO dto) {
+        this.username = dto.getUsername();
+        this.email = dto.getEmail();
+        this.password = dto.getPassword();
+        this.country = dto.getCountry();
+        this.tourismTypes = dto.getTourismTypes();
+        this.phone = dto.getPhone();
     }
 }

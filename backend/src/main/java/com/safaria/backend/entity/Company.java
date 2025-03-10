@@ -1,9 +1,8 @@
 package com.safaria.backend.entity;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import com.safaria.backend.DTO.TourGuideSignUpDTO;
+import com.safaria.backend.DTO.CompanySignUpDTO;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -13,8 +12,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "TourGuide") // Explicitly set the table name
-public class TourGuide {
+@Table(name = "Company") // Explicitly set the table name
+public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,23 +39,25 @@ public class TourGuide {
     private String profilePhoto; // Assuming URL is stored as a String
 
     @ElementCollection
-    @CollectionTable(name = "tourguide_tourism_types", joinColumns = @JoinColumn(name = "UserID"))
+    @CollectionTable(name = "company_tourism_types", joinColumns = @JoinColumn(name = "UserID"))
     @Column(name = "TourismType")
     private List<String> tourismTypes;
 
-    @Column(name = "ApprovmentDocument")
-    private String approvalDocument; // Assuming URL is stored as a String
+    @Column(name = "BusinessLicenseNumber",unique = true)
+    private String businessLicenseNumber; 
+    @Column(name = "BusinessLicenseDocument")
+    private String businessLicenseDocument;
 
     public String getPassword() {
         return password;
     }
-    public TourGuide(TourGuideSignUpDTO dto) {
+    public Company(CompanySignUpDTO dto) {
         this.username = dto.getUsername();
         this.email = dto.getEmail();
         this.password = dto.getPassword();
-        this.country = dto.getCountry();
-        this.approvalDocument=dto.getApprovalDocument();
         this.phone = dto.getPhone();
+        this.businessLicenseNumber=dto.getBusinessLicenseNumber();
+        this.businessLicenseDocument=dto.getBusinessLicenseDocument();
 
     }
 }
