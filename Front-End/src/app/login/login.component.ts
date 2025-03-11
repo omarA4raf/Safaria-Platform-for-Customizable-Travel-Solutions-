@@ -18,8 +18,12 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
 
+  // Variables for error handling and loading state
+  errorMessage: string = '';
+  isLoading: boolean = false;
+
   // Inject HttpClient and Router
-  constructor(private login_services:LoginServices,private http: HttpClient, private router: Router) {}
+  constructor(private login_services: LoginServices, private http: HttpClient, private router: Router) {}
 
   // Method to update the selected user kind
   selectUserKind(kind: string) {
@@ -27,7 +31,36 @@ export class LoginComponent {
   }
 
   // Method to handle form submission
-  onSubmit() {
+  onSubmit(form: any) {
+      console.log('Form submitted:', form);
+      console.log('Form valid:', form.valid);
+      console.log('Form controls:', form.controls);
+    
+      // Reset error message
+      this.errorMessage = '';
+    
+      // Check if the form is invalid
+      if (form.invalid) {
+        console.log('Form is invalid');
+        this.errorMessage = 'Please fill out all required fields.';
+        return;
+      }
+
+    // Check if the form is invalid
+    if (form.invalid) {
+      this.errorMessage = 'Please fill out all required fields.';
+      return;
+    }
+
+    // Validate email format
+    if (!this.validateEmail(this.email)) {
+      this.errorMessage = 'Invalid email format.';
+      return;
+    }
+
+    // Set loading state to true
+    this.isLoading = true;
+
     // Create the payload to send to the backend
     const payload = {
       userKind: this.selectedUserKind,
@@ -39,32 +72,48 @@ export class LoginComponent {
     console.log('Form submitted with data:', payload);
 
     // Send the data to the backend
-    //this.http.get<any>(`http://localhost:8080/login/touristlogin/${this.email}/${this.password}`)
-      this.login_services.login(this.email,this.password,this.selectedUserKind)
+    this.login_services.login(this.email, this.password, this.selectedUserKind)
       .subscribe({
         next: (response: any) => {
-          if(response==null){
-            alert('Login failed. Please check your credentials.');
-          }
-          else{
-          console.log('Login successful:', response);
-          // Navigate to the appropriate page based on the user kind
-          if (this.selectedUserKind === 'Tourist') {
-            this.router.navigate(['/touristdashboardhome']);
-          } else if (this.selectedUserKind === 'Tour Guide') {
-            this.router.navigate(['/tourguidesdashboard']);
-          } else if (this.selectedUserKind === 'Company') {
-            this.router.navigate(['/companydashboard']);
+          // Set loading state to false
+          this.isLoading = false;
+
+          if (response === null) {
+            this.errorMessage = 'Login failed. Please check your credentials.';
           } else {
-            console.error('Unknown user kind:', this.selectedUserKind);
-            alert('Unknown user kind. Please contact support.');
+            console.log('Login successful:', response);
+            // Navigate to the appropriate page based on the user kind
+            if (this.selectedUserKind === 'Tourist') {
+              this.router.navigate(['/touristdashboardhome']);
+            } else if (this.selectedUserKind === 'Tour Guide') {
+              this.router.navigate(['/tourguidesdashboard']);
+            } else if (this.selectedUserKind === 'Company') {
+              this.router.navigate(['/companydashboard']);
+            } else {
+              console.error('Unknown user kind:', this.selectedUserKind);
+              this.errorMessage = 'Unknown user kind. Please contact support.';
+            }
           }
-        }
         },
         error: (error) => {
+          // Set loading state to false
+          this.isLoading = false;
+
+          // Handle specific error messages from the backend
+          if (error.error && error.error.message) {
+            this.errorMessage = error.error.message;
+          } else {
+            this.errorMessage = 'Login failed. Please check your credentials.';
+          }
           console.error('Login failed:', error);
           alert('Login failed. Please check your credentials.');
         }
       });
+  }
+
+  // Method to validate email format
+  validateEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 }

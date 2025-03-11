@@ -11,12 +11,10 @@
   <div class="login-container">
     <div class="login-card">
       <h4 class="mb-4 text-center">Login</h4>
-      <form id="loginForm" novalidate (ngSubmit)="onSubmit()">
-        <!-- User e-mail -->
-        <label class="form-label"><i class="fa fa-user"></i> User e-mail</label>
-        <!-- Dropdown and Email Input -->
+      <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)" novalidate>
+        <!-- User Kind Dropdown -->
+        <label class="form-label"><i class="fa fa-user"></i> User Kind</label>
         <div class="input-group mb-3">
-          <!-- Dropdown for User Kind -->
           <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown"
             aria-expanded="false">
             {{ selectedUserKind || 'Select User Kind' }}
@@ -26,28 +24,50 @@
             <li><a class="dropdown-item" href="#" (click)="selectUserKind('Tour Guide')">Tour Guide</a></li>
             <li><a class="dropdown-item" href="#" (click)="selectUserKind('Company')">Company</a></li>
             <li><a class="dropdown-item" href="#" (click)="selectUserKind('Admin')">Admin</a></li>
-
           </ul>
-
-          <!-- Input for Email -->
-          <input type="email" class="form-control" placeholder="Enter email" [(ngModel)]="email" name="email" required>
+        </div>
+        <div *ngIf="loginForm.submitted && !selectedUserKind" class="error-message">
+          User kind is required.
         </div>
 
-        <!-- Password -->
+        <!-- Email Input -->
+        <label class="form-label"><i class="fa fa-envelope"></i> User e-mail</label>
+        <div class="input-group mb-3">
+          <input type="email" class="form-control" placeholder="Enter email" [(ngModel)]="email" name="email" required>
+        </div>
+        <div *ngIf="loginForm.submitted && loginForm.controls['email']?.errors?.['required']" class="error-message">
+          Email is required.
+        </div>
+        <div *ngIf="loginForm.submitted && loginForm.controls['email']?.errors?.['email']" class="error-message">
+          Invalid email format.
+        </div>
+
+        <!-- Password Input -->
         <div class="mb-3">
           <label class="form-label"><i class="fa fa-lock"></i> Password</label>
-          <input type="password" class="form-control" id="password" placeholder="Enter password" [(ngModel)]="password"
+          <input type="password" class="form-control" placeholder="Enter password" [(ngModel)]="password"
             name="password" required>
-          <div class="invalid-feedback">Password must meet the strength requirements.</div>
-          <small class="text-muted">Password must be at least 8 characters long, include an uppercase letter, a
-            lowercase letter, a number, and a special character.</small>
+          <div *ngIf="loginForm.submitted && loginForm.controls['password']?.errors?.['required']" class="error-message">
+            Password is required.
+          </div>
+          <!-- <small class="text-muted">Password must be at least 8 characters long, include an uppercase letter, a
+            lowercase letter, a number, and a special character.</small> -->
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="error-message mb-3">
+          {{ errorMessage }}
         </div>
 
         <!-- Forgot Password & Login Button -->
         <div class="d-flex justify-content-between mb-3">
           <a href="#" class="text-primary small">Forgot Password?</a>
         </div>
-        <button type="submit" class="btn btn-primary w-100"><i class="fa fa-sign-in-alt"></i> Login</button>
+        <button type="submit" class="btn btn-primary w-100" [disabled]="isLoading">
+          <span *ngIf="!isLoading"><i class="fa fa-sign-in-alt"></i> Login</span>
+          <span *ngIf="isLoading">Logging in...</span>
+          <span *ngIf="isLoading" class="spinner"></span>
+        </button>
 
         <!-- Sign Up Link -->
         <p class="text-center mt-3">Don't have an account? <a href="/signup" class="text-primary">Sign Up</a></p>
