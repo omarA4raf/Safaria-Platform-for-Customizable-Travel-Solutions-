@@ -146,6 +146,7 @@ public class services implements Iservices {
         tourist.setPassword(passwordEncoder.encode(tourist.getPassword()));
         touristRepository.save(new Tourist(tourist));
         return ResponseEntity.status(200).body("DONE Tourist SignedUP");
+        
     }
     @Override
     public ResponseEntity<String> saveTourGuide(TourGuideSignUpDTO tourGuide) {

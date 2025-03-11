@@ -5,12 +5,12 @@ import * as CryptoJS from 'crypto-js';
 import { formatDate } from '@angular/common';
 const secretKey = CryptoJS.enc.Utf8.parse("dsvbsduf76A1xZ9g");
 const iv = CryptoJS.enc.Utf8.parse("1234567890123456");
-const baseUrl = 'http://localhost:8080/signup';
+const baseUrl = 'http://localhost:8080/api';
 const httpOptions = {
           headers: new HttpHeaders({ 'Content-Type': 'application/json' })
         };
 
-
+// Team@1234
 @Injectable({
   providedIn: 'root'
 })
@@ -32,16 +32,17 @@ export class SignUpServices {
   signup(user:any,role:string): Observable<any> {
     const params = new HttpParams()
         
-        user['email']=encodeURIComponent(this.encryptAES(user['email']));
-        user['password']=encodeURIComponent(this.encryptAES(user['password']))
+        // user['email']=encodeURIComponent(this.encryptAES(user['email']));
+        // user['password']=encodeURIComponent(this.encryptAES(user['password']))
     if(role == 'Tourist'){
-        return this.http.post<any>(`${baseUrl}/savetourist`,user);}
+      return this.http.post(`${baseUrl}/touristsignup`, user, { responseType: 'text' });}
     else if(role == 'Tour Guide'){
-        return this.http.post<any>(`${baseUrl}/savetourguide`,user);
-    }
+      return this.http.post(`${baseUrl}/tourguidesignup`, user, { responseType: 'text' });}
     else{
-        return this.http.post<any>(`${baseUrl}/saveadmin`,user);
+      return this.http.post<any>(`${baseUrl}/companysignup`,user);
     }
-  }
+  };
+};
 
-}
+// tourist@gmail.com
+// Team@1234

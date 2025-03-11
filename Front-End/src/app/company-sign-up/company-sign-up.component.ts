@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
+
 @Component({
   selector: 'app-company-sign-up',
   standalone: true,
