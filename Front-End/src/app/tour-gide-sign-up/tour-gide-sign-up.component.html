@@ -11,18 +11,25 @@
                 <h2 class="mb-4">Create Account</h2>
                 <form (submit)="onSubmit()">
 
+                    <!-- Tourguide Name -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                        <input type="text" [(ngModel)]="tourguideName" name="tourguideName" class="form-control"
+                            placeholder="Tourguide Name" required>
+                    </div>
+
                     <!-- Email -->
                     <div class="input-group mb-3">
                         <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                        <input type="email" [(ngModel)]="tourguideemail" name="tourguideemail" class="form-control" placeholder="Email"
-                            required>
+                        <input type="email" [(ngModel)]="tourguideemail" name="tourguideemail" class="form-control"
+                            placeholder="Email" required>
                     </div>
 
                     <!-- Password -->
                     <div class="input-group mb-3">
                         <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                        <input type="password" [(ngModel)]="tourguidepassword" name="tourguidepassword" class="form-control"
-                            placeholder="Password" required
+                        <input type="password" [(ngModel)]="tourguidepassword" name="tourguidepassword"
+                            class="form-control" placeholder="Password" required
                             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
                             #passwordInput="ngModel">
                     </div>
@@ -42,12 +49,16 @@
                     </div>
 
                     <!-- ID verification document -->
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><i class="fa fa-id-card"></i></span>
-                        <input type="file" [(ngModel)]="idVerificationDocument" name="idVerificationDocument"
-                            class="form-control" placeholder="ID Verification Document" required>
+                    <div class="mb-3">
+                        <label for="idDocument" class="form-label text-start d-block">
+                            Enter your ID/Passport document
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                            <input #idDocumentInput type="file" id="idDocument" name="idDocument" class="form-control"
+                                accept="image/*,.pdf" required>
+                        </div>
                     </div>
-
 
                     <!-- Tourguide Country -->
                     <div class="input-group mb-3">

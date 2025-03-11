@@ -11,7 +11,7 @@ public interface AdminRepository extends JpaRepository<Admin, Integer> {
     // Add custom query methods if needed, for example:
     // Admin findByEmail(String email);
     Optional<Admin> findByUsername(String username);
-
+    Optional<Admin> findByEmail(String email);
     @Override
     void deleteById(Integer aLong);
 }

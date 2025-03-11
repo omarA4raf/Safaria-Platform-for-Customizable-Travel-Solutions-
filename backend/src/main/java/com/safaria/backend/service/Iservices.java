@@ -20,4 +20,5 @@ public interface Iservices {
     public ResponseEntity<String> saveTourist(TouristSignUpDTO tourist);
     public ResponseEntity<String> saveTourGuide(TourGuideSignUpDTO tourGuide);
     public ResponseEntity<String> saveCompany(CompanySignUpDTO tourGuide);
+
 }

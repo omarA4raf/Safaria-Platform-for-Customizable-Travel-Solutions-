@@ -14,6 +14,7 @@ public interface TourGuideRepository extends JpaRepository<TourGuide, Integer> {
 
     Optional<TourGuide> findByUsername(String username);
     Optional<TourGuide> findByEmail(String email);
+
     Boolean existsByEmail(String email );
 
     @Override
