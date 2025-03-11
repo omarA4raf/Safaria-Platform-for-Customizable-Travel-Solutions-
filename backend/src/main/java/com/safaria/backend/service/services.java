@@ -3,8 +3,13 @@ package com.safaria.backend.service;
 
 import com.safaria.backend.entity.*;
 import com.safaria.backend.repository.AdminRepository;
+import com.safaria.backend.repository.CompanyRepository;
 import com.safaria.backend.repository.TourGuideRepository;
 import com.safaria.backend.repository.TouristRepository;
+import com.safaria.backend.DTO.CompanySignUpDTO;
+import com.safaria.backend.DTO.TourGuideSignUpDTO;
+import com.safaria.backend.DTO.TouristSignUpDTO;
+
 import jakarta.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +27,9 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 import java.nio.charset.StandardCharsets;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
@@ -60,7 +68,11 @@ public class services implements Iservices {
     @Autowired
     private AdminRepository adminRepository;
     @Autowired
+    private CompanyRepository companyRepository;
+    @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private CheckEmailService checkEmailService;
 
 
     @Override
@@ -124,15 +136,46 @@ public class services implements Iservices {
         return null;
     }
     @Override
-    public Tourist savetourist(Tourist tourist) {
+
+    public ResponseEntity<String> saveTourist(TouristSignUpDTO tourist) {
         tourist.setEmail(decryptAES(URLDecoder.decode(tourist.getEmail(),StandardCharsets.UTF_8)));
         tourist.setPassword(decryptAES(URLDecoder.decode(tourist.getPassword(),StandardCharsets.UTF_8)));
-        System.out.println(tourist.getEmail() + " "+tourist.getPassword());
-        Optional<Tourist> old_tourist_1 = touristRepository.findByEmail(tourist.getEmail());
-        if (old_tourist_1.isPresent()) {
-            return null;
-        }
+        if (!checkEmailService.isValidEmailDomain(tourist.getEmail()))
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not Valid Email Domain");
+        if(touristRepository.existsByEmail(tourist.getEmail()))
+            return  ResponseEntity.status(HttpStatus.CONFLICT).body("tourist Email is already registered!");
         tourist.setPassword(passwordEncoder.encode(tourist.getPassword()));
-        return touristRepository.save(tourist);
+        touristRepository.save(new Tourist(tourist));
+        return ResponseEntity.status(200).body("DONE Tourist SignedUP");
+    }
+    @Override
+    public ResponseEntity<String> saveTourGuide(TourGuideSignUpDTO tourGuide) {
+        tourGuide.setEmail(decryptAES(URLDecoder.decode(tourGuide.getEmail(),StandardCharsets.UTF_8)));
+        tourGuide.setPassword(decryptAES(URLDecoder.decode(tourGuide.getPassword(),StandardCharsets.UTF_8)));
+        if (!checkEmailService.isValidEmailDomain(tourGuide.getEmail()))
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not Valid Email Domain");
+        if(tourGuideRepository.existsByEmail(tourGuide.getEmail()))
+        return  ResponseEntity.status(HttpStatus.CONFLICT).body("tourGuide Email is already registered!");
+        
+        tourGuide.setPassword(passwordEncoder.encode(tourGuide.getPassword()));
+        tourGuideRepository.save(new TourGuide(tourGuide));
+        return ResponseEntity.status(200).body("DONE TourGuide SignedUP");
+    }
+    @Override
+    public ResponseEntity<String> saveCompany(CompanySignUpDTO company) {
+        company.setEmail(decryptAES(URLDecoder.decode(company.getEmail(),StandardCharsets.UTF_8)));
+        company.setPassword(decryptAES(URLDecoder.decode(company.getPassword(),StandardCharsets.UTF_8)));
+        if (!checkEmailService.isValidEmailDomain(company.getEmail()))
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not Valid Email Domain");
+        if(companyRepository.existsByEmail(company.getEmail()))
+            return  ResponseEntity.status(HttpStatus.CONFLICT).body("Company Email is already registered!");
+        else if (companyRepository.existsByBusinessLicenseNumber(company.getBusinessLicenseNumber())) 
+            return  ResponseEntity.status(HttpStatus.CONFLICT).body("Company License is already registered!");
+        
+        
+        
+        company.setPassword(passwordEncoder.encode(company.getPassword()));
+        companyRepository.save(new Company(company));
+        return ResponseEntity.status(200).body("DONE Company SignedUP");
     }
 }
