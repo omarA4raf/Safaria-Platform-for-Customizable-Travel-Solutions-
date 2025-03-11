@@ -138,8 +138,7 @@ public class services implements Iservices {
     @Override
 
     public ResponseEntity<String> saveTourist(TouristSignUpDTO tourist) {
-        tourist.setEmail(decryptAES(URLDecoder.decode(tourist.getEmail(),StandardCharsets.UTF_8)));
-        tourist.setPassword(decryptAES(URLDecoder.decode(tourist.getPassword(),StandardCharsets.UTF_8)));
+        
         if (!checkEmailService.isValidEmailDomain(tourist.getEmail()))
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not Valid Email Domain");
         if(touristRepository.existsByEmail(tourist.getEmail()))
@@ -150,8 +149,7 @@ public class services implements Iservices {
     }
     @Override
     public ResponseEntity<String> saveTourGuide(TourGuideSignUpDTO tourGuide) {
-        tourGuide.setEmail(decryptAES(URLDecoder.decode(tourGuide.getEmail(),StandardCharsets.UTF_8)));
-        tourGuide.setPassword(decryptAES(URLDecoder.decode(tourGuide.getPassword(),StandardCharsets.UTF_8)));
+       
         if (!checkEmailService.isValidEmailDomain(tourGuide.getEmail()))
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not Valid Email Domain");
         if(tourGuideRepository.existsByEmail(tourGuide.getEmail()))
@@ -163,8 +161,7 @@ public class services implements Iservices {
     }
     @Override
     public ResponseEntity<String> saveCompany(CompanySignUpDTO company) {
-        company.setEmail(decryptAES(URLDecoder.decode(company.getEmail(),StandardCharsets.UTF_8)));
-        company.setPassword(decryptAES(URLDecoder.decode(company.getPassword(),StandardCharsets.UTF_8)));
+        
         if (!checkEmailService.isValidEmailDomain(company.getEmail()))
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not Valid Email Domain");
         if(companyRepository.existsByEmail(company.getEmail()))
