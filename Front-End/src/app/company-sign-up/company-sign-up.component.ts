@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
-
 @Component({
   selector: 'app-company-sign-up',
   standalone: true,
@@ -21,28 +20,82 @@ export class CompanySignUpComponent implements OnInit {
   confirmPassword: string = '';
   businessLicense: string = '';
   phoneNumber: string = '';
-  businesslicenseDocument: string | null = null; // Store Base64 string
+  businesslicenseDocument: File | null = null; // Use File type instead of string
+  isLoading: boolean = false; // Loading state
+  errorMessage: string | null = null; // Error message
 
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
-    const fileInput = this.businesslicenseDocumentInput.nativeElement;
-
-    fileInput.addEventListener('change', (event: Event) => {
-      const file = (event.target as HTMLInputElement).files?.[0];
-      if (file) {
-        const reader = new FileReader();
-
-        reader.onload = (e) => {
-          this.businesslicenseDocument = e.target?.result as string; // Base64 encoded string
-        };
-
-        reader.readAsDataURL(file); // Read file as Base64
-      }
-    });
+    // No changes needed here
   }
 
-  sendToBackend(formData: any): void {
+  // Handle file input change
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.businesslicenseDocument = input.files[0]; // Store the file
+      console.log('File selected:', this.businesslicenseDocument.name); // Debugging
+    } else {
+      this.businesslicenseDocument = null; // Reset if no file is selected
+    }
+  }
+
+  // Check if the password is strong
+  isPasswordStrong(password: string): boolean {
+    const strongPasswordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return strongPasswordRegex.test(password);
+  }
+
+  // Handle form submission
+  onSubmit(form: any): void {
+    this.errorMessage = null; // Reset error message
+
+    // Validate form fields
+    if (
+      !this.companyName ||
+      !this.companyemail ||
+      !this.companypassword ||
+      !this.confirmPassword ||
+      !this.businessLicense ||
+      !this.phoneNumber ||
+      !this.businesslicenseDocument
+    ) {
+      this.errorMessage = 'All fields are required.';
+      return;
+    }
+
+    if (!this.companyemail.includes('@')) {
+      this.errorMessage = 'Invalid email format.';
+      return;
+    }
+
+    if (this.companypassword !== this.confirmPassword) {
+      this.errorMessage = 'Passwords do not match.';
+      return;
+    }
+
+    if (!this.isPasswordStrong(this.companypassword)) {
+      this.errorMessage =
+        'Password is weak! It must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.';
+      return;
+    }
+
+    this.isLoading = true; // Enable loading state
+
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('companyName', this.companyName);
+    formData.append('companyemail', this.companyemail);
+    formData.append('companypassword', this.companypassword);
+    formData.append('businessLicense', this.businessLicense);
+    formData.append('phoneNumber', this.phoneNumber);
+    if (this.businesslicenseDocument) {
+      formData.append('businesslicenseDocument', this.businesslicenseDocument);
+    }
+
+    // Send data to the backend
     this.http.post('/api/companysignup', formData).subscribe({
       next: (response) => {
         console.log('Signup successful:', response);
@@ -50,39 +103,11 @@ export class CompanySignUpComponent implements OnInit {
       },
       error: (error) => {
         console.error('Signup failed:', error);
+        this.errorMessage = 'An error occurred. Please try again later.';
+      },
+      complete: () => {
+        this.isLoading = false; // Disable loading state
       },
     });
   }
-
-  isPasswordStrong(password: string): boolean {
-    const strongPasswordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return strongPasswordRegex.test(password);
-  }
-
-  onSubmit(): void {
-    if (this.companypassword !== this.confirmPassword) {
-      alert('Passwords do not match!');
-      return;
-    }
-
-    if (!this.isPasswordStrong(this.companypassword)) {
-      alert(
-        'Password is weak! It must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.'
-      );
-      return;
-    }
-
-    const formData = {
-      companyName: this.companyName,
-      companyemail: this.companyemail,
-      companypassword: this.companypassword,
-      businessLicense: this.businessLicense,
-      phoneNumber: this.phoneNumber,
-      businesslicenseDocument: this.businesslicenseDocument,
-    };
-
-    console.log('Form Data:', formData);
-    this.sendToBackend(formData); // Send form data to the backend
-  }
-};
+}

@@ -1,1 +1,183 @@
-<p>company-dashboard works!</p>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark  ">
+    <div class="container">
+        <!-- Brand Name -->
+        <a style="color: #ffa500;" class="navbar-brand fw-bold" href="#">Safaria</a>
+
+        <!-- Toggle Button for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">About me</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">My trips</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">Clients</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">Reviews</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">Log out <i
+                            class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<!-- information part -->
+<div class="container mt-4">
+    <h4 class="profile-word mb-3">
+        Profile
+    </h4>
+
+    <div class="row align-items-center">
+        <!-- Profile Image (1/4 of the width) -->
+        <div class="col-md-4 text-center">
+            <img src="/assets/img/default company pic.jpg" class="img-fluid rounded profile-img">
+        </div>
+
+        <!-- User Info (3/4 of the width) -->
+        <div class="col-md-8 pt-5">
+            <p><strong>Name:</strong> ExploreMore Tours</p>
+            <p><strong>Email:</strong> info&#64;wanderlustadventures.com</p>
+            <p><strong>Country:</strong> Egypt</p>
+            <p><strong>Phone Number:</strong> 01087746356</p>
+            <p><strong>Bussniss licence:</strong> EMT-2024-001</p>
+            <p><strong>Password:</strong> ***********</p>
+            <p><strong>Rating: </strong>
+                <span id="rating-value" class="text-dark">{{ rating }} </span>
+                <span id="rating-stars" class="text-warning" [innerHTML]="starsHtml"></span>
+            </p>
+
+            <button class="btn btn-sm btn-outline-dark edit-btn" onclick="editAbout()">
+                <i class="fas fa-edit"></i> Edit
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- about CV -->
+<div class="container my-5">
+
+    <h4 class=" mb-3">About me</h4>
+    <p id="about-me">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure, officia. Qui aperiam inventore fugit voluptates
+        sequi repellat aspernatur quasi ad consequuntur culpa. Ad dolore distinctio, nesciunt saepe numquam aliquam,
+        veritatis unde odio exercitationem deleniti dicta nostrum tenetur! Blanditiis eligendi veritatis quas esse unde
+        voluptatum nisi amet numquam repellat cumque, laborum at dolore. Hic natus, aliquid veniam quasi quos nostrum
+        cumque doloremque consectetur repellat aut ipsum soluta nobis autem animi tenetur modi dolore neque expedita
+        molestias earum aspernatur voluptate. Debitis reprehenderit iste, quae sed voluptate, iure ea, voluptas ab
+        asperiores provident repellat rerum non! Recusandae tenetur cum velit hic dolore aspernatur.
+    </p>
+    <button class="btn btn-sm btn-outline-dark edit-btn" onclick="editAbout()">
+        <i class="fas fa-edit"></i> Edit
+    </button>
+</div>
+
+<!-- trips list -->
+<div class="container m-5">
+    <h5 class="fw-bold">
+        My trips:
+        <span class="text-primary">
+            <i class="fas fa-plus"></i> create new trips
+        </span>
+    </h5>
+
+    <div class="trip-container">
+        <div class="trip-list d-flex">
+            <div class="trip-card position-relative overflow-hidden rounded-3" *ngFor="let trip of trips">
+                <!-- Background Image -->
+                <img [src]="trip.image" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ trip.title }}">
+    
+                <!-- Dark Transparent Overlay -->
+                <div class="overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
+    
+                <!-- Trip Info (Displayed on Image) -->
+                <div class="trip-info position-absolute bottom-0 start-0 p-3 text-white w-100">
+                    <h6 class="fw-bold mb-1">{{ trip.title }}</h6>
+                    <p class="text-white-50 mb-1 company-title">{{ trip.company }}</p>
+                    <div class="d-flex align-items-center">
+                        <span id="rating-value" class="text-white">{{ trip.rating }}</span>
+                        <span id="rating-stars" class="text-warning" [innerHTML]="starsHtml"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>
+
+
+
+<!-- info part -->
+<footer class="text-white py-4" style="background-color: #71a7b8">
+    <div class="container">
+        <div class="row">
+            <!-- Left Side - Brand & Social Icons -->
+            <div class="col-md-4">
+                <h4>Safaria</h4>
+                <div class="social-icons mt-3">
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-youtube fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+                </div>
+            </div>
+
+            <!-- Center & Right Side - Topics -->
+            <div class="col-md-8">
+                <div class="row">
+                    <!-- Column 1 -->
+                    <div class="col-md-4">
+                        <h5>Explore</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Destinations</a></li>
+                            <li><a href="#" class="text-white">Tours</a></li>
+                            <li><a href="#" class="text-white">Experiences</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 2 -->
+                    <div class="col-md-4">
+                        <h5>Company</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">About Us</a></li>
+                            <li><a href="#" class="text-white">Careers</a></li>
+                            <li><a href="#" class="text-white">Blog</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 3 -->
+                    <div class="col-md-4">
+                        <h5>Support</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Contact Us</a></li>
+                            <li><a href="#" class="text-white">FAQs</a></li>
+                            <li><a href="#" class="text-white">Help Center</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Line -->
+        <hr class="mt-4 mb-2 border-white" />
+        <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
+    </div>
+</footer>

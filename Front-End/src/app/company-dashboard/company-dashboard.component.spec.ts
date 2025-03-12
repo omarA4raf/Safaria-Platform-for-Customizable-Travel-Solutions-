@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { CompanyDashboardComponent } from './company-dashboard.component';
+import { CompanyDashboardComponent } from './company-dashboard.component'; // ✅ Import CompanyDashboardComponent
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common'; // ✅ Import CommonModule
+import { AppComponent } from '../app.component';
 
 describe('CompanyDashboardComponent', () => {
   let component: CompanyDashboardComponent;
@@ -21,3 +24,16 @@ describe('CompanyDashboardComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+
+@NgModule({
+  declarations: [],
+  imports: [
+    BrowserModule,
+    CommonModule, // ✅ Add this here
+    CompanyDashboardComponent,
+    AppComponent
+  ],
+  providers: [],
+  // bootstrap: [AppComponent]
+})
+export class AppModule { }
