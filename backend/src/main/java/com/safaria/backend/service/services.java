@@ -17,15 +17,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.util.Base64;
+
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.http.HttpStatus;
@@ -73,6 +76,8 @@ public class services implements Iservices {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private CheckEmailService checkEmailService;
+    @Autowired
+     private  FileSystemService fileSystemService;
 
 
     @Override
@@ -157,8 +162,22 @@ public class services implements Iservices {
         return  ResponseEntity.status(HttpStatus.CONFLICT).body("tourGuide Email is already registered!");
         
         tourGuide.setPassword(passwordEncoder.encode(tourGuide.getPassword()));
+        String directory = "Documents/TourGuide";
+        String uniqueFileName = this.fileSystemService.generateUniqueFileName(directory, "pdf");
+        String relativeFilePath = Paths.get(directory, uniqueFileName).toString();
+
+        try {
+            this.fileSystemService.storeFile(this.fileSystemService.convertBase64ToBytes(tourGuide.getApprovalDocument()) ,relativeFilePath);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String[] approvalDocument = { relativeFilePath };
+        tourGuide.setApprovalDocument(approvalDocument); 
         tourGuideRepository.save(new TourGuide(tourGuide));
+     
         return ResponseEntity.status(200).body("DONE TourGuide SignedUP");
+        
     }
     @Override
     public ResponseEntity<String> saveCompany(CompanySignUpDTO company) {
@@ -173,6 +192,18 @@ public class services implements Iservices {
         
         
         company.setPassword(passwordEncoder.encode(company.getPassword()));
+        String directory = "Documents/Company";
+        String uniqueFileName = this.fileSystemService.generateUniqueFileName(directory, "pdf");
+        String relativeFilePath = Paths.get(directory, uniqueFileName).toString();
+
+        try {
+            this.fileSystemService.storeFile(this.fileSystemService.convertBase64ToBytes(company.getBusinessLicenseDocument()) ,relativeFilePath);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String[] BusinessLicenseDocument = { relativeFilePath };
+        company.setBusinessLicenseDocument(BusinessLicenseDocument); 
         companyRepository.save(new Company(company));
         return ResponseEntity.status(200).body("DONE Company SignedUP");
     }

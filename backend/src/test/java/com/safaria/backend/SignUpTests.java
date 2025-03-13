@@ -51,7 +51,7 @@ class SignUpTests {
             "email": "jane.guide@gmail.com",
             "phone": "9876543210",
             "country": "France",
-            "approvalDocument": "guide_license_123.pdf"
+            "approvalDocument": ["abcdefgh"]
             }
         """;
 
@@ -71,7 +71,7 @@ class SignUpTests {
   "email": "info@gmail.com",
   "phone": "1234567890",
   "businessLicenseNumber": "LC-987654",
-  "businessLicenseDocument": "license_certificate.pdf"
+  "businessLicenseDocument": ["abcdefgh"]
         }
 
 
@@ -112,7 +112,7 @@ class SignUpTests {
             "email": "jane.guide@gmail.com",
             "phone": "9876543210",
             "country": "France",
-            "approvalDocument": "guide_license_123.pdf"
+            "approvalDocument": ["abcdefgc"]
             }
         """;
 
@@ -131,7 +131,7 @@ class SignUpTests {
             "email": "info@gmail.com",
             "phone": "1234567890",
             "businessLicenseNumber": "LC-987654",
-            "businessLicenseDocument": "license_certificate.pdf"
+            "businessLicenseDocument": ["abcdefgc"]
                     }
         """;
 
@@ -192,7 +192,7 @@ class SignUpTests {
             "email": "info2@gmail.com",
             "phone": "1234567890",
             "businessLicenseNumber": "LC-987654",
-            "businessLicenseDocument": "license_certificate.pdf"
+            "businessLicenseDocument": ["abcdefgc"]
                     }
         """;
 
