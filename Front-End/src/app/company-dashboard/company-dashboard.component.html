@@ -1,5 +1,5 @@
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark  ">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <!-- Brand Name -->
         <a style="color: #ffa500;" class="navbar-brand fw-bold" href="#">Safaria</a>
@@ -8,7 +8,6 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-
 
         <!-- Navbar Links -->
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -27,29 +26,24 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white" href="#">Reviews</a>
-                </li>
-
+                </li>;
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="#">Log out <i
-                            class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                    <a class="nav-link text-white" (click)="logout()" style="cursor: pointer;">
+                        Log out <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </a>
                 </li>
-
-            </ul>
+            </ul>;
         </div>
     </div>
 </nav>
 
-
-<!-- information part -->
-<div class="container mt-4">
-    <h4 class="profile-word mb-3">
-        Profile
-    </h4>
-
+<!-- Information Part -->
+<div class="container m-5">
+    <h4 class="profile-word mb-3 ">Profile</h4>
     <div class="row align-items-center">
         <!-- Profile Image (1/4 of the width) -->
         <div class="col-md-4 text-center">
-            <img src="/assets/img/default company pic.jpg" class="img-fluid rounded profile-img">
+            <img src="/assets/img/company profile 1.jpg" class="img-fluid rounded profile-img">
         </div>
 
         <!-- User Info (3/4 of the width) -->
@@ -58,25 +52,23 @@
             <p><strong>Email:</strong> info&#64;wanderlustadventures.com</p>
             <p><strong>Country:</strong> Egypt</p>
             <p><strong>Phone Number:</strong> 01087746356</p>
-            <p><strong>Bussniss licence:</strong> EMT-2024-001</p>
+            <p><strong>Business Licence:</strong> EMT-2024-001</p>
             <p><strong>Password:</strong> ***********</p>
             <p><strong>Rating: </strong>
                 <span id="rating-value" class="text-dark">{{ rating }} </span>
-                <span id="rating-stars" class="text-warning" [innerHTML]="starsHtml"></span>
+                <span id="rating-stars" class="text-warning" [innerHTML]="renderStars(rating)"></span>
             </p>
-
-            <button class="btn btn-sm btn-outline-dark edit-btn" onclick="editAbout()">
+            <button class="btn btn-sm btn-outline-dark edit-btn" (click)="editProfile()">
                 <i class="fas fa-edit"></i> Edit
             </button>
         </div>
-
     </div>
+
 </div>
 
-<!-- about CV -->
-<div class="container my-5">
-
-    <h4 class=" mb-3">About me</h4>
+<!-- About CV -->
+<div class="container m-5">
+    <h4 class="mb-3" style="color: #174750;">About me</h4>
     <p id="about-me">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure, officia. Qui aperiam inventore fugit voluptates
         sequi repellat aspernatur quasi ad consequuntur culpa. Ad dolore distinctio, nesciunt saepe numquam aliquam,
@@ -86,46 +78,116 @@
         molestias earum aspernatur voluptate. Debitis reprehenderit iste, quae sed voluptate, iure ea, voluptas ab
         asperiores provident repellat rerum non! Recusandae tenetur cum velit hic dolore aspernatur.
     </p>
-    <button class="btn btn-sm btn-outline-dark edit-btn" onclick="editAbout()">
+    <button class="btn btn-sm btn-outline-dark edit-btn" (click)="editAbout()">
         <i class="fas fa-edit"></i> Edit
     </button>
 </div>
 
-<!-- trips list -->
+<!-- Trips List -->
 <div class="container m-5">
-    <h5 class="fw-bold">
+    <h5 class="fw-bold mb-3" (click)="navigateToCreateTrip()" style="cursor: pointer; color: #174750;">
         My trips:
-        <span class="text-primary">
+        <span class="text-secondary">
             <i class="fas fa-plus"></i> create new trips
         </span>
     </h5>
 
-    <div class="trip-container">
-        <div class="trip-list d-flex">
-            <div class="trip-card position-relative overflow-hidden rounded-3" *ngFor="let trip of trips">
+    <div class="list-container">
+        <div class="list-list d-flex flex-nowrap overflow-auto">
+            <div class="list-card position-relative overflow-hidden rounded-3" *ngFor="let trip of trips"
+                style="flex: 0 0 auto; width: 18rem;">
                 <!-- Background Image -->
                 <img [src]="trip.image" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ trip.title }}">
-    
+
                 <!-- Dark Transparent Overlay -->
                 <div class="overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
-    
+
                 <!-- Trip Info (Displayed on Image) -->
-                <div class="trip-info position-absolute bottom-0 start-0 p-3 text-white w-100">
+                <div class="list-info position-absolute bottom-0 start-0 p-3 text-white w-100">
                     <h6 class="fw-bold mb-1">{{ trip.title }}</h6>
                     <p class="text-white-50 mb-1 company-title">{{ trip.company }}</p>
                     <div class="d-flex align-items-center">
-                        <span id="rating-value" class="text-white">{{ trip.rating }}</span>
-                        <span id="rating-stars" class="text-warning" [innerHTML]="starsHtml"></span>
+                        <span id="rating-value" class="text-white me-2">{{ trip.rating }}</span>
+                        <span id="rating-stars" class="text-warning" [innerHTML]="renderStars(trip.rating)"></span>
                     </div>
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
+</div>
+
+<!-- Clients List -->
+<div class="container m-5">
+    <h5 class="fw-bold mb-3" style="color: #174750;">
+        My Clients:
+    </h5>
+
+    <div class="list-container">
+        <div class="list-list d-flex flex-nowrap overflow-auto">
+            <div class="list-card position-relative overflow-hidden rounded-3" *ngFor="let client of clients"
+                style="flex: 0 0 auto; width: 18rem;">
+                <!-- Background Image -->
+                <img [src]="client.image" class="card-img-top w-100 h-100 object-fit-cover"
+                    alt="{{ client.clientName }}">
+
+                <!-- Dark Transparent Overlay -->
+                <div class="overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
+
+                <!-- list Info (Displayed on Image) -->
+                <div class="list-info position-absolute bottom-0 start-0 p-3 text-white w-100">
+                    <h6 class="fw-bold mb-1">{{ client.clientName }}</h6>
+                    <p class="text-white-50 mb-1 company-title">{{ client.Address }}</p>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <!-- Rating Section -->
+                        <div class="d-flex align-items-center">
+                            <span id="rating-value" class="text-white me-2">{{ client.rating }}</span>
+                            <span id="rating-stars" class="text-warning"
+                                [innerHTML]="renderStars(client.rating)"></span>
+                        </div>
+
+                        <!-- Message Icon -->
+                        <div>
+                            <i class="fa-regular fa-comment text-warning fs-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
+<!-- Client Reviews Section -->
+<div class="container m-5 client-reviews-container">
+    <h5 class="fw-bold mb-3" style="color: #174750;">
+        My Reviews:
+    </h5>
+    <div class="client-reviews-list d-flex flex-nowrap overflow-auto">
+        <!-- Client Review Card -->
+        <div class="client-review-card" *ngFor="let review of clientReviews">
+            <!-- Rectangle Card -->
+            <div class="card-body">
+                <!-- Client Image and Name -->
+                <div class="d-flex align-items-center mb-3">
+                    <img [src]="review.image" class="client-image rounded-circle" alt="{{ review.name }}" />
+                    <h6 class="client-name ms-3">{{ review.name }}</h6>
+                </div>
 
-<!-- info part -->
+                <!-- Review Rating -->
+                <div class="rating mb-3">
+                    <span id="rating-value" class="text-black me-2">{{ review.rating }}</span>
+                    <span class="text-warning" [innerHTML]="renderStars(review.rating)"></span>
+                </div>
+
+                <!-- Text Review -->
+                <p class="review-text">{{ review.review }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Footer -->
 <footer class="text-white py-4" style="background-color: #71a7b8">
     <div class="container">
         <div class="row">

@@ -12,7 +12,7 @@ html {
 }
 /* Navbar Styles */
 .navbar {
-  background-color: #040a15; /* Dark background for navbar */
+  background-color: #174750; /* Dark background for navbar */
 }
 
 .navbar-brand {
@@ -36,7 +36,7 @@ html {
 }
 
 .profile-word {
-  color: #040a15 !important;
+  color: #174750 !important;
 }
 
 .edit-btn {
@@ -48,19 +48,19 @@ html {
   height: 100%;
 }
 
-/* trips list */
-.trip-container {
+/* lists list */
+.list-container {
     overflow-x: auto; /* Enables horizontal scrolling */
     white-space: nowrap; /* Prevents wrapping */
     padding-bottom: 10px;
 }
 
-.trip-list {
+.list-list {
     display: flex;
     gap: 15px; /* Spacing between cards */
 }
 
-.trip-card {
+.list-card {
     min-width: 300px; /* Ensures consistent width */
     height: 350px; /* Fixed height for uniformity */
     flex-shrink: 0; /* Prevents shrinking */
@@ -69,7 +69,7 @@ html {
     transition: transform 0.3s ease-in-out;
 }
 
-.trip-card:hover {
+.list-card:hover {
     transform: scale(1.05); /* Slight zoom effect on hover */
 }
 
@@ -77,13 +77,80 @@ html {
     object-fit: cover;
 }
 
-.trip-info {
+.list-info {
     z-index: 2; /* Ensures the text is above the overlay */
 }
 
 .overlay {
     z-index: 1; /* Ensures overlay is between image and text */
 }
+
+/* Client Reviews Container */
+.client-reviews-container {
+  width: 100%;
+  padding: 1rem;
+}
+
+/* Client Reviews List */
+.client-reviews-list {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 1rem;
+  padding-bottom: 1rem;
+}
+
+/* Client Review Card */
+.client-review-card {
+  flex: 0 0 auto;
+  width: 18rem;
+  background-color: #d0dedf; /* Rectangle color */
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Client Image */
+.client-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border: 2px solid #fff;
+}
+
+/* Client Name */
+.client-name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Review Rating */
+.rating {
+  font-size: 1.2rem;
+}
+
+/* Review Text */
+.review-text {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0;
+}
+
+/* Scrollbar Styling (Optional) */
+.client-reviews-list::-webkit-scrollbar {
+  height: 8px;
+}
+
+.client-reviews-list::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+.client-reviews-list::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
 
 /* Footer Styles */
 footer {
