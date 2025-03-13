@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './tour-gide-sign-up.component.css',
 })
 export class TourGideSignUpComponent implements OnInit {
-  @ViewChild('idDocumentInput') idDocumentInput!: ElementRef; // Reference to the file input
+  @ViewChild('idDocumentInput') idDocumentInput!: ElementRef;
 
   tourguideName: string = '';
   tourguideemail: string = '';
@@ -20,30 +20,16 @@ export class TourGideSignUpComponent implements OnInit {
   confirmPassword: string = '';
   tourguidephone: string = '';
   tourguideCountry: string = '';
-  countries: string[] = []; // Dynamic country list
+  countries: string[] = [];
   countrySlugs: { name: string; slug: string }[] = [];
-  idDocument: string | null = null; // Store Base64 string for the ID document
+  idDocument: File | null = null; // Use File type instead of string
+  isLoading: boolean = false; // Loading state
+  errorMessage: string | null = null;
 
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
-    this.initializeCountries(); // Initialize the list of countries
-
-    const fileInput = this.idDocumentInput.nativeElement;
-
-    // Listen for file input changes
-    fileInput.addEventListener('change', (event: Event) => {
-      const file = (event.target as HTMLInputElement).files?.[0];
-      if (file) {
-        const reader = new FileReader();
-
-        reader.onload = (e) => {
-          this.idDocument = e.target?.result as string; // Base64 encoded string
-        };
-
-        reader.readAsDataURL(file); // Read file as Base64
-      }
-    });
+    this.initializeCountries();
   }
 
   // Initialize the list of countries and their slugs
@@ -131,37 +117,76 @@ export class TourGideSignUpComponent implements OnInit {
     return strongPasswordRegex.test(password);
   }
 
-  // Handle form submission
-  onSubmit(): void {
+  // Handle file input change
+  onFileChange(event: Event): void {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files.length > 0) {
+      this.idDocument = fileInput.files[0]; // Store the file
+    } else {
+      this.idDocument = null;
+    }
+  }
+
+  // Validate form fields
+  validateForm(): boolean {
+    if (
+      !this.tourguideName ||
+      !this.tourguideemail ||
+      !this.tourguidepassword ||
+      !this.confirmPassword ||
+      !this.tourguidephone ||
+      !this.tourguideCountry ||
+      !this.idDocument
+    ) {
+      this.errorMessage = 'All fields are required.';
+      return false;
+    }
+
+    if (!this.tourguideemail.includes('@')) {
+      this.errorMessage = 'Invalid email format.';
+      return false;
+    }
+
     if (this.tourguidepassword !== this.confirmPassword) {
-      alert('Passwords do not match!');
-      return;
+      this.errorMessage = 'Passwords do not match.';
+      return false;
     }
 
     if (!this.isPasswordStrong(this.tourguidepassword)) {
-      alert(
-        'Password is weak! It must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.'
-      );
+      this.errorMessage =
+        'Password is weak! It must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.';
+      return false;
+    }
+
+    this.errorMessage = null;
+    return true;
+  }
+
+  // Handle form submission
+  onSubmit(form: any): void {
+    this.errorMessage = null; // Reset error message
+
+    if (!this.validateForm()) {
       return;
     }
 
-    // Team@1234
+    this.isLoading = true; // Enable loading state
 
-    const formData = {
-      tourguideName: this.tourguideName,
-      tourguideemail: this.tourguideemail,
-      tourguidepassword: this.tourguidepassword,
-      tourguidephone: this.tourguidephone,
-      tourguideCountry: this.tourguideCountry,
-      idDocument: this.idDocument, // Include the Base64-encoded ID document
-    };
+    const formData = new FormData();
+    formData.append('tourguideName', this.tourguideName);
+    formData.append('tourguideemail', this.tourguideemail);
+    formData.append('tourguidepassword', this.tourguidepassword);
+    formData.append('tourguidephone', this.tourguidephone);
+    formData.append('tourguideCountry', this.tourguideCountry);
+    if (this.idDocument) {
+      formData.append('idDocument', this.idDocument);
+    }
 
-    console.log('Form Data:', formData);
-    this.sendToBackend(formData); // Send form data to the backend
+    this.sendToBackend(formData);
   }
 
   // Send form data to the backend
-  sendToBackend(formData: any): void {
+  sendToBackend(formData: FormData): void {
     this.http.post('/api/tourguidesignup', formData).subscribe({
       next: (response) => {
         console.log('Signup successful:', response);
@@ -169,7 +194,20 @@ export class TourGideSignUpComponent implements OnInit {
       },
       error: (error) => {
         console.error('Signup failed:', error);
+        this.isLoading = false; // Disable loading state on error
+
+        // Handle specific backend errors
+        if (error.status === 400) {
+          this.errorMessage = 'Invalid email or password.';
+        } else if (error.status === 404) {
+          this.errorMessage = 'Email not found.';
+        } else {
+          this.errorMessage = 'An error occurred. Please try again later.';
+        }
+      },
+      complete: () => {
+        this.isLoading = false; // Disable loading state on completion
       },
     });
   }
-};
+}

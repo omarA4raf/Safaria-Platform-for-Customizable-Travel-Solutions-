@@ -8,6 +8,7 @@ import { CompanySignUpComponent } from './company-sign-up/company-sign-up.compon
 import { CompanyDashboardComponent } from './company-dashboard/company-dashboard.component';
 import { TourguideDashboardComponent } from './tourguide-dashboard/tourguide-dashboard.component';
 import { TouristDashboardHomeComponent } from './tourist-dashboard-home/tourist-dashboard-home.component';
+import { CompanyCreateTripComponent } from './company-create-trip/company-create-trip.component';
 
 
 
@@ -20,6 +21,7 @@ export const routes: Routes = [
   { path: 'companysignup', component: CompanySignUpComponent }, // company sign up route
   { path: 'companydashboard', component: CompanyDashboardComponent }, // company dashboard route
   { path: 'tourguidesdashboard', component: TourguideDashboardComponent }, // tourguide dashboard route
-  { path: 'touristdashboardhome', component: TouristDashboardHomeComponent } // tourist dashboard home route
+  { path: 'touristdashboardhome', component: TouristDashboardHomeComponent }, // tourist dashboard home route
+  { path: 'companycreatetrip', component: CompanyCreateTripComponent } // company create trip route
 
 ];
