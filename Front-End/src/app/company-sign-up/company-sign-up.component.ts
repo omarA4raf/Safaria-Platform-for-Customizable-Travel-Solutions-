@@ -20,7 +20,7 @@ export class CompanySignUpComponent implements OnInit {
   confirmPassword: string = '';
   businessLicense: string = '';
   phoneNumber: string = '';
-  businesslicenseDocument: File | null = null; // Use File type instead of string
+  businesslicenseDocument: File | null = null; // Use File type for binary data
   isLoading: boolean = false; // Loading state
   errorMessage: string | null = null; // Error message
 
@@ -48,11 +48,8 @@ export class CompanySignUpComponent implements OnInit {
     return strongPasswordRegex.test(password);
   }
 
-  // Handle form submission
-  onSubmit(form: any): void {
-    this.errorMessage = null; // Reset error message
-
-    // Validate form fields
+  // Validate form fields
+  validateForm(): boolean {
     if (
       !this.companyName ||
       !this.companyemail ||
@@ -63,28 +60,40 @@ export class CompanySignUpComponent implements OnInit {
       !this.businesslicenseDocument
     ) {
       this.errorMessage = 'All fields are required.';
-      return;
+      return false;
     }
 
     if (!this.companyemail.includes('@')) {
       this.errorMessage = 'Invalid email format.';
-      return;
+      return false;
     }
 
     if (this.companypassword !== this.confirmPassword) {
       this.errorMessage = 'Passwords do not match.';
-      return;
+      return false;
     }
 
     if (!this.isPasswordStrong(this.companypassword)) {
       this.errorMessage =
         'Password is weak! It must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.';
+      return false;
+    }
+
+    this.errorMessage = null;
+    return true;
+  }
+
+  // Handle form submission
+  onSubmit(form: any): void {
+    this.errorMessage = null; // Reset error message
+
+    if (!this.validateForm()) {
       return;
     }
 
     this.isLoading = true; // Enable loading state
 
-    // Prepare form data
+    // Prepare FormData for file upload
     const formData = new FormData();
     formData.append('companyName', this.companyName);
     formData.append('companyemail', this.companyemail);
@@ -92,7 +101,7 @@ export class CompanySignUpComponent implements OnInit {
     formData.append('businessLicense', this.businessLicense);
     formData.append('phoneNumber', this.phoneNumber);
     if (this.businesslicenseDocument) {
-      formData.append('businesslicenseDocument', this.businesslicenseDocument);
+      formData.append('businesslicenseDocument', this.businesslicenseDocument); // Append the file
     }
 
     // Send data to the backend
@@ -103,10 +112,19 @@ export class CompanySignUpComponent implements OnInit {
       },
       error: (error) => {
         console.error('Signup failed:', error);
-        this.errorMessage = 'An error occurred. Please try again later.';
+        this.isLoading = false; // Disable loading state on error
+
+        // Handle specific backend errors
+        if (error.status === 400) {
+          this.errorMessage = 'Invalid email or password.';
+        } else if (error.status === 404) {
+          this.errorMessage = 'Endpoint not found.';
+        } else {
+          this.errorMessage = 'An error occurred. Please try again later.';
+        }
       },
       complete: () => {
-        this.isLoading = false; // Disable loading state
+        this.isLoading = false; // Disable loading state on completion
       },
     });
   }

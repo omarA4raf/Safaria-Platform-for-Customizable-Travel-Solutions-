@@ -22,7 +22,7 @@ export class TourGideSignUpComponent implements OnInit {
   tourguideCountry: string = '';
   countries: string[] = [];
   countrySlugs: { name: string; slug: string }[] = [];
-  idDocument: File | null = null; // Use File type instead of string
+  idDocument: File | null = null; // Store the file as a File object
   isLoading: boolean = false; // Loading state
   errorMessage: string | null = null;
 
@@ -121,7 +121,7 @@ export class TourGideSignUpComponent implements OnInit {
   onFileChange(event: Event): void {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files.length > 0) {
-      this.idDocument = fileInput.files[0]; // Store the file
+      this.idDocument = fileInput.files[0]; // Store the file as a File object
     } else {
       this.idDocument = null;
     }
@@ -172,6 +172,7 @@ export class TourGideSignUpComponent implements OnInit {
 
     this.isLoading = true; // Enable loading state
 
+    // Prepare FormData for file upload
     const formData = new FormData();
     formData.append('tourguideName', this.tourguideName);
     formData.append('tourguideemail', this.tourguideemail);
@@ -179,7 +180,7 @@ export class TourGideSignUpComponent implements OnInit {
     formData.append('tourguidephone', this.tourguidephone);
     formData.append('tourguideCountry', this.tourguideCountry);
     if (this.idDocument) {
-      formData.append('idDocument', this.idDocument);
+      formData.append('idDocument', this.idDocument); // Append the file
     }
 
     this.sendToBackend(formData);
@@ -187,7 +188,7 @@ export class TourGideSignUpComponent implements OnInit {
 
   // Send form data to the backend
   sendToBackend(formData: FormData): void {
-    this.http.post('/api/tourguidesignup', formData).subscribe({
+    this.http.post('http://localhost:8080/api/tourguidesignup', formData).subscribe({
       next: (response) => {
         console.log('Signup successful:', response);
         this.router.navigate(['/login']); // Redirect to login page
@@ -200,7 +201,7 @@ export class TourGideSignUpComponent implements OnInit {
         if (error.status === 400) {
           this.errorMessage = 'Invalid email or password.';
         } else if (error.status === 404) {
-          this.errorMessage = 'Email not found.';
+          this.errorMessage = 'Endpoint not found.';
         } else {
           this.errorMessage = 'An error occurred. Please try again later.';
         }

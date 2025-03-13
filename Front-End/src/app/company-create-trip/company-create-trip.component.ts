@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +11,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './company-create-trip.component.html',
   styleUrls: ['./company-create-trip.component.css'],
 })
-export class CompanyCreateTripComponent {
+export class CompanyCreateTripComponent implements OnInit {
   constructor(private router: Router, private http: HttpClient) {}
 
   // Loading state for the submit button
@@ -23,17 +23,25 @@ export class CompanyCreateTripComponent {
   // Object to hold trip details
   trip = {
     title: '',
-    destination: '',
+    destinationCountry: '', // New field for destination country
+    tourismTypes: [] as string[], // New field for tourism types
     duration: null as number | null,
     availableDates: [{ startDate: null, endDate: null, trips: 1 }],
     description: '',
     availableSeats: null as number | null,
   };
 
+  // List of countries
+  countries: string[] = [];
+
+  // List of tourism types
+  tourismTypes: string[] = ['cultural', 'adventure', 'beach', 'historical', 'wildlife', 'religious'];
+
   // Error messages
   errorMessages: { [key: string]: string } = {
     title: '',
-    destination: '',
+    destinationCountry: '',
+    tourismTypes: '',
     duration: '',
     availableSeats: '',
     description: '',
@@ -41,34 +49,100 @@ export class CompanyCreateTripComponent {
     images: '',
   };
 
-  // Increment the number of trips for a date range
-  incrementTrips(index: number) {
-    this.trip.availableDates[index].trips++;
+  ngOnInit(): void {
+    this.initializeCountries();
   }
 
-  // Add a new image upload box
-  addImageBox() {
-    this.images.push({ url: null, file: null });
+  // Initialize the list of countries
+  initializeCountries(): void {
+    this.countries = [
+      'Afghanistan',
+      'Albania',
+      'Algeria',
+      'Andorra',
+      'Angola',
+      'Argentina',
+      'Armenia',
+      'Australia',
+      'Austria',
+      'Azerbaijan',
+      'Bahrain',
+      'Bangladesh',
+      'Belgium',
+      'Brazil',
+      'Canada',
+      'China',
+      'Colombia',
+      'Denmark',
+      'Egypt',
+      'Finland',
+      'France',
+      'Germany',
+      'Greece',
+      'India',
+      'Indonesia',
+      'Iran',
+      'Iraq',
+      'Ireland',
+      'Italy',
+      'Japan',
+      'Jordan',
+      'Kenya',
+      'Kuwait',
+      'Lebanon',
+      'Malaysia',
+      'Mexico',
+      'Morocco',
+      'Netherlands',
+      'New Zealand',
+      'Nigeria',
+      'Norway',
+      'Oman',
+      'Pakistan',
+      'Palestine',
+      'Philippines',
+      'Poland',
+      'Portugal',
+      'Qatar',
+      'Romania',
+      'Russia',
+      'Saudi Arabia',
+      'South Africa',
+      'Spain',
+      'Sudan',
+      'Sweden',
+      'Switzerland',
+      'Syria',
+      'Thailand',
+      'Tunisia',
+      'Turkey',
+      'UAE',
+      'UK',
+      'Ukraine',
+      'USA',
+      'Vietnam',
+      'Yemen',
+    ];
   }
 
-  // Remove an image
-  removeImage(index: number) {
-    this.images.splice(index, 1);
-  }
-
-  // Add a new date range
-  addDateRange() {
-    this.trip.availableDates.push({ startDate: null, endDate: null, trips: 1 });
+  // Toggle tourism type selection
+  toggleTourismType(type: string, event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    if (isChecked) {
+      this.trip.tourismTypes.push(type);
+    } else {
+      this.trip.tourismTypes = this.trip.tourismTypes.filter((t) => t !== type);
+    }
   }
 
   // Trigger file input when the user clicks on an image box
-  triggerFileInput(index: number) {
+  triggerFileInput(index: number): void {
     const fileInput = document.getElementById('fileInput' + index) as HTMLInputElement;
     fileInput.click();
   }
 
   // Handle file selection
-  onFileSelected(event: Event, index: number) {
+  onFileSelected(event: Event, index: number): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
@@ -80,6 +154,21 @@ export class CompanyCreateTripComponent {
     }
   }
 
+  // Remove an image
+  removeImage(index: number): void {
+    this.images.splice(index, 1);
+  }
+
+  // Add a new image upload box
+  addImageBox(): void {
+    this.images.push({ url: null, file: null });
+  }
+
+  // Add a new date range
+  addDateRange(): void {
+    this.trip.availableDates.push({ startDate: null, endDate: null, trips: 1 });
+  }
+
   // Validate form inputs
   validateForm(): boolean {
     let isValid = true;
@@ -87,7 +176,8 @@ export class CompanyCreateTripComponent {
     // Reset error messages
     this.errorMessages = {
       title: '',
-      destination: '',
+      destinationCountry: '',
+      tourismTypes: '',
       duration: '',
       availableSeats: '',
       description: '',
@@ -101,9 +191,15 @@ export class CompanyCreateTripComponent {
       isValid = false;
     }
 
-    // Validate destination
-    if (!this.trip.destination) {
-      this.errorMessages['destination'] = 'Destination is required.';
+    // Validate destination country
+    if (!this.trip.destinationCountry) {
+      this.errorMessages['destinationCountry'] = 'Destination country is required.';
+      isValid = false;
+    }
+
+    // Validate tourism types
+    if (this.trip.tourismTypes.length === 0) {
+      this.errorMessages['tourismTypes'] = 'At least one tourism type is required.';
       isValid = false;
     }
 
@@ -149,7 +245,7 @@ export class CompanyCreateTripComponent {
   }
 
   // Handle form submission
-  onSubmit() {
+  onSubmit(): void {
     // Validate form inputs
     if (!this.validateForm()) {
       return;
@@ -161,7 +257,8 @@ export class CompanyCreateTripComponent {
     // Prepare form data
     const formData = new FormData();
     formData.append('title', this.trip.title);
-    formData.append('destination', this.trip.destination);
+    formData.append('destinationCountry', this.trip.destinationCountry);
+    formData.append('tourismTypes', JSON.stringify(this.trip.tourismTypes));
     if (this.trip.duration !== null) {
       formData.append('duration', this.trip.duration.toString());
     }
@@ -182,7 +279,6 @@ export class CompanyCreateTripComponent {
     this.http.post('https://your-backend-api.com/trips', formData).subscribe({
       next: (response) => {
         console.log('Trip created successfully:', response);
-        console.log('Uploaded Images:', this.images.filter((img) => img.file));
         this.isLoading = false;
         this.router.navigate(['/companydashboard']);
       },
@@ -194,7 +290,7 @@ export class CompanyCreateTripComponent {
   }
 
   // Save as draft
-  saveDraft() {
+  saveDraft(): void {
     const draftData = {
       ...this.trip,
       images: this.images.filter((img) => img.file),
@@ -204,7 +300,7 @@ export class CompanyCreateTripComponent {
   }
 
   // Method to handle logout
-  logout() {
+  logout(): void {
     localStorage.clear(); // Clear localStorage
     sessionStorage.clear(); // Clear sessionStorage
     this.router.navigate(['/']); // Navigate to the home page

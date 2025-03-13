@@ -83,6 +83,32 @@ html {
   background-color: #5C8FA0; /* Darker blue on hover */
 }
 
+/* Checkbox styling */
+.checkbox-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.checkbox-inline {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.checkbox-inline input {
+  margin-right: 5px;
+}
+
+.checkbox-inline i {
+  font-size: 18px;
+  margin-right: 5px;
+  color: #28a745;
+}
+
 /* Image Upload Box */
 .image-upload-box {
   border: 2px dashed #71A7B8; /* Light blue border */
