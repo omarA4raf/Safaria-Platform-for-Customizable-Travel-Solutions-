@@ -4,9 +4,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import com.safaria.backend.DTO.TourGuideSignUpDTO;
+import com.safaria.backend.service.FileSystemService;
+
 import jakarta.persistence.*;
 
+import java.io.IOException;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Entity
@@ -15,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "TourGuide") // Explicitly set the table name
 public class TourGuide {
+   
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,18 +51,18 @@ public class TourGuide {
     private List<String> tourismTypes;
 
     @Column(name = "ApprovmentDocument")
-    private String approvalDocument; // Assuming URL is stored as a String
+    private String approvalDocumentPath; // Assuming URL is stored as a String
 
     public String getPassword() {
         return password;
     }
-    public TourGuide(TourGuideSignUpDTO dto) {
-        this.username = dto.getUsername();
-        this.email = dto.getEmail();
-        this.password = dto.getPassword();
-        this.country = dto.getCountry();
-        this.approvalDocument=dto.getApprovalDocument();
-        this.phone = dto.getPhone();
+    public TourGuide(TourGuideSignUpDTO dto)  {
+            this.username = dto.getUsername();
+            this.email = dto.getEmail();
+            this.password = dto.getPassword();
+            this.country = dto.getCountry();
+            this.approvalDocumentPath=  dto.getApprovalDocument()[0];
+            this.phone = dto.getPhone();
 
     }
 }

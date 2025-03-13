@@ -3,9 +3,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import com.safaria.backend.DTO.CompanySignUpDTO;
+import com.safaria.backend.service.FileSystemService;
+
 import jakarta.persistence.*;
 
+import java.io.IOException;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Entity
@@ -14,6 +19,9 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "Company") // Explicitly set the table name
 public class Company {
+    @Autowired
+    @Transient
+    private  FileSystemService fileSystemService;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,7 +54,7 @@ public class Company {
     @Column(name = "BusinessLicenseNumber",unique = true)
     private String businessLicenseNumber; 
     @Column(name = "BusinessLicenseDocument")
-    private String businessLicenseDocument;
+    private String businessLicenseDocumentPath;
 
     public String getPassword() {
         return password;
@@ -57,7 +65,8 @@ public class Company {
         this.password = dto.getPassword();
         this.phone = dto.getPhone();
         this.businessLicenseNumber=dto.getBusinessLicenseNumber();
-        this.businessLicenseDocument=dto.getBusinessLicenseDocument();
+        
+        this.businessLicenseDocumentPath=  dto.getBusinessLicenseDocument()[0];
 
     }
 }
