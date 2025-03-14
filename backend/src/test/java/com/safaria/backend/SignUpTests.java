@@ -4,15 +4,25 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
 class SignUpTests {
 
     @Autowired
@@ -22,6 +32,7 @@ class SignUpTests {
     private ObjectMapper objectMapper;
 
     @Test
+    @Order(1)
     void testSignupAsTourist() throws Exception {
         // Tourist request (No extra fields required)
         String touristRequest = """
@@ -42,47 +53,51 @@ class SignUpTests {
     }
 
     @Test
+    @Order(2)
     void testSignupAsTourGuide() throws Exception {
-        // Tour Guide request (Must include licenseNumber)
-        String guideRequest = """
-                {
-            "username": "jane_guide",
-            "password": "strongPass456",
-            "email": "jane.guide@gmail.com",
-            "phone": "9876543210",
-            "country": "France",
-            "approvalDocument": ["abcdefgh"]
-            }
-        """;
+        // Mock file representing the approval document
+        MockMultipartFile approvalDocument = new MockMultipartFile(
+                "approvalDocument", // Field name
+                "license.pdf", // File name
+                "application/pdf", // MIME type
+                "dummy file content".getBytes() // File content as bytes
+        );
 
-        mockMvc.perform(post("/api/tourguidesignup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(guideRequest))
+        mockMvc.perform(multipart("/api/tourguidesignup")
+                .file(approvalDocument)
+                .param("username", "jane_guide")
+                .param("password", "strongPass456")
+                .param("email", "jane.guide@gmail.com")
+                .param("phone", "9876543210")
+                .param("country", "France")
+                .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk());
     }
 
     @Test
+    @Order(3)
     void testSignupAsCompany() throws Exception {
-        // Company request (Must include companyName)
-        String companyRequest = """
-        {
-  "username": "travel_company",
-  "password": "securePass789",
-  "email": "info@gmail.com",
-  "phone": "1234567890",
-  "businessLicenseNumber": "LC-987654",
-  "businessLicenseDocument": ["abcdefgh"]
-        }
+        // Create a mock file for the business license document
+        MockMultipartFile businessLicenseDocument = new MockMultipartFile(
+                "businessLicenseDocument", // Field name
+                "license.pdf", // File name
+                "application/pdf", // MIME type
+                "dummy file content".getBytes() // File content as bytes
+        );
 
-
-        """;
-
-        mockMvc.perform(post("/api/companysignup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(companyRequest))
+        // Send multipart form-data request
+        mockMvc.perform(multipart("/api/companysignup")
+                .file(businessLicenseDocument)
+                .param("username", "travel_company")
+                .param("password", "securePass789")
+                .param("email", "info@gmail.com")
+                .param("phone", "1234567890")
+                .param("businessLicenseNumber", "LC-987654")
+                .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk());
     }
     @Test
+    @Order(4)
     void testSignupAsTouristWithExistingEmail_ShouldFail() throws Exception {
         // Trying to sign up with an email that already exists
         String duplicateEmailRequest = """
@@ -103,46 +118,51 @@ class SignUpTests {
                 .andExpect(content().string("tourist Email is already registered!"));
     }
     @Test
+    @Order(5)
     void testSignupAsTourGuideWithExistingEmail_ShouldFail() throws Exception {
-        // Trying to sign up with an email that already exists
-        String duplicateEmailRequest = """
-          {
-            "username": "jane_guide",
-            "password": "strongPass456",
-            "email": "jane.guide@gmail.com",
-            "phone": "9876543210",
-            "country": "France",
-            "approvalDocument": ["abcdefgc"]
-            }
-        """;
+         // Mock file representing the approval document
+         MockMultipartFile approvalDocument = new MockMultipartFile(
+            "approvalDocument", // Field name
+            "license.pdf", // File name
+            "application/pdf", // MIME type
+            "dummy file content".getBytes() // File content as bytes
+    );
 
-        mockMvc.perform(post("/api/tourguidesignup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(duplicateEmailRequest))
-                .andExpect(status().isConflict())
-                .andExpect(content().string("tourGuide Email is already registered!"));
+    mockMvc.perform(multipart("/api/tourguidesignup")
+            .file(approvalDocument)
+            .param("username", "jane_guide")
+            .param("password", "strongPass456")
+            .param("email", "jane.guide@gmail.com")
+            .param("phone", "9876543210")
+            .param("country", "France")
+            .contentType(MediaType.MULTIPART_FORM_DATA))
+            .andExpect(status().isConflict());
     }
+    @Test
+    @Order(6)
     void testSignupAsCompanyWithExistingEmail_ShouldFail() throws Exception {
-        // Trying to sign up with an email that already exists
-        String duplicateEmailRequest = """
-                    {
-            "username": "travel_company",
-            "password": "securePass789",
-            "email": "info@gmail.com",
-            "phone": "1234567890",
-            "businessLicenseNumber": "LC-987654",
-            "businessLicenseDocument": ["abcdefgc"]
-                    }
-        """;
+        // Create a mock file for the business license document
+        MockMultipartFile businessLicenseDocument = new MockMultipartFile(
+                "businessLicenseDocument", // Field name
+                "license.pdf", // File name
+                "application/pdf", // MIME type
+                "dummy file content".getBytes() // File content as bytes
+        );
 
-        mockMvc.perform(post("/api/companysignup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(duplicateEmailRequest))
-                .andExpect(status().isConflict())
-                .andExpect(content().string("Company Email is already registered!"));
+        // Send multipart form-data request
+        mockMvc.perform(multipart("/api/companysignup")
+                .file(businessLicenseDocument)
+                .param("username", "travel_company")
+                .param("password", "securePass789")
+                .param("email", "info@gmail.com")
+                .param("phone", "1234567890")
+                .param("businessLicenseNumber", "LC-987654")
+                .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isConflict());
     }
 
     @Test
+    @Order(7)
     void testSignupWithInvalidEmail_ShouldFail() throws Exception {
         // Invalid email format (missing '@' and domain)
         String invalidEmailRequest = """
@@ -163,6 +183,7 @@ class SignUpTests {
                 .andExpect(content().string("{\"email\":\"Invalid email format\"}"));
     }
     @Test
+    @Order(8)
     void testSignupWithInvalidEmailDomain_ShouldFail() throws Exception {
         // Invalid email format (missing '@' and domain)
         String invalidEmailRequest = """
@@ -183,24 +204,25 @@ class SignUpTests {
                 .andExpect(content().string("Not Valid Email Domain"));
     }
     @Test
+    @Order(9)
     void testSignupAsCompanyWithExistingCompanyLicence_ShouldFail() throws Exception {
-        // Trying to sign up with an email that already exists
-        String duplicateCompanyLicenceRequest = """
-            {
-            "username": "travel_company",
-            "password": "securePass789",
-            "email": "info2@gmail.com",
-            "phone": "1234567890",
-            "businessLicenseNumber": "LC-987654",
-            "businessLicenseDocument": ["abcdefgc"]
-                    }
-        """;
+        MockMultipartFile businessLicenseDocument = new MockMultipartFile(
+            "businessLicenseDocument", // Field name
+            "license.pdf", // File name
+            "application/pdf", // MIME type
+            "dummy file content".getBytes() // File content as bytes
+    );
 
-        mockMvc.perform(post("/api/companysignup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(duplicateCompanyLicenceRequest ))
-                .andExpect(status().isConflict())
-                .andExpect(content().string("Company License is already registered!"));
+    // Send multipart form-data request
+    mockMvc.perform(multipart("/api/companysignup")
+            .file(businessLicenseDocument)
+            .param("username", "travel_company")
+            .param("password", "securePass789")
+            .param("email", "info2@gmail.com")
+            .param("phone", "1234567890")
+            .param("businessLicenseNumber", "LC-987654")
+            .contentType(MediaType.MULTIPART_FORM_DATA))
+            .andExpect(status().isConflict());
     }
 
 

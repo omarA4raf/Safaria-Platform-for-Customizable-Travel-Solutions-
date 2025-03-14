@@ -59,14 +59,13 @@ public class Company {
     public String getPassword() {
         return password;
     }
-    public Company(CompanySignUpDTO dto) {
+    public Company(CompanySignUpDTO dto,String fileRelativePath) {
         this.username = dto.getUsername();
         this.email = dto.getEmail();
         this.password = dto.getPassword();
         this.phone = dto.getPhone();
         this.businessLicenseNumber=dto.getBusinessLicenseNumber();
-        
-        this.businessLicenseDocumentPath=  dto.getBusinessLicenseDocument()[0];
+        this.businessLicenseDocumentPath=  fileRelativePath;
 
     }
 }

@@ -166,14 +166,14 @@ public class services implements Iservices {
         String relativeFilePath = Paths.get(directory, uniqueFileName).toString();
 
         try {
-            this.fileSystemService.storeFile(this.fileSystemService.convertBase64ToBytes(tourGuide.getApprovalDocument()) ,relativeFilePath);
+            this.fileSystemService.storeFile(tourGuide.getApprovalDocument().getBytes() ,relativeFilePath);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        String[] approvalDocument = { relativeFilePath };
-        tourGuide.setApprovalDocument(approvalDocument); 
-        tourGuideRepository.save(new TourGuide(tourGuide));
+        
+        
+        tourGuideRepository.save(new TourGuide(tourGuide,relativeFilePath));
      
         return ResponseEntity.status(200).body("DONE TourGuide SignedUP");
         
@@ -196,14 +196,15 @@ public class services implements Iservices {
         String relativeFilePath = Paths.get(directory, uniqueFileName).toString();
 
         try {
-            this.fileSystemService.storeFile(this.fileSystemService.convertBase64ToBytes(company.getBusinessLicenseDocument()) ,relativeFilePath);
+            this.fileSystemService.storeFile(company.getBusinessLicenseDocument().getBytes() ,relativeFilePath);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        String[] BusinessLicenseDocument = { relativeFilePath };
-        company.setBusinessLicenseDocument(BusinessLicenseDocument); 
-        companyRepository.save(new Company(company));
+         
+        
+        
+        companyRepository.save(new Company(company,relativeFilePath ));
         return ResponseEntity.status(200).body("DONE Company SignedUP");
     }
 }

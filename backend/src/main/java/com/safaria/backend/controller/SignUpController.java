@@ -3,6 +3,7 @@ import com.safaria.backend.service.*;
 
 import jakarta.validation.Valid;
 
+import org.apache.tomcat.util.http.parser.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -29,16 +30,16 @@ public class SignUpController {
         // return ResponseEntity.status(200).body("No valid type");
 
     }
-    @PostMapping("/api/tourguidesignup")
-    public ResponseEntity<String> tourGuideSignUp(@Valid @RequestBody TourGuideSignUpDTO data) {
+    @PostMapping(value="/api/tourguidesignup",consumes = "multipart/form-data")
+    public ResponseEntity<String> tourGuideSignUp(@Valid @ModelAttribute TourGuideSignUpDTO data) {
        
             return serv.saveTourGuide(data);
         
         // return ResponseEntity.status(200).body("No valid type");
 
     }
-    @PostMapping("/api/companysignup")
-    public ResponseEntity<String> companySignUp( @Valid @RequestBody  CompanySignUpDTO data) {
+    @PostMapping(value="/api/companysignup",consumes = "multipart/form-data")
+    public ResponseEntity<String> companySignUp( @Valid @ModelAttribute  CompanySignUpDTO data) {
        
             return serv.saveCompany(data);
         
