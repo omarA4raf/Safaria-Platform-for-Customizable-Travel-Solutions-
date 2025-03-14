@@ -1,160 +1,75 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CompanyDashboardService } from './company-dashboard.service'; // Import the service
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-company-dashboard',
-  standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './company-dashboard.component.html',
-  styleUrl: './company-dashboard.component.css',
+  styleUrls: ['./company-dashboard.component.css'],
 })
-export class CompanyDashboardComponent {
+export class CompanyDashboardComponent implements OnInit {
+  // Properties to hold data
+  profile: any = {};
+  about: string = '';
+  trips: any[] = [];
+  clients: any[] = [];
+  clientReviews: any[] = [];
+  rating: number = 5; // Default rating for the company
+  showUploadText: boolean = false; // Control visibility of "Upload Picture" text
+
+  constructor(
+    private router: Router,
+    private apiService: CompanyDashboardService
+  ) {}
+
+  ngOnInit(): void {
+    this.fetchData();
+  }
+
+  // Fetch all data from the backend
+  fetchData(): void {
+    this.apiService.getProfile().subscribe((data) => {
+      this.profile = data;
+    });
+
+    this.apiService.getAbout().subscribe((data) => {
+      this.about = data.about;
+    });
+
+    this.apiService.getTrips().subscribe((data) => {
+      this.trips = data;
+    });
+
+    this.apiService.getClients().subscribe((data) => {
+      this.clients = data;
+    });
+
+    this.apiService.getClientReviews().subscribe((data) => {
+      this.clientReviews = data;
+    });
+  }
 
   // Method to handle logout
-  logout() {
+  logout(): void {
     localStorage.clear(); // Clear localStorage
     sessionStorage.clear(); // Clear sessionStorage
     this.router.navigate(['/']); // Navigate to the home page
-  };
-
-  // Properties
-  rating: number = 5; // Default rating for the company
-
-  // Sample data for trips
-  trips: { title: string; company: string; rating: number; image: string }[] = [
-    {
-      title: '5 days in Cairo',
-      company: 'ExploreMore Tours',
-      rating: 3.8,
-      image: '/assets/img/cairo.jpeg',
-    },
-    {
-      title: '10 days in Paris',
-      company: 'ExploreMore Tours',
-      rating: 4.8,
-      image: '/assets/img/paris.jpeg',
-    },
-    {
-      title: 'Let’s make Omra with us',
-      company: 'ExploreMore Tours',
-      rating: 4,
-      image: '/assets/img/kabaah.jpeg',
-    },
-    {
-      title: '5 days in Cairo',
-      company: 'ExploreMore Tours',
-      rating: 2.8,
-      image: '/assets/img/cairo.jpeg',
-    },
-    {
-      title: '10 days in Paris',
-      company: 'ExploreMore Tours',
-      rating: 5,
-      image: '/assets/img/paris.jpeg',
-    },
-    {
-      title: 'Let’s make Omra with us',
-      company: 'ExploreMore Tours',
-      rating: 4.8,
-      image: '/assets/img/kabaah.jpeg',
-    },
-  ];
-
-  // Sample data for cleints
-  clients: { clientName: string; Address: string; rating: number; image: string }[] = [
-    {
-      clientName: 'Salma Hussin',
-      Address: 'in Egypt, Alexandrai',
-      rating: 3.8,
-      image: '/assets/img/client 1.jpeg',
-    },
-    {
-      clientName: 'Martin Alexander',
-      Address: 'in Egypt, Alexandrai',
-      rating: 4.8,
-      image: '/assets/img/client 2.jpeg',
-    },
-    {
-      clientName: 'Martin Alexander',
-      Address: 'in Egypt, Alexandrai',
-      rating: 4,
-      image: '/assets/img/client 3.jpeg',
-    },
-    {
-      clientName: 'Salma Hussin',
-      Address: 'in Egypt, Alexandrai',
-      rating: 2.8,
-      image: '/assets/img/client 1.jpeg',
-    },
-    {
-      clientName: 'Martin Alexander',
-      Address: 'in Egypt, Alexandrai',
-      rating: 5,
-      image: '/assets/img/client 2.jpeg',
-    },
-    {
-      clientName: 'Martin Alexander',
-      Address: 'in Egypt, Alexandrai',
-      rating: 4.8,
-      image: '/assets/img/client 3.jpeg',
-    },
-  ];
-
-  // Sample data for clients and their reviews
-  clientReviews = [
-    {
-      image: '/assets/img/client 2.jpeg', // Path to client image
-      name: 'John Doe',
-      rating: 4.5,
-      review: 'Amazing experience with ExploreMore Tours! Highly recommended.',
-    },
-    {
-      image: '/assets/img/client 3.jpeg',
-      name: 'Jane Smith',
-      rating: 5,
-      review: 'The trip was well-organized and the guides were very knowledgeable.',
-    },
-    {
-      image: '/assets/img/client 1.jpeg',
-      name: 'Alice Johnson',
-      rating: 2,
-      review: 'Great service and friendly staff. Will book again!',
-    },
-    {
-      image: '/assets/img/client 2.jpeg',
-      name: 'Bob Brown',
-      rating: 3.8,
-      review: 'Good experience overall, but some delays in the schedule.',
-    },
-    {
-      image: '/assets/img/client 1.jpeg',
-      name: 'Salma Hussin',
-      rating: 3,
-      review: 'Good experience overall, but some delays in the schedule.',
-    },
-    {
-      image: '/assets/img/client 3.jpeg',
-      name: 'Bob Brown',
-      rating: 2.8,
-      review: 'Good experience overall, but some delays in the schedule.',
-    },
-  ];
-
-  constructor(private router: Router) {}
+  }
 
   // Method to handle navigation to create a new trip
-  navigateToCreateTrip() {
+  navigateToCreateTrip(): void {
     this.router.navigate(['/companycreatetrip']);
   }
 
   // Method to handle editing the profile
-  editProfile() {
+  editProfile(): void {
     alert('Edit Profile functionality here!');
   }
 
   // Method to handle editing the "About Me" section
-  editAbout() {
+  editAbout(): void {
     alert('Edit About Me functionality here!');
   }
 
@@ -175,5 +90,17 @@ export class CompanyDashboardComponent {
       starsHtml += '<i class="bi bi-star text-secondary"></i> ';
     }
     return starsHtml;
+  }
+
+  // Method to handle file selection for profile picture
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.profile.image = e.target.result; // Update the profile image
+      };
+      reader.readAsDataURL(file);
+    }
   }
 }

@@ -26,33 +26,39 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white" href="#">Reviews</a>
-                </li>;
+                </li>
                 <li class="nav-item">
                     <a class="nav-link text-white" (click)="logout()" style="cursor: pointer;">
                         Log out <i class="fa-solid fa-arrow-right-from-bracket"></i>
                     </a>
                 </li>
-            </ul>;
+            </ul>
         </div>
     </div>
 </nav>
 
-<!-- Information Part -->
+<!-- Profile Part -->
 <div class="container m-5">
-    <h4 class="profile-word mb-3 ">Profile</h4>
+    <h4 class="profile-word mb-3">Profile</h4>
     <div class="row align-items-center">
         <!-- Profile Image (1/4 of the width) -->
         <div class="col-md-4 text-center">
-            <img src="/assets/img/company profile 1.jpg" class="img-fluid rounded profile-img">
+            <div class="profile-image-container" (mouseenter)="showUploadText = true"
+                (mouseleave)="showUploadText = false">
+                <img [src]="profile.image || '/assets/img/company profile 1.jpg'" class="img-fluid rounded profile-img"
+                    alt="Profile Image" />
+                <div class="upload-text" *ngIf="showUploadText" (click)="fileInput.click()">Upload Picture</div>
+                <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none;" />
+            </div>
         </div>
 
         <!-- User Info (3/4 of the width) -->
         <div class="col-md-8 pt-5">
-            <p><strong>Name:</strong> ExploreMore Tours</p>
-            <p><strong>Email:</strong> info&#64;wanderlustadventures.com</p>
-            <p><strong>Country:</strong> Egypt</p>
-            <p><strong>Phone Number:</strong> 01087746356</p>
-            <p><strong>Business Licence:</strong> EMT-2024-001</p>
+            <p><strong>Name:</strong> {{ profile.name }}</p>
+            <p><strong>Email:</strong> {{ profile.email }}</p>
+            <p><strong>Country:</strong> {{ profile.country }}</p>
+            <p><strong>Phone Number:</strong> {{ profile.phone }}</p>
+            <p><strong>Business Licence:</strong> {{ profile.businessLicence }}</p>
             <p><strong>Password:</strong> ***********</p>
             <p><strong>Rating: </strong>
                 <span id="rating-value" class="text-dark">{{ rating }} </span>
@@ -63,21 +69,12 @@
             </button>
         </div>
     </div>
-
 </div>
 
 <!-- About CV -->
 <div class="container m-5">
     <h4 class="mb-3" style="color: #174750;">About me</h4>
-    <p id="about-me">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure, officia. Qui aperiam inventore fugit voluptates
-        sequi repellat aspernatur quasi ad consequuntur culpa. Ad dolore distinctio, nesciunt saepe numquam aliquam,
-        veritatis unde odio exercitationem deleniti dicta nostrum tenetur! Blanditiis eligendi veritatis quas esse unde
-        voluptatum nisi amet numquam repellat cumque, laborum at dolore. Hic natus, aliquid veniam quasi quos nostrum
-        cumque doloremque consectetur repellat aut ipsum soluta nobis autem animi tenetur modi dolore neque expedita
-        molestias earum aspernatur voluptate. Debitis reprehenderit iste, quae sed voluptate, iure ea, voluptas ab
-        asperiores provident repellat rerum non! Recusandae tenetur cum velit hic dolore aspernatur.
-    </p>
+    <p id="about-me">{{ about }}</p>
     <button class="btn btn-sm btn-outline-dark edit-btn" (click)="editAbout()">
         <i class="fas fa-edit"></i> Edit
     </button>
@@ -97,7 +94,7 @@
             <div class="list-card position-relative overflow-hidden rounded-3" *ngFor="let trip of trips"
                 style="flex: 0 0 auto; width: 18rem;">
                 <!-- Background Image -->
-                <img [src]="trip.image" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ trip.title }}">
+                <img [src]="trip.image" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ trip.title }}" />
 
                 <!-- Dark Transparent Overlay -->
                 <div class="overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
@@ -128,7 +125,7 @@
                 style="flex: 0 0 auto; width: 18rem;">
                 <!-- Background Image -->
                 <img [src]="client.image" class="card-img-top w-100 h-100 object-fit-cover"
-                    alt="{{ client.clientName }}">
+                    alt="{{ client.clientName }}" />
 
                 <!-- Dark Transparent Overlay -->
                 <div class="overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
@@ -155,7 +152,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- Client Reviews Section -->
 <div class="container m-5 client-reviews-container">
@@ -185,7 +181,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- Footer -->
 <footer class="text-white py-4" style="background-color: #71a7b8">

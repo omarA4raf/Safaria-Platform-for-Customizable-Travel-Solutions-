@@ -24,7 +24,7 @@ html {
   color: white !important; /* White text for navbar links */
 }
 
-/* information part */
+/* profile part */
 
 .masked-password {
   letter-spacing: 2px;
@@ -46,6 +46,33 @@ html {
 .profile-img {
   width: 280px;
   height: 100%;
+}
+
+/* Profile Image Container */
+.profile-image-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Upload Text */
+.upload-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Show Upload Text on Hover */
+.profile-image-container:hover .upload-text {
+  opacity: 1;
 }
 
 /* lists list */
