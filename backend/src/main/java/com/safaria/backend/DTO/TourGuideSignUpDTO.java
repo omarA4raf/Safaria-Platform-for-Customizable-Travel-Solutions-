@@ -1,5 +1,7 @@
 package com.safaria.backend.DTO;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +12,6 @@ public class TourGuideSignUpDTO extends UserSignUpDTO {
 
     
     private String country;
-    private String[] approvalDocument;
+    private MultipartFile approvalDocument;
    
 }

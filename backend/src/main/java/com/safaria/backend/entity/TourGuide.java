@@ -56,12 +56,12 @@ public class TourGuide {
     public String getPassword() {
         return password;
     }
-    public TourGuide(TourGuideSignUpDTO dto)  {
+    public TourGuide(TourGuideSignUpDTO dto,String relativeFilePath)  {
             this.username = dto.getUsername();
             this.email = dto.getEmail();
             this.password = dto.getPassword();
             this.country = dto.getCountry();
-            this.approvalDocumentPath=  dto.getApprovalDocument()[0];
+            this.approvalDocumentPath=  relativeFilePath ; 
             this.phone = dto.getPhone();
 
     }
