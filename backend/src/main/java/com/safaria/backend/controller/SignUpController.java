@@ -2,6 +2,7 @@ package com.safaria.backend.controller;
 
 import com.safaria.backend.service.*;
 import jakarta.validation.Valid;
+import org.apache.tomcat.util.http.parser.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,28 +22,23 @@ public class SignUpController {
 
     @PostMapping("/api/touristsignup")
     public ResponseEntity<String> touristSignUp(@Valid @RequestBody TouristSignUpDTO data) {
-        try {
+        
             return serv.saveTourist(data);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
-        }
+       
     }
 
-    @PostMapping("/api/tourguidesignup")
-    public ResponseEntity<String> tourGuideSignUp(@Valid @RequestBody TourGuideSignUpDTO data) {
-        try {
+    @PostMapping(value="/api/tourguidesignup",consumes = "multipart/form-data")
+    public ResponseEntity<String> tourGuideSignUp(@Valid @ModelAttribute TourGuideSignUpDTO data) {
+       
+
             return serv.saveTourGuide(data);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
-        }
     }
 
-    @PostMapping("/api/companysignup")
-    public ResponseEntity<String> companySignUp(@Valid @RequestBody CompanySignUpDTO data) {
-        try {
+    @PostMapping(value="/api/companysignup",consumes = "multipart/form-data")
+    public ResponseEntity<String> companySignUp( @Valid @ModelAttribute  CompanySignUpDTO data) {
+       
+
             return serv.saveCompany(data);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
-        }
+       
     }
 }
