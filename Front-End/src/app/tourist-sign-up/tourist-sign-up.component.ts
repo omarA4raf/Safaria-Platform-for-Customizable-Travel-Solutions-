@@ -11,10 +11,9 @@ import { SignUpServices } from '../services/signup_sevices';
   standalone: true,
   imports: [CommonModule, HttpClientModule, FormsModule],
   templateUrl: './tourist-sign-up.component.html',
-  styleUrl: './tourist-sign-up.component.css',
+  styleUrls: ['./tourist-sign-up.component.css'],
 })
 export class TouristSignUpComponent implements OnInit {
-  constructor(private signup_services:SignUpServices){}
   touristName: string = '';
   touristemail: string = '';
   touristpassword: string = '';
@@ -24,12 +23,11 @@ export class TouristSignUpComponent implements OnInit {
   touristCountry: string = '';
   countries: string[] = []; // Dynamic country list
   countrySlugs: { name: string; slug: string }[] | undefined;
-  tourist=new Tourist();
-  isPasswordStrong(touristpassword: string): boolean {
-    const strongPasswordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return strongPasswordRegex.test(touristpassword);
-  }
+  tourist = new Tourist();
+  isLoading: boolean = false; // Loading state
+  errorMessage: string | null = null; // Error message
+
+  constructor(private signup_services: SignUpServices, private router: Router) {}
 
   ngOnInit(): void {
     this.countries = [
@@ -107,6 +105,14 @@ export class TouristSignUpComponent implements OnInit {
     }));
   }
 
+  // Check if the password is strong
+  isPasswordStrong(touristpassword: string): boolean {
+    const strongPasswordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return strongPasswordRegex.test(touristpassword);
+  }
+
+  // Toggle tourism type selection
   toggleTourismType(type: string, event: Event) {
     const isChecked = (event.target as HTMLInputElement).checked;
     if (isChecked) {
@@ -118,41 +124,67 @@ export class TouristSignUpComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  // Handle form submission
+  onSubmit(form: any) {
+    this.errorMessage = null; // Reset error message
+
+    // Validate form fields
+    if (
+      !this.touristName ||
+      !this.touristemail ||
+      !this.touristpassword ||
+      !this.confirmPassword ||
+      !this.touristphone ||
+      !this.touristCountry ||
+      this.selectedTourismTypes.length === 0
+    ) {
+      this.errorMessage = 'All fields are required.';
+      return;
+    }
+
+    if (!this.touristemail.includes('@')) {
+      this.errorMessage = 'Invalid email format.';
+      return;
+    }
+
     if (this.touristpassword !== this.confirmPassword) {
-      alert('Passwords do not match!');
+      this.errorMessage = 'Passwords do not match.';
       return;
     }
 
     if (!this.isPasswordStrong(this.touristpassword)) {
-      alert(
-        'Password is weak! It must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.'
-      );
+      this.errorMessage =
+        'Password is weak! It must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.';
       return;
     }
-    
-    const formData = {
-      touristName: this.touristName,
-      touristemail: this.touristemail,
-      touristpassword: this.touristpassword,
-      touristphone: this.touristphone,
-      selectedTourismTypes: this.selectedTourismTypes,
-      country: this.touristCountry,
-    };
-    this.tourist.email=this.touristemail;
-    this.tourist.password=this.touristpassword;
-    this.tourist.username=this.touristName;
-    this.tourist.phone=this.touristphone;
-    this.tourist.tourismTypes=this.selectedTourismTypes
-    this.tourist.country=this.touristCountry;
-    this.signup_services.signup(this.tourist,'Tourist').subscribe((data) => {
-      if (data == null) {
-        alert('Email or Username already exists');
-      }
-      else{
-        alert("You have successfully sign up, please verify your mail!");
-      }
-    });
-    console.log('Form Data:', formData);
+
+    this.isLoading = true; // Enable loading state
+
+    // Prepare form data
+    this.tourist.email = this.touristemail;
+    this.tourist.password = this.touristpassword;
+    this.tourist.username = this.touristName;
+    this.tourist.phone = this.touristphone;
+    this.tourist.tourismTypes = this.selectedTourismTypes;
+    this.tourist.country = this.touristCountry;
+
+    // Send data to the backend
+    this.signup_services.signup(this.tourist, 'Tourist').subscribe({
+      next: (data) => {
+        if (data == null) {
+          this.errorMessage = 'Email or Username already exists.';
+        } else {
+          alert('You have successfully signed up. Please verify your email!');
+          this.router.navigate(['/login']); // Redirect to login page
+        }
+      },
+      error: (error) => {
+        console.error('Signup failed:', error);
+        this.errorMessage = 'An error occurred. Please try again later.';
+      },
+      complete: () => {
+        this.isLoading = false; // Disable loading state
+      },
+    })
   }
-}
+};
