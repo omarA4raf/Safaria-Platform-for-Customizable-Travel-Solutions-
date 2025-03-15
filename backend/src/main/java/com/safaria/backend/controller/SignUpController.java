@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.safaria.backend.DTO.TouristSignUpDTO;
-import com.safaria.backend.DTO.CompanySignUpDTO;
-import com.safaria.backend.DTO.TourGuideSignUpDTO;
+import com.safaria.backend.entity.TourProvider;
+import com.safaria.backend.DTO.TourProviderSignUpDTO;
 
 @CrossOrigin(origins = "http://localhost:4200") // Allow requests from Angular frontend
 @RestController
@@ -28,17 +28,17 @@ public class SignUpController {
     }
 
     @PostMapping(value="/api/tourguidesignup",consumes = "multipart/form-data")
-    public ResponseEntity<String> tourGuideSignUp(@Valid @ModelAttribute TourGuideSignUpDTO data) {
+    public ResponseEntity<String> tourGuideSignUp(@Valid @ModelAttribute TourProviderSignUpDTO data) {
        
 
-            return serv.saveTourGuide(data);
+            return serv.saveTourProvider(data,true);
     }
 
     @PostMapping(value="/api/companysignup",consumes = "multipart/form-data")
-    public ResponseEntity<String> companySignUp( @Valid @ModelAttribute  CompanySignUpDTO data) {
+    public ResponseEntity<String> companySignUp( @Valid @ModelAttribute  TourProviderSignUpDTO data) {
        
 
-            return serv.saveCompany(data);
+            return serv.saveTourProvider(data,false);
        
     }
 }
