@@ -1,4 +1,6 @@
 # Ignore system and IDE files
+
+.history/
 .VirtualBox/
 .anaconda/
 .angular-config.json

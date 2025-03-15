@@ -3,23 +3,19 @@ package com.safaria.backend.entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import com.safaria.backend.DTO.TourGuideSignUpDTO;
-import com.safaria.backend.service.FileSystemService;
+import com.safaria.backend.DTO.TourProviderSignUpDTO;
 
 import jakarta.persistence.*;
 
-import java.io.IOException;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "TourGuide") // Explicitly set the table name
-public class TourGuide {
+@Table(name = "TourProvider") // Explicitly set the table name
+public class TourProvider {
    
 
     @Id
@@ -46,22 +42,28 @@ public class TourGuide {
     private String profilePhoto; // Assuming URL is stored as a String
 
     @ElementCollection
-    @CollectionTable(name = "tourguide_tourism_types", joinColumns = @JoinColumn(name = "UserID"))
+    @CollectionTable(name = "tourProvider_tourism_types", joinColumns = @JoinColumn(name = "UserID"))
     @Column(name = "TourismType")
     private List<String> tourismTypes;
 
     @Column(name = "ApprovmentDocument")
     private String approvalDocumentPath; // Assuming URL is stored as a String
 
+    @Column(name = "Type")
+    private Boolean type;
+
     public String getPassword() {
         return password;
     }
-    public TourGuide(TourGuideSignUpDTO dto,String relativeFilePath)  {
+
+    public TourProvider(TourProviderSignUpDTO dto, String relativeFilePath,Boolean type)  {
+
             this.username = dto.getUsername();
             this.email = dto.getEmail();
             this.password = dto.getPassword();
             this.country = dto.getCountry();
             this.approvalDocumentPath=  relativeFilePath ; 
+            this.type=type;
             this.phone = dto.getPhone();
 
     }

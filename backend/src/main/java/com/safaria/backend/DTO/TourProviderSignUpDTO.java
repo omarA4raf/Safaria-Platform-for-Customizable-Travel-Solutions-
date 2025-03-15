@@ -6,9 +6,12 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Data
-public class CompanySignUpDTO extends UserSignUpDTO{
-    String businessLicenseNumber;
-    MultipartFile businessLicenseDocument;
 
+@Data
+public class TourProviderSignUpDTO extends UserSignUpDTO {
+
+    
+    private String country;
+    private MultipartFile approvalDocument;
+   
 }
