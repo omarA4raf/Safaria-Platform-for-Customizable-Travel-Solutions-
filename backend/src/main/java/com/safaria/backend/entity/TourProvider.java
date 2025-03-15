@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "TourGuide") // Explicitly set the table name
+@Table(name = "TourProvider") // Explicitly set the table name
 public class TourGuide {
    
 
@@ -52,6 +52,9 @@ public class TourGuide {
 
     @Column(name = "ApprovmentDocument")
     private String approvalDocumentPath; // Assuming URL is stored as a String
+
+    @Column(name = "Type")
+    private Boolean type;
 
     public String getPassword() {
         return password;

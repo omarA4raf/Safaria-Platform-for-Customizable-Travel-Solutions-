@@ -6,7 +6,7 @@ import lombok.Setter;
 
 
 @Data
-public class TourGuideSignUpDTO extends UserSignUpDTO {
+public class TourProviderSignUpDTO extends UserSignUpDTO {
 
     
     private String country;
