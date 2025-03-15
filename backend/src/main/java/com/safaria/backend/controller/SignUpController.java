@@ -1,4 +1,5 @@
 package com.safaria.backend.controller;
+import com.safaria.backend.DTO.TourProviderSignUpDTO;
 import com.safaria.backend.service.*;
 
 import jakarta.validation.Valid;
@@ -8,8 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import com.safaria.backend.DTO.TouristSignUpDTO;
-import com.safaria.backend.DTO.CompanySignUpDTO;
-import com.safaria.backend.DTO.TourGuideSignUpDTO;
+
 
 
 
@@ -29,20 +29,18 @@ public class SignUpController {
         // return ResponseEntity.status(200).body("No valid type");
 
     }
+
+    /*
+    *
+    * this api should be edited
+    * */
     @PostMapping("/api/tourguidesignup")
-    public ResponseEntity<String> tourGuideSignUp(@Valid @RequestBody TourGuideSignUpDTO data) {
+    public ResponseEntity<String> tourGuideSignUp(@Valid @RequestBody TourProviderSignUpDTO data) {
        
-            return serv.saveTourGuide(data);
+            return serv.saveTourProvider(data);
         
         // return ResponseEntity.status(200).body("No valid type");
 
     }
-    @PostMapping("/api/companysignup")
-    public ResponseEntity<String> companySignUp( @Valid @RequestBody  CompanySignUpDTO data) {
-       
-            return serv.saveCompany(data);
-        
-        // return ResponseEntity.status(200).body("No valid type");
 
-    }
 }

@@ -1,35 +1,25 @@
 package com.safaria.backend.service;
 
 
+import com.safaria.backend.DTO.TourProviderSignUpDTO;
 import com.safaria.backend.entity.*;
 import com.safaria.backend.repository.AdminRepository;
-import com.safaria.backend.repository.CompanyRepository;
-import com.safaria.backend.repository.TourGuideRepository;
+import com.safaria.backend.repository.TourProviderRepository;
 import com.safaria.backend.repository.TouristRepository;
-import com.safaria.backend.DTO.CompanySignUpDTO;
-import com.safaria.backend.DTO.TourGuideSignUpDTO;
 import com.safaria.backend.DTO.TouristSignUpDTO;
-
-import jakarta.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
-import java.nio.charset.StandardCharsets;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,11 +57,9 @@ public class services implements Iservices {
     @Autowired
     private TouristRepository touristRepository;
     @Autowired
-    private TourGuideRepository tourGuideRepository;
+    private TourProviderRepository tourProviderRepository;
     @Autowired
     private AdminRepository adminRepository;
-    @Autowired
-    private CompanyRepository companyRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -103,17 +91,17 @@ public class services implements Iservices {
         return null;
     }
     @Override
-    public TourGuide tourguidelogin(String email, String password) {
+    public TourProvider tourProviderlogin(String email, String password) {
         email=URLDecoder.decode(email, StandardCharsets.UTF_8);
         password=URLDecoder.decode(password, StandardCharsets.UTF_8);
         try {
             email=decryptAES(email);
             password=decryptAES(password);
         }catch (Exception e){System.out.println(e.getMessage());}
-        Optional<TourGuide> tourguide = tourGuideRepository.findByEmail(email);
-        if (tourguide.isPresent()) {
-            if (passwordEncoder.matches(password, tourguide.get().getPassword())) {
-                return tourguide.get();
+        Optional<TourProvider> tourProvider = tourProviderRepository.findByEmail(email);
+        if (tourProvider.isPresent()) {
+            if (passwordEncoder.matches(password, tourProvider.get().getPassword())) {
+                return tourProvider.get();
             } else {
                 return null;
             }
@@ -154,57 +142,30 @@ public class services implements Iservices {
         
     }
     @Override
-    public ResponseEntity<String> saveTourGuide(TourGuideSignUpDTO tourGuide) {
+    public ResponseEntity<String> saveTourProvider(TourProviderSignUpDTO tourProvider) {
        
-        if (!checkEmailService.isValidEmailDomain(tourGuide.getEmail()))
+        if (!checkEmailService.isValidEmailDomain(tourProvider.getEmail()))
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not Valid Email Domain");
-        if(tourGuideRepository.existsByEmail(tourGuide.getEmail()))
-        return  ResponseEntity.status(HttpStatus.CONFLICT).body("tourGuide Email is already registered!");
-        
-        tourGuide.setPassword(passwordEncoder.encode(tourGuide.getPassword()));
-        String directory = "Documents/TourGuide";
+        if(tourProviderRepository.existsByEmail(tourProvider.getEmail()))
+        return  ResponseEntity.status(HttpStatus.CONFLICT).body("tourProvider Email is already registered!");
+
+        tourProvider.setPassword(passwordEncoder.encode(tourProvider.getPassword()));
+        String directory = "Documents/TourProvider";
         String uniqueFileName = this.fileSystemService.generateUniqueFileName(directory, "pdf");
         String relativeFilePath = Paths.get(directory, uniqueFileName).toString();
 
         try {
-            this.fileSystemService.storeFile(this.fileSystemService.convertBase64ToBytes(tourGuide.getApprovalDocument()) ,relativeFilePath);
+            this.fileSystemService.storeFile(this.fileSystemService.convertBase64ToBytes(tourProvider.getApprovalDocument()) ,relativeFilePath);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         String[] approvalDocument = { relativeFilePath };
-        tourGuide.setApprovalDocument(approvalDocument); 
-        tourGuideRepository.save(new TourGuide(tourGuide));
+        tourProvider.setApprovalDocument(approvalDocument);
+        tourProviderRepository.save(new TourProvider(tourProvider));
      
-        return ResponseEntity.status(200).body("DONE TourGuide SignedUP");
+        return ResponseEntity.status(200).body("DONE TourProvider SignedUP");
         
     }
-    @Override
-    public ResponseEntity<String> saveCompany(CompanySignUpDTO company) {
-        
-        if (!checkEmailService.isValidEmailDomain(company.getEmail()))
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not Valid Email Domain");
-        if(companyRepository.existsByEmail(company.getEmail()))
-            return  ResponseEntity.status(HttpStatus.CONFLICT).body("Company Email is already registered!");
-        else if (companyRepository.existsByBusinessLicenseNumber(company.getBusinessLicenseNumber())) 
-            return  ResponseEntity.status(HttpStatus.CONFLICT).body("Company License is already registered!");
-        
-        
-        
-        company.setPassword(passwordEncoder.encode(company.getPassword()));
-        String directory = "Documents/Company";
-        String uniqueFileName = this.fileSystemService.generateUniqueFileName(directory, "pdf");
-        String relativeFilePath = Paths.get(directory, uniqueFileName).toString();
 
-        try {
-            this.fileSystemService.storeFile(this.fileSystemService.convertBase64ToBytes(company.getBusinessLicenseDocument()) ,relativeFilePath);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        String[] BusinessLicenseDocument = { relativeFilePath };
-        company.setBusinessLicenseDocument(BusinessLicenseDocument); 
-        companyRepository.save(new Company(company));
-        return ResponseEntity.status(200).body("DONE Company SignedUP");
-    }
 }

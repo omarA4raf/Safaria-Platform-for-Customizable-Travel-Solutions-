@@ -3,15 +3,11 @@ package com.safaria.backend.entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import com.safaria.backend.DTO.TourGuideSignUpDTO;
-import com.safaria.backend.service.FileSystemService;
+import com.safaria.backend.DTO.TourProviderSignUpDTO;
 
 import jakarta.persistence.*;
 
-import java.io.IOException;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Entity
@@ -19,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "TourProvider") // Explicitly set the table name
-public class TourGuide {
+public class TourProvider {
    
 
     @Id
@@ -46,7 +42,7 @@ public class TourGuide {
     private String profilePhoto; // Assuming URL is stored as a String
 
     @ElementCollection
-    @CollectionTable(name = "tourguide_tourism_types", joinColumns = @JoinColumn(name = "UserID"))
+    @CollectionTable(name = "tourProvider_tourism_types", joinColumns = @JoinColumn(name = "UserID"))
     @Column(name = "TourismType")
     private List<String> tourismTypes;
 
@@ -59,7 +55,7 @@ public class TourGuide {
     public String getPassword() {
         return password;
     }
-    public TourGuide(TourGuideSignUpDTO dto)  {
+    public TourProvider(TourProviderSignUpDTO dto)  {
             this.username = dto.getUsername();
             this.email = dto.getEmail();
             this.password = dto.getPassword();

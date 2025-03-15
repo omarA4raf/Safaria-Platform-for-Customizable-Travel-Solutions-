@@ -24,9 +24,21 @@ public class LoginController {
     public Tourist touristlogin(@RequestParam String email, @RequestParam String password) {
         return serv.touristlogin(email,password);
     }
+    /*
+    * ------------------------------------------------------
+    *
+    * ------------------------------------------------------
+    *
+    * ------------------------------------------------------
+    *
+    *
+    *
+    *
+    * --------> this endpoint should be edited
+    * */
     @GetMapping("/tourguidelogin/")
-    public TourGuide tourguidelogin(@RequestParam String email, @RequestParam String password) {
-        return serv.tourguidelogin(email, password);
+    public TourProvider tourProviderlogin(@RequestParam String email, @RequestParam String password) {
+        return serv.tourProviderlogin(email, password);
     }
     @GetMapping("/adminlogin/")
     public Admin adminlogin(@RequestParam String email, @RequestParam String password) {

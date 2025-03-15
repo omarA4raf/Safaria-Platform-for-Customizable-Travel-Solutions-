@@ -1,5 +1,4 @@
 package com.safaria.backend.repository;
-import com.safaria.backend.entity.TourGuide;
 import com.safaria.backend.entity.TourProvider;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
