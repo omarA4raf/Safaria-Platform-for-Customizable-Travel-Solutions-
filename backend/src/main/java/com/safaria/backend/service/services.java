@@ -173,5 +173,21 @@ public class services implements Iservices {
      
         return ResponseEntity.status(200).body("DONE TourProvider SignedUP");
         
-    }}
+    }
+
+    @Override
+    public Optional<List<TourProvider>> getPendingProviders() {
+        Optional<List<TourProvider>>pendingProviders=this.tourProviderRepository.findByType(true);
+
+        return pendingProviders;
+    }
+
+    @Override
+    public ResponseEntity<String> deleteTourProvider(Integer id) {
+        this.tourProviderRepository.deleteById(id);
+        return ResponseEntity.status(200).body("Provider Disapproved");
+    }
+
+
+}
 

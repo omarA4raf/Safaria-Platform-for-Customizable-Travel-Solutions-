@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import com.safaria.backend.DTO.TouristSignUpDTO;
 import com.safaria.backend.DTO.TourProviderSignUpDTO;
 
+import java.util.List;
+import java.util.Optional;
 
 
 public interface Iservices {
@@ -18,6 +20,7 @@ public interface Iservices {
     public Admin adminlogin(String username, String password);
     public ResponseEntity<String> saveTourist(TouristSignUpDTO tourist);
     public ResponseEntity<String> saveTourProvider(TourProviderSignUpDTO tourProvider,Boolean type);
-
+    public Optional<List<TourProvider>> getPendingProviders();
+    public ResponseEntity<String> deleteTourProvider(Integer id);
 
 }

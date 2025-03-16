@@ -13,5 +13,8 @@ public class TourProviderSignUpDTO extends UserSignUpDTO {
     
     private String country;
     private MultipartFile approvalDocument;
+
+    public String getCountry(){return this.country;}
+    public MultipartFile getApprovalDocument(){return this.approvalDocument;}
    
 }
