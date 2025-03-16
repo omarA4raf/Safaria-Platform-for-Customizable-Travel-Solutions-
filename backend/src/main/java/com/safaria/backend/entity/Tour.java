@@ -29,8 +29,11 @@ public class Tour {
     @Column(name = "Category")
     private Category category;
 
-    @Column(name = "CreatedBy")
-    private Integer createdBy; // Foreign key to Users table
+    @ManyToOne // manytone when using foriegn key which one of it maps to many of this entity
+    // but onetomany when annotate a repeated field
+    @JoinColumn(name = "TourProviderID") // Assuming TourProviderID is the foreign key column
+    private TourProvider tourProvider;
+
 
     @Column(name = "StartDate")
     private LocalDate startDate;
@@ -38,8 +41,8 @@ public class Tour {
     @Column(name = "EndDate")
     private LocalDate endDate;
 
-    // Constructors (No-arg and All-args), Getters, Setters, toString, equals, hashCode
-    // ... (Generate using your IDE or write them manually)
+    @Column(name = "AvailableSeats") // Add this column
+    private Integer availableSeats; // Assuming available seats is an integer
 
     public enum Category {
         PRE_PACKAGED, CUSTOMIZED
