@@ -17,7 +17,8 @@ public interface TourProviderRepository extends JpaRepository<TourProvider, Inte
     Optional<TourProvider> findByEmail(String email);
 
     Boolean existsByEmail(String email );
-    Optional<List<TourProvider>> findByType(Boolean type);
+    Optional<List<TourProvider>> findByisApproved(Boolean isApproved);
+    Optional<TourProvider> findById(Integer id);
 
     @Override
     void deleteById(Integer aLong);

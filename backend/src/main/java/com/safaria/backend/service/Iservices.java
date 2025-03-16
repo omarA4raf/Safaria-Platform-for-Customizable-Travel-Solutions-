@@ -22,5 +22,6 @@ public interface Iservices {
     public ResponseEntity<String> saveTourProvider(TourProviderSignUpDTO tourProvider,Boolean type);
     public Optional<List<TourProvider>> getPendingProviders();
     public ResponseEntity<String> deleteTourProvider(Integer id);
+    public ResponseEntity<String> approveTourProvider(Integer id);
 
 }

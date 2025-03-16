@@ -177,7 +177,7 @@ public class services implements Iservices {
 
     @Override
     public Optional<List<TourProvider>> getPendingProviders() {
-        Optional<List<TourProvider>>pendingProviders=this.tourProviderRepository.findByType(true);
+        Optional<List<TourProvider>>pendingProviders=this.tourProviderRepository.findByisApproved(false);
 
         return pendingProviders;
     }
@@ -186,6 +186,15 @@ public class services implements Iservices {
     public ResponseEntity<String> deleteTourProvider(Integer id) {
         this.tourProviderRepository.deleteById(id);
         return ResponseEntity.status(200).body("Provider Disapproved");
+    }
+    @Override
+    public ResponseEntity<String> approveTourProvider(Integer id){
+        Optional<TourProvider> tourProvider= this.tourProviderRepository.findById(id);
+        if(tourProvider.isPresent()) {
+            tourProvider.get().setIsApproved(true);
+            return ResponseEntity.status(200).body("Tour Provider Approved");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tour Provider Not Found");
     }
 
 

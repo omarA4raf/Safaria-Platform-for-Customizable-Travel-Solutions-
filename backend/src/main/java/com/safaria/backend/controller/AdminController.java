@@ -31,4 +31,8 @@ public class AdminController {
     public ResponseEntity<String> deleteTourProvider(@PathVariable Integer id){
         return this.serv.deleteTourProvider(id);
     }
+    @PostMapping("/approveTourProvider")
+    public ResponseEntity<String> approveTourProvider(@PathVariable Integer id){
+        return this.serv.approveTourProvider(id);
+    }
 }
