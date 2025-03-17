@@ -48,4 +48,6 @@ public class UserSignUpDTO {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+    public List<String> getTourismTypes(){return this.tourismTypes;}
+
 }

@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 
 @Data
 public class TourProviderSignUpDTO extends UserSignUpDTO {
@@ -18,5 +20,6 @@ public class TourProviderSignUpDTO extends UserSignUpDTO {
     public MultipartFile getApprovalDocument(){return this.approvalDocument;}
     public Boolean getIsApproved(){return this.isApproved;}
     public void setIsApproved(){this.isApproved=true;}
-   
+
+
 }

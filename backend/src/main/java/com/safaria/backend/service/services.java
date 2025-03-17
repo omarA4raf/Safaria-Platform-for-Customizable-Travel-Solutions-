@@ -177,7 +177,7 @@ public class services implements Iservices {
 
     @Override
     public Optional<List<TourProvider>> getPendingProviders() {
-        Optional<List<TourProvider>>pendingProviders=this.tourProviderRepository.findByisApproved(false);
+        Optional<List<TourProvider>>pendingProviders=this.tourProviderRepository.findByIsApproved(false);
 
         return pendingProviders;
     }
