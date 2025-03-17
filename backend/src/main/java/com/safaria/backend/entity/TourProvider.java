@@ -72,6 +72,11 @@ public class TourProvider {
             this.approvalDocumentPath=  relativeFilePath ; 
             this.type=type;
             this.phone = dto.getPhone();
+<<<<<<< HEAD
             this.isApproved=dto.getIsApproved();
+=======
+            this.tourismTypes=dto.getTourismTypes();
+
+>>>>>>> b9721df0a2f3c51670d389b89b464a52b8fe56f1
     }
 }

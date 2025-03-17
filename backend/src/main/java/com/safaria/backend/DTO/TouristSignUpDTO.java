@@ -12,12 +12,7 @@ import java.util.List;
 @Setter
 public class TouristSignUpDTO extends UserSignUpDTO {
     private String country;
-    private List<String> tourismTypes;
-    public String getCountry(){
-        return this.country;
-    }
-    public List<String> getTourismTypes(){
-        return this.tourismTypes;
-    }
+   
+   
    
 }
