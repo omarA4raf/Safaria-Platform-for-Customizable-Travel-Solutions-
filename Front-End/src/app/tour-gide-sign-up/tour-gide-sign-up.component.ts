@@ -1,32 +1,48 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { SignUpServices } from '../services/signup_sevices';
+import { tourguide } from '../objects/tourguide';
 
 @Component({
   selector: 'app-tour-gide-sign-up',
   standalone: true,
   imports: [CommonModule, HttpClientModule, FormsModule],
   templateUrl: './tour-gide-sign-up.component.html',
-  styleUrl: './tour-gide-sign-up.component.css',
+  styleUrls: ['./tour-gide-sign-up.component.css'],
 })
 export class TourGideSignUpComponent implements OnInit {
   @ViewChild('idDocumentInput') idDocumentInput!: ElementRef;
 
+  // Form fields
   tourguideName: string = '';
   tourguideemail: string = '';
   tourguidepassword: string = '';
   confirmPassword: string = '';
   tourguidephone: string = '';
   tourguideCountry: string = '';
-  countries: string[] = [];
+  idDocument: File | null = null;
+  selectedTourismTypes: string[] = [];
+  tourismTypes: string[] = [
+    'cultural',
+    'adventure',
+    'beach',
+    'historical',
+    'wildlife',
+    'religious',
+  ];
   countrySlugs: { name: string; slug: string }[] = [];
-  idDocument: File | null = null; // Store the file as a File object
-  isLoading: boolean = false; // Loading state
+
+  // State management
+  isLoading: boolean = false;
   errorMessage: string | null = null;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private signup_services: SignUpServices,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.initializeCountries();
@@ -34,7 +50,7 @@ export class TourGideSignUpComponent implements OnInit {
 
   // Initialize the list of countries and their slugs
   initializeCountries(): void {
-    this.countries = [
+    const countries = [
       'Afghanistan',
       'Albania',
       'Algeria',
@@ -103,8 +119,7 @@ export class TourGideSignUpComponent implements OnInit {
       'Yemen',
     ];
 
-    // Generate slugs for each country
-    this.countrySlugs = this.countries.map((country) => ({
+    this.countrySlugs = countries.map((country) => ({
       name: country,
       slug: country.toLowerCase().replace(/\s+/g, '-'),
     }));
@@ -119,11 +134,23 @@ export class TourGideSignUpComponent implements OnInit {
 
   // Handle file input change
   onFileChange(event: Event): void {
-    const fileInput = event.target as HTMLInputElement;
-    if (fileInput.files && fileInput.files.length > 0) {
-      this.idDocument = fileInput.files[0]; // Store the file as a File object
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.idDocument = input.files[0];
     } else {
       this.idDocument = null;
+    }
+  }
+
+  // Toggle tourism type selection
+  toggleTourismType(type: string, event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+    if (checkbox.checked) {
+      this.selectedTourismTypes.push(type);
+    } else {
+      this.selectedTourismTypes = this.selectedTourismTypes.filter(
+        (t) => t !== type
+      );
     }
   }
 
@@ -136,7 +163,8 @@ export class TourGideSignUpComponent implements OnInit {
       !this.confirmPassword ||
       !this.tourguidephone ||
       !this.tourguideCountry ||
-      !this.idDocument
+      !this.idDocument ||
+      this.selectedTourismTypes.length === 0
     ) {
       this.errorMessage = 'All fields are required.';
       return false;
@@ -164,51 +192,44 @@ export class TourGideSignUpComponent implements OnInit {
 
   // Handle form submission
   onSubmit(form: any): void {
-    this.errorMessage = null; // Reset error message
+    if (!this.validateForm()) return;
 
-    if (!this.validateForm()) {
-      return;
-    }
+    this.isLoading = true;
 
-    this.isLoading = true; // Enable loading state
 
-    // Prepare FormData for file upload
     const formData = new FormData();
-    formData.append('tourguideName', this.tourguideName);
-    formData.append('tourguideemail', this.tourguideemail);
-    formData.append('tourguidepassword', this.tourguidepassword);
-    formData.append('tourguidephone', this.tourguidephone);
-    formData.append('tourguideCountry', this.tourguideCountry);
-    if (this.idDocument) {
-      formData.append('idDocument', this.idDocument); // Append the file
+    formData.append('username', this.tourguideName);
+    formData.append('email', this.tourguideemail);
+    formData.append('password', this.tourguidepassword);
+    formData.append('phone', this.tourguidephone);
+    formData.append('country', this.tourguideCountry);
+    // Append each tourism type individually
+    for (let i = 0; i < this.selectedTourismTypes.length; i++) {
+      formData.append(`tourismTypes[${i}]`, this.selectedTourismTypes[i]);
     }
 
-    this.sendToBackend(formData);
-  }
+    if (this.idDocument) {
+      formData.append('approvalDocument', this.idDocument);
+    }
 
-  // Send form data to the backend
-  sendToBackend(formData: FormData): void {
-    this.http.post('http://localhost:8080/api/tourguidesignup', formData).subscribe({
-      next: (response) => {
-        console.log('Signup successful:', response);
-        this.router.navigate(['/login']); // Redirect to login page
+    this.signup_services.signup(formData, 'Tour Guide').subscribe({
+      next: (data) => {
+        if (data == null) {
+          this.errorMessage = 'Email or Username already exists.';
+        } else {
+          alert('You have successfully signed up. Please verify your email!');
+          this.router.navigate(['/login']);
+        }
       },
       error: (error) => {
         console.error('Signup failed:', error);
-        this.isLoading = false; // Disable loading state on error
-
-        // Handle specific backend errors
-        if (error.status === 400) {
-          this.errorMessage = 'Invalid email or password.';
-        } else if (error.status === 404) {
-          this.errorMessage = 'Endpoint not found.';
-        } else {
-          this.errorMessage = 'An error occurred. Please try again later.';
-        }
+        this.errorMessage = 'An error occurred. Please try again later.';
       },
       complete: () => {
-        this.isLoading = false; // Disable loading state on completion
+        this.isLoading = false;
       },
     });
+
+    console.log(formData)
   }
 }

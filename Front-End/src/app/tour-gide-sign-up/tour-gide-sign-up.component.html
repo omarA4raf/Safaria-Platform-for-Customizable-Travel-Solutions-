@@ -10,15 +10,15 @@
       <div class="signup-form text-center">
         <h2 class="mb-4">Create Account</h2>
         <form #signupForm="ngForm" (ngSubmit)="onSubmit(signupForm)" novalidate>
-          <!-- Tourguide Name -->
+          <!-- Tour Guide Name -->
           <div class="input-group mb-3">
             <span class="input-group-text"><i class="fa fa-user"></i></span>
             <input type="text" [(ngModel)]="tourguideName" name="tourguideName" class="form-control"
-              placeholder="Tourguide Name" required />
+              placeholder="Tour Guide Name" required />
           </div>
           <div *ngIf="signupForm.submitted && signupForm.controls['tourguideName']?.errors?.['required']"
             class="text-danger">
-            Tourguide Name is required.
+            Tour Guide Name is required.
           </div>
 
           <!-- Email -->
@@ -76,22 +76,7 @@
             Phone Number is required.
           </div>
 
-          <!-- ID verification document -->
-          <div class="mb-3">
-            <label for="idDocument" class="form-label text-start d-block">
-              Enter your ID/Passport document
-            </label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="fa fa-id-card"></i></span>
-              <input #idDocumentInput type="file" id="idDocument" name="idDocument" class="form-control"
-                accept="image/*,.pdf" required (change)="onFileChange($event)" />
-            </div>
-          </div>
-          <div *ngIf="signupForm.submitted && !idDocument" class="text-danger">
-            ID Document is required.
-          </div>
-
-          <!-- Tourguide Country -->
+          <!-- Tour Guide Country -->
           <div class="input-group mb-3">
             <span class="input-group-text"><i class="fa fa-globe"></i></span>
             <select [(ngModel)]="tourguideCountry" name="tourguideCountry" class="form-control" required>
@@ -106,18 +91,53 @@
             Country is required.
           </div>
 
-          <!-- Submit Button -->
-          <button type="submit" class="btn btn-success w-100" [disabled]="isLoading">
-            <span *ngIf="!isLoading">Sign Up</span>
-            <span *ngIf="isLoading">
-              <i class="fa fa-spinner fa-spin"></i> Processing...
-            </span>
-          </button>
+          <!-- Tourism Type (Checkboxes) -->
+          <div class="mb-3">
+            <label class="form-label fw-bold">Select Tourism Type:</label>
+            <div class="checkbox-container">
+              <label class="checkbox-inline"
+                *ngFor="let type of ['cultural', 'adventure', 'beach', 'historical', 'wildlife', 'religious']">
+                <input type="checkbox" [value]="type" (change)="toggleTourismType(type, $event)">
+                <i class="fa" [ngClass]="{
+                      'fa-landmark': type === 'cultural',
+                      'fa-hiking': type === 'adventure',
+                      'fa-umbrella-beach': type === 'beach',
+                      'fa-monument': type === 'historical',
+                      'fa-paw': type === 'wildlife',
+                      'fa-praying-hands': type === 'religious'
+                  }"></i> {{ type | titlecase }}
+              </label>
+            </div>
+
+              <!-- ID Verification Document -->
+              <div class="mb-3">
+                <label for="idDocument" class="form-label text-start d-block">
+                  Enter your ID/Passport document
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fa fa-id-card"></i></span>
+                  <input #idDocumentInput type="file" id="idDocument" name="idDocument" class="form-control"
+                    accept="image/*,.pdf" required (change)="onFileChange($event)" />
+                </div>
+              </div>
+              <div *ngIf="signupForm.submitted && !idDocument" class="text-danger">
+                ID Document is required.
+              </div>
+            </div>
+
+
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-success w-100" [disabled]="isLoading">
+              <span *ngIf="!isLoading">Sign Up</span>
+              <span *ngIf="isLoading">
+                <i class="fa fa-spinner fa-spin"></i> Processing...
+              </span>
+            </button>
         </form>
         <p class="mt-3">Already have an account? <a href="/login">Login</a></p>
       </div>
     </div>
   </div>
 </div>
-
-<!-- Team@1234 -->
+;

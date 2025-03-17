@@ -1,43 +1,138 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { SignUpServices } from '../services/signup_sevices';
+// import { Company } from '../objects/company';
 
 @Component({
   selector: 'app-company-sign-up',
   standalone: true,
   imports: [CommonModule, HttpClientModule, FormsModule],
   templateUrl: './company-sign-up.component.html',
-  styleUrl: './company-sign-up.component.css',
+  styleUrls: ['./company-sign-up.component.css'],
 })
 export class CompanySignUpComponent implements OnInit {
-  @ViewChild('businesslicenseDocumentInput') businesslicenseDocumentInput!: ElementRef;
+  @ViewChild('businesslicenseDocumentInput')
+  businesslicenseDocumentInput!: ElementRef;
 
+  // Form fields
   companyName: string = '';
   companyemail: string = '';
   companypassword: string = '';
   confirmPassword: string = '';
-  businessLicense: string = '';
   phoneNumber: string = '';
-  businesslicenseDocument: File | null = null; // Use File type for binary data
-  isLoading: boolean = false; // Loading state
-  errorMessage: string | null = null; // Error message
+  companyCountry: string = '';
+  businesslicenseDocument: File | null = null;
+  selectedTourismTypes: string[] = [];
+  tourismTypes: string[] = [
+    'cultural',
+    'adventure',
+    'beach',
+    'historical',
+    'wildlife',
+    'religious',
+  ];
+  countrySlugs: { name: string; slug: string }[] = [];
 
-  constructor(private http: HttpClient, private router: Router) {}
+  // State management
+  isLoading: boolean = false;
+  errorMessage: string | null = null;
+
+  constructor(
+    private signup_services: SignUpServices,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    // No changes needed here
+    this.initializeCountries();
+  }
+
+  // Initialize the list of countries and their slugs
+  initializeCountries(): void {
+    const countries = [
+      'Afghanistan',
+      'Albania',
+      'Algeria',
+      'Andorra',
+      'Angola',
+      'Argentina',
+      'Armenia',
+      'Australia',
+      'Austria',
+      'Azerbaijan',
+      'Bahrain',
+      'Bangladesh',
+      'Belgium',
+      'Brazil',
+      'Canada',
+      'China',
+      'Colombia',
+      'Denmark',
+      'Egypt',
+      'Finland',
+      'France',
+      'Germany',
+      'Greece',
+      'India',
+      'Indonesia',
+      'Iran',
+      'Iraq',
+      'Ireland',
+      'Italy',
+      'Japan',
+      'Jordan',
+      'Kenya',
+      'Kuwait',
+      'Lebanon',
+      'Malaysia',
+      'Mexico',
+      'Morocco',
+      'Netherlands',
+      'New Zealand',
+      'Nigeria',
+      'Norway',
+      'Oman',
+      'Pakistan',
+      'Palestine',
+      'Philippines',
+      'Poland',
+      'Portugal',
+      'Qatar',
+      'Romania',
+      'Russia',
+      'Saudi Arabia',
+      'South Africa',
+      'Spain',
+      'Sudan',
+      'Sweden',
+      'Switzerland',
+      'Syria',
+      'Thailand',
+      'Tunisia',
+      'Turkey',
+      'UAE',
+      'UK',
+      'Ukraine',
+      'USA',
+      'Vietnam',
+      'Yemen',
+    ];
+
+    this.countrySlugs = countries.map((country) => ({
+      name: country,
+      slug: country.toLowerCase().replace(/\s+/g, '-'),
+    }));
   }
 
   // Handle file input change
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.businesslicenseDocument = input.files[0]; // Store the file
-      console.log('File selected:', this.businesslicenseDocument.name); // Debugging
+      this.businesslicenseDocument = input.files[0];
     } else {
-      this.businesslicenseDocument = null; // Reset if no file is selected
+      this.businesslicenseDocument = null;
     }
   }
 
@@ -48,6 +143,18 @@ export class CompanySignUpComponent implements OnInit {
     return strongPasswordRegex.test(password);
   }
 
+  // Toggle tourism type selection
+  toggleTourismType(type: string, event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+    if (checkbox.checked) {
+      this.selectedTourismTypes.push(type);
+    } else {
+      this.selectedTourismTypes = this.selectedTourismTypes.filter(
+        (t) => t !== type
+      );
+    }
+  }
+
   // Validate form fields
   validateForm(): boolean {
     if (
@@ -55,9 +162,10 @@ export class CompanySignUpComponent implements OnInit {
       !this.companyemail ||
       !this.companypassword ||
       !this.confirmPassword ||
-      !this.businessLicense ||
       !this.phoneNumber ||
-      !this.businesslicenseDocument
+      !this.companyCountry ||
+      !this.businesslicenseDocument ||
+      this.selectedTourismTypes.length === 0
     ) {
       this.errorMessage = 'All fields are required.';
       return false;
@@ -85,47 +193,50 @@ export class CompanySignUpComponent implements OnInit {
 
   // Handle form submission
   onSubmit(form: any): void {
-    this.errorMessage = null; // Reset error message
+    if (!this.validateForm()) return;
 
-    if (!this.validateForm()) {
-      return;
-    }
+    this.isLoading = true;
 
-    this.isLoading = true; // Enable loading state
-
-    // Prepare FormData for file upload
     const formData = new FormData();
-    formData.append('companyName', this.companyName);
-    formData.append('companyemail', this.companyemail);
-    formData.append('companypassword', this.companypassword);
-    formData.append('businessLicense', this.businessLicense);
-    formData.append('phoneNumber', this.phoneNumber);
-    if (this.businesslicenseDocument) {
-      formData.append('businesslicenseDocument', this.businesslicenseDocument); // Append the file
+    formData.append('username', this.companyName);
+    formData.append('email', this.companyemail);
+    formData.append('password', this.companypassword);
+    formData.append('phone', this.phoneNumber);
+    formData.append('country', this.companyCountry);
+    // Append each tourism type individually
+    for (let i = 0; i < this.selectedTourismTypes.length; i++) {
+      formData.append(`tourismTypes[${i}]`, this.selectedTourismTypes[i]);
     }
 
-    // Send data to the backend
-    this.http.post('/api/companysignup', formData).subscribe({
-      next: (response) => {
-        console.log('Signup successful:', response);
-        this.router.navigate(['/login']); // Redirect to login page
+    if (this.businesslicenseDocument) {
+      formData.append('approvalDocument', this.businesslicenseDocument);
+    }
+
+    // Log FormData for debugging
+    for (const pair of formData.entries()) {
+      console.log('before', pair[0], pair[1]);
+    }
+
+    this.signup_services.signup(formData, 'Company').subscribe({
+      next: (data) => {
+        if (data == null) {
+          this.errorMessage = 'Email or Username already exists.';
+        } else {
+          alert('You have successfully signed up. Please verify your email!');
+          this.router.navigate(['/login']);
+        }
       },
       error: (error) => {
         console.error('Signup failed:', error);
-        this.isLoading = false; // Disable loading state on error
-
-        // Handle specific backend errors
-        if (error.status === 400) {
-          this.errorMessage = 'Invalid email or password.';
-        } else if (error.status === 404) {
-          this.errorMessage = 'Endpoint not found.';
-        } else {
-          this.errorMessage = 'An error occurred. Please try again later.';
-        }
+        this.errorMessage = 'An error occurred. Please try again later.';
       },
       complete: () => {
-        this.isLoading = false; // Disable loading state on completion
+        this.isLoading = false;
       },
     });
+    // Log FormData contents
+    for (const pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
+    }
   }
 }

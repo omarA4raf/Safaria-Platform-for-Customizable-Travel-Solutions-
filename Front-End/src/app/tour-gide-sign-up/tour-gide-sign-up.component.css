@@ -17,7 +17,7 @@ body, html {
 
 .left-section {
     height: 98vh; 
-    background: url('/assets/img/tourguide.jpg') no-repeat center center;
+    background: url('/assets/img/tourguide.jpg') no-repeat center center; /* Updated image */
     background-size: cover;
     position: relative;
 }
@@ -36,6 +36,8 @@ body, html {
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-height: 90vh; /* Ensure form fits within viewport */
+    overflow-y: auto; /* Enable scrolling for long forms */
 }
 
 .input-group-text {
@@ -58,6 +60,14 @@ p a {
 
 p a:hover {
     text-decoration: underline;
+}
+
+/* Style the select dropdown */
+select {
+    appearance: none;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: white;
 }
 
 /* Checkbox styling */
@@ -84,12 +94,4 @@ p a:hover {
     font-size: 18px;
     margin-right: 5px;
     color: #28a745;
-}
-
-/* Style the select dropdown */
-select {
-    appearance: none;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: white;
 }
