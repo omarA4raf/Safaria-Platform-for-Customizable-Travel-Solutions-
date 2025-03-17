@@ -1,5 +1,8 @@
 package com.safaria.backend.DTO;
 import lombok.Data;
+
+import java.util.List;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -16,6 +19,7 @@ public class UserSignUpDTO {
     @Email(message = "Invalid email format")
     protected String email;
     protected String phone;
+    protected List<String> tourismTypes;
     public String getUsername(){
         return this.username;
     }
