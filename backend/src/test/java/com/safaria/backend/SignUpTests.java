@@ -70,6 +70,7 @@ class SignUpTests {
                 .param("email", "jane.guide@gmail.com")
                 .param("phone", "9876543210")
                 .param("country", "France")
+                .param("tourismTypes", "[\"adventure\", \"cultural\", \"eco-tourism\"]")
                 .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk());
     }
@@ -78,8 +79,8 @@ class SignUpTests {
     @Order(3)
     void testSignupAsCompany() throws Exception {
         // Create a mock file for the business license document
-        MockMultipartFile businessLicenseDocument = new MockMultipartFile(
-                "businessLicenseDocument", // Field name
+        MockMultipartFile approvalDocument = new MockMultipartFile(
+                "approvalDocument", // Field name
                 "license.pdf", // File name
                 "application/pdf", // MIME type
                 "dummy file content".getBytes() // File content as bytes
@@ -87,12 +88,12 @@ class SignUpTests {
 
         // Send multipart form-data request
         mockMvc.perform(multipart("/api/companysignup")
-                .file(businessLicenseDocument)
+                .file(approvalDocument)
                 .param("username", "travel_company")
                 .param("password", "securePass789")
                 .param("email", "info@gmail.com")
                 .param("phone", "1234567890")
-                .param("businessLicenseNumber", "LC-987654")
+                .param("tourismTypes", "[\"adventure\", \"cultural\", \"eco-tourism\"]")
                 .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk());
     }
@@ -135,6 +136,7 @@ class SignUpTests {
             .param("email", "jane.guide@gmail.com")
             .param("phone", "9876543210")
             .param("country", "France")
+            .param("tourismTypes", "[\"adventure\", \"cultural\", \"eco-tourism\"]")
             .contentType(MediaType.MULTIPART_FORM_DATA))
             .andExpect(status().isConflict());
     }
@@ -143,7 +145,7 @@ class SignUpTests {
     void testSignupAsCompanyWithExistingEmail_ShouldFail() throws Exception {
         // Create a mock file for the business license document
         MockMultipartFile businessLicenseDocument = new MockMultipartFile(
-                "businessLicenseDocument", // Field name
+                "approvalDocument", // Field name
                 "license.pdf", // File name
                 "application/pdf", // MIME type
                 "dummy file content".getBytes() // File content as bytes
@@ -156,7 +158,7 @@ class SignUpTests {
                 .param("password", "securePass789")
                 .param("email", "info@gmail.com")
                 .param("phone", "1234567890")
-                .param("businessLicenseNumber", "LC-987654")
+                .param("tourismTypes", "[\"adventure\", \"cultural\", \"eco-tourism\"]")
                 .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isConflict());
     }
@@ -203,27 +205,7 @@ class SignUpTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Not Valid Email Domain"));
     }
-    @Test
-    @Order(9)
-    void testSignupAsCompanyWithExistingCompanyLicence_ShouldFail() throws Exception {
-        MockMultipartFile businessLicenseDocument = new MockMultipartFile(
-            "businessLicenseDocument", // Field name
-            "license.pdf", // File name
-            "application/pdf", // MIME type
-            "dummy file content".getBytes() // File content as bytes
-    );
-
-    // Send multipart form-data request
-    mockMvc.perform(multipart("/api/companysignup")
-            .file(businessLicenseDocument)
-            .param("username", "travel_company")
-            .param("password", "securePass789")
-            .param("email", "info2@gmail.com")
-            .param("phone", "1234567890")
-            .param("businessLicenseNumber", "LC-987654")
-            .contentType(MediaType.MULTIPART_FORM_DATA))
-            .andExpect(status().isConflict());
-    }
+   
 
 
 }
