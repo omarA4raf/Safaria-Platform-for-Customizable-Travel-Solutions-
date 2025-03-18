@@ -56,6 +56,13 @@ public class TourProvider {
         return password;
     }
 
+    public Boolean getApproved() {
+        return isApproved;
+    }
+    public void setIsApproved(Boolean Approvement){this.isApproved=Approvement;}
+
+    @Column(name = "IsApproved")
+    private Boolean isApproved;
     public TourProvider(TourProviderSignUpDTO dto, String relativeFilePath,Boolean type)  {
 
             this.username = dto.getUsername();
@@ -65,7 +72,11 @@ public class TourProvider {
             this.approvalDocumentPath=  relativeFilePath ; 
             this.type=type;
             this.phone = dto.getPhone();
+
+            this.isApproved=dto.getIsApproved();
+
             this.tourismTypes=dto.getTourismTypes();
+
 
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.safaria.backend.DTO.TouristSignUpDTO;
 import com.safaria.backend.DTO.TourProviderSignUpDTO;
 
-@CrossOrigin(origins = "http://localhost:4200") // Allow requests from Angular frontend
+@CrossOrigin(origins = "http://localhost:8080") // Allow requests from Angular frontend
 @RestController
 @Validated
 public class SignUpController {

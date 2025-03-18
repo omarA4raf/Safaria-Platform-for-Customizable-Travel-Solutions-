@@ -13,6 +13,6 @@ import java.util.List;
 public class TouristSignUpDTO extends UserSignUpDTO {
     private String country;
    
-   
+   public String getCountry(){return this.country;}
    
 }
