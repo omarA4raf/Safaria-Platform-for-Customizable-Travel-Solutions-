@@ -209,7 +209,7 @@ export class CompanySignUpComponent implements OnInit {
     }
 
     if (this.businesslicenseDocument) {
-      formData.append('approvalDocument', this.businesslicenseDocument);
+      formData.append('approvalDocument', this.businesslicenseDocument,this.businesslicenseDocument.name);
     }
 
     // Log FormData for debugging

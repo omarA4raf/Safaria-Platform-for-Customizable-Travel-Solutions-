@@ -50,6 +50,8 @@ public class Tourist {
     @CollectionTable(name = "tourist_tourism_types", joinColumns = @JoinColumn(name = "UserID"))
     @Column(name = "TourismType")
     private List<String> tourismTypes;
+    @Column(name = "ُEnabled")
+    private boolean enabled = false;
 
     public String getPassword() {
         return password;

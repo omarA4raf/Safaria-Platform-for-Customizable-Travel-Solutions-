@@ -51,6 +51,8 @@ public class TourProvider {
 
     @Column(name = "Type")
     private Boolean type;
+    @Column(name = "ُEnabled")
+    private boolean enabled = false;
 
     public String getPassword() {
         return password;
