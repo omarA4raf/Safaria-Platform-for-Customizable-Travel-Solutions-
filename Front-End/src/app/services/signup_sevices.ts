@@ -24,24 +24,22 @@ export class SignUpServices {
   }
 
   signup(user: any, role: string): Observable<any> {
+    console.log(user)
     if (role === 'Tourist') {
-      // Send JSON data for tourist signup
+      // JSON for Tourist
       return this.http.post(`${baseUrl}/touristsignup`, user, { responseType: 'text' });
     } else if (role === 'Tour Guide' || role === 'Company') {
-      // Send FormData for tour guide and company signup
-      const formData = new FormData();
-      for (const key in user) {
-        if (user.hasOwnProperty(key)) {
-          formData.append(key, user[key]);
-        }
-      }
-      return this.http.post(`${baseUrl}/${role === 'Tour Guide' ? 'tourguidesignup' : 'companysignup'}`, formData, { responseType: 'text' });
+      // user is already FormData, send directly
+      return this.http.post(
+        `${baseUrl}/${role === 'Tour Guide' ? 'tourguidesignup' : 'companysignup'}`,
+        user,
+        { responseType: 'text' }
+      );
     } else {
       throw new Error('Invalid role');
     }
-  }
-}     
-//     if(role == 'Tourist'){
+  }}
+
 //       return this.http.post(`${baseUrl}/touristsignup`, user, { responseType: 'text' });}
 //     else if(role == 'Tour Guide'){
 //       return this.http.post(`${baseUrl}/tourguidesignup`, user, { responseType: 'text' });}
