@@ -58,7 +58,7 @@
                         </div>
 
                         <!-- Destination Country (New Field) -->
-                        <div class="mb-3 col-4">
+                        <div class="mb-3 col-3">
                             <label for="destinationCountry" class="form-label">Destination Country</label>
                             <select class="form-control" id="destinationCountry" [(ngModel)]="trip.destinationCountry"
                                 name="destinationCountry" required>
@@ -70,7 +70,7 @@
                         </div>
 
                         <!-- Duration -->
-                        <div class="mb-3 col-4">
+                        <div class="mb-3 col-3">
                             <label for="duration" class="form-label">Duration (in days)</label>
                             <input type="number" class="form-control" id="duration" [(ngModel)]="trip.duration"
                                 name="duration" required />
@@ -79,12 +79,25 @@
                         </div>
 
                         <!-- Available Seats -->
-                        <div class="mb-3 col-4">
+                        <div class="mb-3 col-3">
                             <label for="availableSeats" class="form-label">Available Seats</label>
                             <input type="number" class="form-control" id="availableSeats"
                                 [(ngModel)]="trip.availableSeats" name="availableSeats" required />
                             <small class="text-danger" *ngIf="errorMessages['availableSeats']">{{
                                 errorMessages['availableSeats'] }}</small>
+                        </div>
+
+                        <!-- Free Cancellation Deadline -->
+                        <div class="mb-3 col-3">
+                            <label for="freeCancellationDeadline" class="form-label">Free Cancellation Deadline (in
+                                hours)</label>
+                            <input type="number" class="form-control" id="freeCancellationDeadline"
+                                [(ngModel)]="trip.freeCancellationDeadline" name="freeCancellationDeadline" required />
+                            <small class="text-muted">Enter the number of hours before the trip when free cancellation
+                                will no longer
+                                be available (e.g., 48 hours).</small>
+                            <small class="text-danger" *ngIf="errorMessages['freeCancellationDeadline']">{{
+                                errorMessages['freeCancellationDeadline'] }}</small>
                         </div>
 
                         <!-- Tourism Type (New Field) -->

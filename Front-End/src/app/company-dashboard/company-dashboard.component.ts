@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CompanyDashboardService } from './company-dashboard.service'; // Import the service
+import { CompanyDashboardService } from './company-dashboard.service'; // Import the services
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 
@@ -9,15 +9,22 @@ import { CommonModule } from '@angular/common';
   templateUrl: './company-dashboard.component.html',
   styleUrls: ['./company-dashboard.component.css'],
 })
+
 export class CompanyDashboardComponent implements OnInit {
   // Properties to hold data
-  profile: any = {};
-  about: string = '';
-  trips: any[] = [];
-  clients: any[] = [];
-  clientReviews: any[] = [];
-  rating: number = 5; // Default rating for the company
-  showUploadText: boolean = false; // Control visibility of "Upload Picture" text
+  name: string = '';
+  email: string = '';
+  country: string = '';
+  phone: string = '';
+  password: string = '';
+  tourismTypes: any[] = [];
+  rating: number = 5; // Default rating set to 5
+  about: string = 'There is no data yet.'; // Default message for About Me
+  trips: any[] = []; // Initialize as empty array
+  clients: any[] = []; // Initialize as empty array
+  clientReviews: any[] = []; // Initialize as empty array
+  showUploadText: boolean = false;
+  profile: { image: string } = { image: '' }; // Add profile property
 
   constructor(
     private router: Router,
@@ -30,24 +37,49 @@ export class CompanyDashboardComponent implements OnInit {
 
   // Fetch all data from the backend
   fetchData(): void {
-    this.apiService.getProfile().subscribe((data) => {
-      this.profile = data;
+    this.apiService.getName().subscribe((data) => {
+      this.name = data.name || 'No Name Provided';
+    });
+
+    this.apiService.getEmail().subscribe((data) => {
+      this.email = data.email || 'No Email Provided';
+    });
+
+    this.apiService.getCountry().subscribe((data) => {
+      this.country = data.country || 'No Country Provided';
+    });
+
+    this.apiService.getPhoneNumber().subscribe((data) => {
+      this.phone = data.phone || 'No Phone Number Provided';
+    });
+
+    this.apiService.getPassword().subscribe((data) => {
+      this.password = data.password || '********';
+    });
+
+    this.apiService.getTourismTypes().subscribe((data) => {
+      this.tourismTypes = data;
+    });
+
+    // Fetch rating, but if the backend returns null/undefined, keep the default value of 5
+    this.apiService.getRating().subscribe((data) => {
+      this.rating = data.rating !== null && data.rating !== undefined ? data.rating : 5;
     });
 
     this.apiService.getAbout().subscribe((data) => {
-      this.about = data.about;
+      this.about = data.about || 'No information provided yet.';
     });
 
     this.apiService.getTrips().subscribe((data) => {
-      this.trips = data;
+      this.trips = data; // Assign data directly (empty array if no data)
     });
 
     this.apiService.getClients().subscribe((data) => {
-      this.clients = data;
+      this.clients = data; // Assign data directly (empty array if no data)
     });
 
     this.apiService.getClientReviews().subscribe((data) => {
-      this.clientReviews = data;
+      this.clientReviews = data; // Assign data directly (empty array if no data)
     });
   }
 

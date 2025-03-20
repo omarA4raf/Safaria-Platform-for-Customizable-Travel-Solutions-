@@ -54,12 +54,12 @@
 
         <!-- User Info (3/4 of the width) -->
         <div class="col-md-8 pt-5">
-            <p><strong>Name:</strong> {{ profile.name }}</p>
-            <p><strong>Email:</strong> {{ profile.email }}</p>
-            <p><strong>Country:</strong> {{ profile.country }}</p>
-            <p><strong>Phone Number:</strong> {{ profile.phone }}</p>
-            <p><strong>Business Licence:</strong> {{ profile.businessLicence }}</p>
+            <p><strong>Name:</strong> {{ name }}</p>
+            <p><strong>Email:</strong> {{ email }}</p>
+            <p><strong>Country:</strong> {{ country }}</p>
+            <p><strong>Phone Number:</strong> {{ phone }}</p>
             <p><strong>Password:</strong> ***********</p>
+            <p><strong>Tourism Types:</strong> {{ tourismTypes }}</p>
             <p><strong>Rating: </strong>
                 <span id="rating-value" class="text-dark">{{ rating }} </span>
                 <span id="rating-stars" class="text-warning" [innerHTML]="renderStars(rating)"></span>
@@ -90,11 +90,11 @@
     </h5>
 
     <div class="list-container">
-        <div class="list-list d-flex flex-nowrap overflow-auto">
+        <div *ngIf="trips.length > 0; else noTrips" class="list-list d-flex flex-nowrap overflow-auto">
             <div class="list-card position-relative overflow-hidden rounded-3" *ngFor="let trip of trips"
                 style="flex: 0 0 auto; width: 18rem;">
                 <!-- Background Image -->
-                <img [src]="trip.image" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ trip.title }}" />
+                <img [src]="trip.image || '/assets/img/default-trip.jpg'" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ trip.title }}" />
 
                 <!-- Dark Transparent Overlay -->
                 <div class="overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
@@ -102,14 +102,17 @@
                 <!-- Trip Info (Displayed on Image) -->
                 <div class="list-info position-absolute bottom-0 start-0 p-3 text-white w-100">
                     <h6 class="fw-bold mb-1">{{ trip.title }}</h6>
-                    <p class="text-white-50 mb-1 company-title">{{ trip.company }}</p>
+                    <p class="text-white-50 mb-1 company-title">{{ trip.company || 'No company provided' }}</p>
                     <div class="d-flex align-items-center">
-                        <span id="rating-value" class="text-white me-2">{{ trip.rating }}</span>
-                        <span id="rating-stars" class="text-warning" [innerHTML]="renderStars(trip.rating)"></span>
+                        <span id="rating-value" class="text-white me-2">{{ trip.rating || 0 }}</span>
+                        <span id="rating-stars" class="text-warning" [innerHTML]="renderStars(trip.rating || 0)"></span>
                     </div>
                 </div>
             </div>
         </div>
+        <ng-template #noTrips>
+            <p class="text-secondary">There are no trips yet.</p>
+        </ng-template>
     </div>
 </div>
 
@@ -120,11 +123,11 @@
     </h5>
 
     <div class="list-container">
-        <div class="list-list d-flex flex-nowrap overflow-auto">
+        <div *ngIf="clients.length > 0; else noClients" class="list-list d-flex flex-nowrap overflow-auto">
             <div class="list-card position-relative overflow-hidden rounded-3" *ngFor="let client of clients"
                 style="flex: 0 0 auto; width: 18rem;">
                 <!-- Background Image -->
-                <img [src]="client.image" class="card-img-top w-100 h-100 object-fit-cover"
+                <img [src]="client.image || '/assets/img/default-client.jpg'" class="card-img-top w-100 h-100 object-fit-cover"
                     alt="{{ client.clientName }}" />
 
                 <!-- Dark Transparent Overlay -->
@@ -133,13 +136,13 @@
                 <!-- list Info (Displayed on Image) -->
                 <div class="list-info position-absolute bottom-0 start-0 p-3 text-white w-100">
                     <h6 class="fw-bold mb-1">{{ client.clientName }}</h6>
-                    <p class="text-white-50 mb-1 company-title">{{ client.Address }}</p>
+                    <p class="text-white-50 mb-1 company-title">{{ client.Address || 'No address provided' }}</p>
                     <div class="d-flex align-items-center justify-content-between">
                         <!-- Rating Section -->
                         <div class="d-flex align-items-center">
-                            <span id="rating-value" class="text-white me-2">{{ client.rating }}</span>
+                            <span id="rating-value" class="text-white me-2">{{ client.rating || 0 }}</span>
                             <span id="rating-stars" class="text-warning"
-                                [innerHTML]="renderStars(client.rating)"></span>
+                                [innerHTML]="renderStars(client.rating || 0)"></span>
                         </div>
 
                         <!-- Message Icon -->
@@ -150,6 +153,9 @@
                 </div>
             </div>
         </div>
+        <ng-template #noClients>
+            <p class="text-secondary">There are no clients yet.</p>
+        </ng-template>
     </div>
 </div>
 
@@ -159,26 +165,31 @@
         My Reviews:
     </h5>
     <div class="client-reviews-list d-flex flex-nowrap overflow-auto">
-        <!-- Client Review Card -->
-        <div class="client-review-card" *ngFor="let review of clientReviews">
-            <!-- Rectangle Card -->
-            <div class="card-body">
-                <!-- Client Image and Name -->
-                <div class="d-flex align-items-center mb-3">
-                    <img [src]="review.image" class="client-image rounded-circle" alt="{{ review.name }}" />
-                    <h6 class="client-name ms-3">{{ review.name }}</h6>
-                </div>
+        <div *ngIf="clientReviews.length > 0; else noReviews">
+            <!-- Client Review Card -->
+            <div class="client-review-card" *ngFor="let review of clientReviews">
+                <!-- Rectangle Card -->
+                <div class="card-body">
+                    <!-- Client Image and Name -->
+                    <div class="d-flex align-items-center mb-3">
+                        <img [src]="review.image || '/assets/img/default-reviewer.jpg'" class="client-image rounded-circle" alt="{{ review.name }}" />
+                        <h6 class="client-name ms-3">{{ review.name || 'Anonymous' }}</h6>
+                    </div>
 
-                <!-- Review Rating -->
-                <div class="rating mb-3">
-                    <span id="rating-value" class="text-black me-2">{{ review.rating }}</span>
-                    <span class="text-warning" [innerHTML]="renderStars(review.rating)"></span>
-                </div>
+                    <!-- Review Rating -->
+                    <div class="rating mb-3">
+                        <span id="rating-value" class="text-black me-2">{{ review.rating || 0 }}</span>
+                        <span class="text-warning" [innerHTML]="renderStars(review.rating || 0)"></span>
+                    </div>
 
-                <!-- Text Review -->
-                <p class="review-text">{{ review.review }}</p>
+                    <!-- Text Review -->
+                    <p class="review-text">{{ review.review || 'No review provided' }}</p>
+                </div>
             </div>
         </div>
+        <ng-template #noReviews>
+            <p class="text-secondary">There are no reviews yet.</p>
+        </ng-template>
     </div>
 </div>
 

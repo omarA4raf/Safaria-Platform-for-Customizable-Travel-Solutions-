@@ -83,20 +83,36 @@
 </div>
 
 <!-- prepackage tours ready -->
-<div class="trip-container">
-    <h3 class="section-title">Ready tours all over the world</h3>
-    <div class="trip-list">
-        <div class="trip-card" *ngFor="let trip of trips">
-            <div class="trip-image" [style.backgroundImage]="'url(' + trip.image + ')'">
-                <div class="overlay">
-                    <h4 class="trip-title">{{ trip.title }}</h4>
-                    <p class="trip-company">{{ trip.company }}</p>
-                    <div class="trip-rating">
-                        <i class="fas fa-star"></i> {{ trip.rating }}
+<div class="container m-5">
+    <h5 class="fw-bold mb-3">
+        Most popular prepackage tours
+    </h5>
+
+    <div class="list-container">
+        <div *ngIf="trips.length > 0; else noTrips" class="list-list d-flex flex-nowrap overflow-auto">
+            <div class="list-card position-relative overflow-hidden rounded-3" *ngFor="let trip of trips"
+                style="flex: 0 0 auto; width: 18rem;">
+                <!-- Background Image -->
+                <img [src]="trip.image || '/assets/img/default-trip.jpg'"
+                    class="card-img-top w-100 h-100 object-fit-cover" alt="{{ trip.title }}" />
+
+                <!-- Dark Transparent Overlay -->
+                <div class="overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
+
+                <!-- Trip Info (Displayed on Image) -->
+                <div class="list-info position-absolute bottom-0 start-0 p-3 text-white w-100">
+                    <h6 class="fw-bold mb-1">{{ trip.title }}</h6>
+                    <p class="text-white-50 mb-1 company-title">{{ trip.company || 'No company provided' }}</p>
+                    <div class="d-flex align-items-center">
+                        <span id="rating-value" class="text-white me-2">{{ trip.rating || 0 }}</span>
+                        <span id="rating-stars" class="text-warning" [innerHTML]="renderStars(trip.rating || 0)"></span>
                     </div>
                 </div>
             </div>
         </div>
+        <ng-template #noTrips>
+            <p class="text-secondary">There are no trips yet.</p>
+        </ng-template>
     </div>
 </div>
 

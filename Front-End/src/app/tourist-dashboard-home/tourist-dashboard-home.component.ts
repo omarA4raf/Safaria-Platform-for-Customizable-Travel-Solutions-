@@ -1,32 +1,47 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ApiService } from './tourist-dashboard-home.service'; // Import the ApiService
 
 @Component({
   selector: 'app-tourist-dashboard-home',
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './tourist-dashboard-home.component.html',
-  styleUrl: './tourist-dashboard-home.component.css'
+  styleUrls: ['./tourist-dashboard-home.component.css'],
 })
-export class TouristDashboardHomeComponent {
 
-  trips = [
-    {
-      title: '5 days in Cairo',
-      company: 'WanderSphere Adventures',
-      rating: 4.8,
-      image: '/assets/images/cairo.jpeg'
-    },
-    {
-      title: '10 days in Paris',
-      company: 'WanderSphere Adventures',
-      rating: 4.8,
-      image: '/assets/images/paris.jpeg'
-    },
-    {
-      title: 'Let\'s make Omra with us',
-      company: 'WanderSphere Adventures',
-      rating: 4.8,
-      image: '/assets/images/kabaah.jpeg'
+export class TouristDashboardHomeComponent {
+  constructor(private apiService: ApiService) {} // Inject the ApiService
+  trips: any[] = []; // Initialize as empty array
+
+  ngOnInit(): void {
+    this.fetchData();
+  }
+
+  // Fetch all data from the backend
+  fetchData(): void {
+    this.apiService.getTrips().subscribe((data) => {
+      this.trips = data; // Assign data directly (empty array if no data)
+    });
+  }
+
+  // Method to generate star HTML for a given rating
+  renderStars(rating: number): string {
+    let fullStars = Math.floor(rating);
+    let halfStar = rating % 1 !== 0;
+    let emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+    let starsHtml = '';
+    for (let i = 0; i < fullStars; i++) {
+      starsHtml += '<i class="bi bi-star-fill text-warning"></i> ';
     }
-  ];
+    if (halfStar) {
+      starsHtml += '<i class="bi bi-star-half text-warning"></i> ';
+    }
+    for (let i = 0; i < emptyStars; i++) {
+      starsHtml += '<i class="bi bi-star text-secondary"></i> ';
+    }
+    return starsHtml;
+  }
 }

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -8,30 +7,60 @@ import { Observable } from 'rxjs';
 })
 export class CompanyDashboardService {
   private apiUrl = 'https://your-backend-api.com'; // Replace with your backend API URL
-  
-  constructor(@Inject(HttpClient) private http: HttpClient) {}
-  
-  // Fetch profile data
-  getProfile(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/profile`);
+
+  constructor(private http: HttpClient) {}
+
+  // Fetch Name
+  getName(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/name`);
   }
 
-  // Fetch about CV data
+  // Fetch Email
+  getEmail(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/email`);
+  }
+
+  // Fetch Country
+  getCountry(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/country`);
+  }
+
+  // Fetch Phone Number
+  getPhoneNumber(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/phone`);
+  }
+
+  // Fetch Password
+  getPassword(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/password`);
+  }
+
+  // Fetch Tourism types
+  getTourismTypes(): Observable<any> {
+    return this.http.get('/api/tourismTypes');
+  }
+
+  // Fetch Rating
+  getRating(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/rating`);
+  }
+
+  // Fetch About Me (optional)
   getAbout(): Observable<any> {
     return this.http.get(`${this.apiUrl}/about`);
   }
 
-  // Fetch trips data
+  // Fetch Trips (optional)
   getTrips(): Observable<any> {
     return this.http.get(`${this.apiUrl}/trips`);
   }
 
-  // Fetch clients data
+  // Fetch Clients (optional)
   getClients(): Observable<any> {
     return this.http.get(`${this.apiUrl}/clients`);
   }
 
-  // Fetch client reviews data
+  // Fetch Client Reviews (optional)
   getClientReviews(): Observable<any> {
     return this.http.get(`${this.apiUrl}/client-reviews`);
   }

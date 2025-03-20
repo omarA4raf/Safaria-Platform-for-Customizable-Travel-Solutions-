@@ -18,7 +18,9 @@ export class CompanyCreateTripComponent implements OnInit {
   isLoading: boolean = false;
 
   // Array to hold uploaded images
-  images: { url: string | null; file: File | null }[] = [{ url: null, file: null }];
+  images: { url: string | null; file: File | null }[] = [
+    { url: null, file: null },
+  ];
 
   // Object to hold trip details
   trip = {
@@ -29,13 +31,21 @@ export class CompanyCreateTripComponent implements OnInit {
     availableDates: [{ startDate: null, endDate: null, trips: 1 }],
     description: '',
     availableSeats: null as number | null,
+    freeCancellationDeadline: null as number | null, // New field for free cancellation deadline
   };
 
   // List of countries
   countries: string[] = [];
 
   // List of tourism types
-  tourismTypes: string[] = ['cultural', 'adventure', 'beach', 'historical', 'wildlife', 'religious'];
+  tourismTypes: string[] = [
+    'cultural',
+    'adventure',
+    'beach',
+    'historical',
+    'wildlife',
+    'religious',
+  ];
 
   // Error messages
   errorMessages: { [key: string]: string } = {
@@ -47,6 +57,7 @@ export class CompanyCreateTripComponent implements OnInit {
     description: '',
     availableDates: '',
     images: '',
+    freeCancellationDeadline: '', // New error message for free cancellation deadline
   };
 
   ngOnInit(): void {
@@ -137,7 +148,9 @@ export class CompanyCreateTripComponent implements OnInit {
 
   // Trigger file input when the user clicks on an image box
   triggerFileInput(index: number): void {
-    const fileInput = document.getElementById('fileInput' + index) as HTMLInputElement;
+    const fileInput = document.getElementById(
+      'fileInput' + index
+    ) as HTMLInputElement;
     fileInput.click();
   }
 
@@ -183,6 +196,7 @@ export class CompanyCreateTripComponent implements OnInit {
       description: '',
       availableDates: '',
       images: '',
+      freeCancellationDeadline: '', // New error message for free cancellation deadline
     };
 
     // Validate title
@@ -193,13 +207,15 @@ export class CompanyCreateTripComponent implements OnInit {
 
     // Validate destination country
     if (!this.trip.destinationCountry) {
-      this.errorMessages['destinationCountry'] = 'Destination country is required.';
+      this.errorMessages['destinationCountry'] =
+        'Destination country is required.';
       isValid = false;
     }
 
     // Validate tourism types
     if (this.trip.tourismTypes.length === 0) {
-      this.errorMessages['tourismTypes'] = 'At least one tourism type is required.';
+      this.errorMessages['tourismTypes'] =
+        'At least one tourism type is required.';
       isValid = false;
     }
 
@@ -211,8 +227,25 @@ export class CompanyCreateTripComponent implements OnInit {
 
     // Validate available seats
     if (!this.trip.availableSeats || this.trip.availableSeats <= 0) {
-      this.errorMessages['availableSeats'] = 'Available seats must be a positive number.';
+      this.errorMessages['availableSeats'] =
+        'Available seats must be a positive number.';
       isValid = false;
+    }
+
+    // Validate available dates
+    if (this.trip.availableDates.length === 0) {
+      this.errorMessages['availableDates'] =
+        'At least one date range is required.';
+      isValid = false;
+    } else {
+      for (let dateRange of this.trip.availableDates) {
+        if (!dateRange.startDate || !dateRange.endDate) {
+          this.errorMessages['availableDates'] =
+            'Start and end dates are required for all date ranges.';
+          isValid = false;
+          break;
+        }
+      }
     }
 
     // Validate description
@@ -221,18 +254,14 @@ export class CompanyCreateTripComponent implements OnInit {
       isValid = false;
     }
 
-    // Validate available dates
-    if (this.trip.availableDates.length === 0) {
-      this.errorMessages['availableDates'] = 'At least one date range is required.';
+    // Validate free cancellation deadline
+    if (
+      !this.trip.freeCancellationDeadline ||
+      this.trip.freeCancellationDeadline <= 0
+    ) {
+      this.errorMessages['freeCancellationDeadline'] =
+        'Free cancellation deadline must be a positive number.';
       isValid = false;
-    } else {
-      for (let dateRange of this.trip.availableDates) {
-        if (!dateRange.startDate || !dateRange.endDate) {
-          this.errorMessages['availableDates'] = 'Start and end dates are required for all date ranges.';
-          isValid = false;
-          break;
-        }
-      }
     }
 
     // Validate images
@@ -267,11 +296,21 @@ export class CompanyCreateTripComponent implements OnInit {
     }
     formData.append('description', this.trip.description);
     formData.append('availableDates', JSON.stringify(this.trip.availableDates));
+    if (this.trip.freeCancellationDeadline !== null) {
+      formData.append(
+        'freeCancellationDeadline',
+        this.trip.freeCancellationDeadline.toString()
+      );
+    }
 
     // Append images
     this.images.forEach((image, index) => {
       if (image.file) {
-        formData.append('images', image.file, `image_${index}.${image.file.type.split('/')[1]}`);
+        formData.append(
+          'images',
+          image.file,
+          `image_${index}.${image.file.type.split('/')[1]}`
+        );
       }
     });
 

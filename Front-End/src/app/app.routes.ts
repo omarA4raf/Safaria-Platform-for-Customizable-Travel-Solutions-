@@ -10,8 +10,9 @@ import { TourguideDashboardComponent } from './tourguide-dashboard/tourguide-das
 import { TouristDashboardHomeComponent } from './tourist-dashboard-home/tourist-dashboard-home.component';
 import { CompanyCreateTripComponent } from './company-create-trip/company-create-trip.component';
 import { TourguideCreateTripComponent } from './tourguide-create-trip/tourguide-create-trip.component';
-
-
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { AdminDashboardTourguideRequestComponent } from './admin-dashboard-tourguide-request/admin-dashboard-tourguide-request.component';
+import { AdminDashboardCompanyRequestComponent } from './admin-dashboard-company-request/admin-dashboard-company-request.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent }, // Default route
@@ -24,6 +25,14 @@ export const routes: Routes = [
   { path: 'tourguidesdashboard', component: TourguideDashboardComponent }, // tourguide dashboard route
   { path: 'touristdashboardhome', component: TouristDashboardHomeComponent }, // tourist dashboard home route
   { path: 'companycreatetrip', component: CompanyCreateTripComponent }, // company create trip route
-  { path: 'tourguidecreatetrip', component: TourguideCreateTripComponent } // tourguide create trip route
-
+  { path: 'tourguidecreatetrip', component: TourguideCreateTripComponent }, // tourguide create trip route
+  { path: 'admindashboard', component: AdminDashboardComponent }, // admin dashboard route
+  {
+    path: 'admindashboardcompanyrequest',
+    component: AdminDashboardCompanyRequestComponent,
+  }, // admin dashboard for company request route
+  {
+    path: 'admindashboardtourguiderequest',
+    component: AdminDashboardTourguideRequestComponent,
+  }, // admin dashboard for tour guide request route
 ];

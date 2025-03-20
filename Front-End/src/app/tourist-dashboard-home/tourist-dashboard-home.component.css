@@ -85,67 +85,41 @@ h2 {
 }
 
 /* Prepackage Tours Section Styles */
-.trip-container {
-  padding: 20px;
-}
-
-.section-title {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  color: #174750; /* Dark blue text */
-}
-
-.trip-list {
-  display: flex;
-  gap: 15px;
-  overflow-x: auto;
-  white-space: nowrap;
+/* lists list */
+.list-container {
+  overflow-x: auto; /* Enables horizontal scrolling */
+  white-space: nowrap; /* Prevents wrapping */
   padding-bottom: 10px;
-  scrollbar-width: none; /* Hide scrollbar */
 }
 
-.trip-list::-webkit-scrollbar {
-  display: none; /* Hide scrollbar for WebKit browsers */
-}
-
-.trip-card {
-  flex: 0 0 auto;
-  width: 250px;
-  position: relative;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.trip-image {
-  width: 100%;
-  height: 160px;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-  border-radius: 10px;
-}
-
-.trip-title {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0;
-}
-
-.trip-company {
-  font-size: 12px;
-  margin: 2px 0;
-}
-
-.trip-rating {
-  font-size: 14px;
+.list-list {
   display: flex;
-  align-items: center;
+  gap: 15px; /* Spacing between cards */
 }
 
-.trip-rating i {
-  color: gold; /* Gold stars for ratings */
-  margin-right: 5px;
+.list-card {
+  min-width: 300px; /* Ensures consistent width */
+  height: 350px; /* Fixed height for uniformity */
+  flex-shrink: 0; /* Prevents shrinking */
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out;
+}
+
+.list-card:hover {
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.card-img-top {
+  object-fit: cover;
+}
+
+.list-info {
+  z-index: 2; /* Ensures the text is above the overlay */
+}
+
+.overlay {
+  z-index: 1; /* Ensures overlay is between image and text */
 }
 
 /* Footer Styles */

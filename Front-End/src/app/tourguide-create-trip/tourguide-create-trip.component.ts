@@ -32,6 +32,7 @@ export class TourguideCreateTripComponent {
     availableDates: [{ startDate: null, endDate: null, trips: 1 }],
     description: '',
     availableSeats: null as number | null,
+    freeCancellationDeadline: null as number | null, // New field for free cancellation deadline
   };
 
   // List of countries
@@ -57,6 +58,7 @@ export class TourguideCreateTripComponent {
     description: '',
     availableDates: '',
     images: '',
+    freeCancellationDeadline: '', // New error message for free cancellation deadline
   };
 
   ngOnInit(): void {
@@ -195,6 +197,7 @@ export class TourguideCreateTripComponent {
       description: '',
       availableDates: '',
       images: '',
+      freeCancellationDeadline: '', // New error message for free cancellation deadline
     };
 
     // Validate title
@@ -233,6 +236,16 @@ export class TourguideCreateTripComponent {
     // Validate description
     if (!this.trip.description) {
       this.errorMessages['description'] = 'Description is required.';
+      isValid = false;
+    }
+
+    // Validate free cancellation deadline
+    if (
+      !this.trip.freeCancellationDeadline ||
+      this.trip.freeCancellationDeadline <= 0
+    ) {
+      this.errorMessages['freeCancellationDeadline'] =
+        'Free cancellation deadline must be a positive number.';
       isValid = false;
     }
 
@@ -284,6 +297,12 @@ export class TourguideCreateTripComponent {
     }
     formData.append('description', this.trip.description);
     formData.append('availableDates', JSON.stringify(this.trip.availableDates));
+    if (this.trip.freeCancellationDeadline !== null) {
+      formData.append(
+        'freeCancellationDeadline',
+        this.trip.freeCancellationDeadline.toString()
+      );
+    }
 
     // Append images
     this.images.forEach((image, index) => {
