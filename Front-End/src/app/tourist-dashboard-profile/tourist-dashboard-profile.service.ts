@@ -5,7 +5,8 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class CompanyDashboardService {
+
+export class TouristDashboardProfileService {
   private apiUrl = 'https://your-backend-api.com'; // Replace with your backend API URL
 
   constructor(private http: HttpClient) {}
@@ -59,35 +60,35 @@ export class CompanyDashboardService {
     return this.http.post(`${this.apiUrl}/rating`, formData);
   }
 
-  // Fetch About Me (optional)
+  // Fetch About Me
   getAbout(): Observable<any> {
     const formData = new FormData();
     formData.append('key', 'value'); // Add any necessary data to the FormData object
     return this.http.post(`${this.apiUrl}/about`, formData);
   }
 
-  // Fetch Trips (optional)
+  // Fetch Trips
   getTrips(): Observable<any> {
     const formData = new FormData();
     formData.append('key', 'value'); // Add any necessary data to the FormData object
     return this.http.post(`${this.apiUrl}/trips`, formData);
   }
 
-  // Fetch Clients (optional)
+  // Fetch Clients
   getClients(): Observable<any> {
     const formData = new FormData();
     formData.append('key', 'value'); // Add any necessary data to the FormData object
     return this.http.post(`${this.apiUrl}/clients`, formData);
   }
 
-  // Fetch Client Reviews (optional)
+  // Fetch Client Reviews
   getClientReviews(): Observable<any> {
     const formData = new FormData();
     formData.append('key', 'value'); // Add any necessary data to the FormData object
     return this.http.post(`${this.apiUrl}/client-reviews`, formData);
   }
 
-  // Add this method to the CompanyDashboardService
+  // Upload Profile Image
   uploadProfileImage(formData: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/upload-profile-image`, formData);
   }

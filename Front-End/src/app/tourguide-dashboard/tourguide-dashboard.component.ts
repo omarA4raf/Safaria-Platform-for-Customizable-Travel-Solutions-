@@ -12,7 +12,6 @@ import { TourguideDashboardService } from './tourguide-dashboard.service';
   templateUrl: './tourguide-dashboard.component.html',
   styleUrls: ['./tourguide-dashboard.component.css'],
 })
-
 export class TourguideDashboardComponent implements OnInit {
   // Properties to hold data
   name: string = '';
@@ -131,11 +130,12 @@ export class TourguideDashboardComponent implements OnInit {
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.profile.image = e.target.result; // Update the profile image
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      this.apiService.uploadProfileImage(formData).subscribe((response) => {
+        this.profile.image = response.imageUrl; // Update the profile image URL
+      });
     }
   }
 }

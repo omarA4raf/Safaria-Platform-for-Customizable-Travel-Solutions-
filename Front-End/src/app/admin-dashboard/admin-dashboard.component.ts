@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Import CommonModule
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
+import { AdminDashboardService } from './admin-dashboard.service';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms'; // Import FormsModule
 
 interface User {
   id: number;
@@ -13,85 +15,44 @@ interface User {
 
 @Component({
   selector: 'app-admin-dashboard',
-  standalone: true, // Mark as standalone
-  imports: [CommonModule], // Import CommonModule here
+  standalone: true,
+  imports: [CommonModule, HttpClientModule, FormsModule], // Add FormsModule here
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css'],
 })
-export class AdminDashboardComponent {
-  [x: string]: any;
-  private users: User[] = [
-    {
-      id: 1,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'John Doe',
-      email: 'abcd@email.com',
-      role: 1,
-    },
-    {
-      id: 2,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'Jane Smith',
-      email: 'abcd@email.com',
-      role: 2,
-    },
-    {
-      id: 3,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'Alice Johnson',
-      email: 'abcd@email.com',
-      role: 3,
-    },
-    {
-    id: 4,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'John Doe',
-      email: 'abcd@email.com',
-      role: 1,
-    },
-    {
-      id: 5,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'Jane Smith',
-      email: 'abcd@email.com',
-      role: 2,
-    },
-    {
-      id: 6,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'Alice Johnson',
-      email: 'abcd@email.com',
-      role: 3,
-    },
-    {
-      id: 6,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'Alice Johnson',
-      email: 'abcd@email.com',
-      role: 3,
-    },
-    {
-      id: 6,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'Alice Johnson',
-      email: 'abcd@email.com',
-      role: 3,
-    },
-    {
-      id: 6,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'Alice Johnson',
-      email: 'abcd@email.com',
-      role: 3,
-    }
-  ];
+export class AdminDashboardComponent implements OnInit {
+  users: User[] = [];
+  newUser: User = {
+    id: 0,
+    profilePicture: '/assets/img/client 2.jpeg',
+    name: '',
+    email: '',
+    role: 1,
+  };
 
-  getUsers(): User[] {
-    return this.users;
+  constructor(private adminService: AdminDashboardService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.fetchUsers();
+  }
+
+  fetchUsers(): void {
+    this.adminService.getUsers().subscribe((users) => {
+      this.users = users;
+    });
   }
 
   deleteUser(id: number): void {
-    this.users = this.users.filter((user) => user.id !== id);
+    this.adminService.deleteUser(id).subscribe(() => {
+      this.users = this.users.filter((user) => user.id !== id);
+    });
+  }
+
+  addUser(): void {
+    this.adminService.addUser(this.newUser).subscribe((user) => {
+      this.users.push(user);
+      this.newUser = { id: 0, profilePicture: '/assets/img/client 2.jpeg', name: '', email: '', role: 1 };
+    });
   }
 
   getRoleName(role: number): string {
@@ -106,10 +67,10 @@ export class AdminDashboardComponent {
         return 'Unknown';
     }
   }
-    // Method to handle logout
+
   logout(): void {
-    localStorage.clear(); // Clear localStorage
-    sessionStorage.clear(); // Clear sessionStorage
-    this['router'].navigate(['/']); // Navigate to the home page
+    localStorage.clear();
+    sessionStorage.clear();
+    this.router.navigate(['/']);
   }
 }
