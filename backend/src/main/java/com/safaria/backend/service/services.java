@@ -7,9 +7,11 @@ import com.safaria.backend.repository.AdminRepository;
 import com.safaria.backend.repository.TourProviderRepository;
 import com.safaria.backend.repository.TouristRepository;
 import com.safaria.backend.DTO.TouristSignUpDTO;
+import com.safaria.backend.DTO.UserInfoDTO;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
@@ -69,65 +71,66 @@ public class services implements Iservices {
 
 
     @Override
-    public Tourist touristlogin(String email, String password) {
-
-        email=URLDecoder.decode(email, StandardCharsets.UTF_8);
-        password=URLDecoder.decode(password, StandardCharsets.UTF_8);
-        try {
-            email=decryptAES(email);
-            password=decryptAES(password);
-        }catch (Exception e){System.out.println(e.getMessage());}
+    public ResponseEntity<UserInfoDTO> touristlogin(String email, String password) {
         Optional<Tourist> tourist = touristRepository.findByEmail(email);
-        System.out.println(tourist.isPresent());
+        
 
         if (tourist.isPresent()) {
                 if (passwordEncoder.matches(password, tourist.get().getPassword())) {
-                    return tourist.get();
+                    UserInfoDTO dto = new UserInfoDTO(tourist.get());
+                    dto.setType("Tourist");
+
+                    return ResponseEntity.status(200).body(dto);
                 } else {
-                    return null;
+                    return ResponseEntity.status(404).build();
                 }
 
         }
-        return null;
+        return ResponseEntity.status(404).build();
+    
     }
     @Override
-    public TourProvider tourProviderlogin(String email, String password) {
-        email=URLDecoder.decode(email, StandardCharsets.UTF_8);
-        password=URLDecoder.decode(password, StandardCharsets.UTF_8);
-        try {
-            email=decryptAES(email);
-            password=decryptAES(password);
-        }catch (Exception e){System.out.println(e.getMessage());}
+    public ResponseEntity<UserInfoDTO>  tourProviderlogin(String email, String password) {
+       
         Optional<TourProvider> tourProvider = tourProviderRepository.findByEmail(email);
+        
+
         if (tourProvider.isPresent()) {
-            if (passwordEncoder.matches(password, tourProvider.get().getPassword())) {
-                return tourProvider.get();
-            } else {
-                return null;
-            }
+                if (passwordEncoder.matches(password, tourProvider.get().getPassword())) {
+                    UserInfoDTO dto = new UserInfoDTO(tourProvider.get());
+                    if(tourProvider.get().getType())
+                      dto.setType("Tour Guide");
+                    else
+                      dto.setType("Company");
+
+
+                    return ResponseEntity.status(200).body(dto);
+                } else {
+                    return ResponseEntity.status(404).build();
+                }
 
         }
-        return null;
+        return ResponseEntity.status(404).build();
     }
-    @Override
-    public Admin adminlogin(String email, String password) {
-        email=URLDecoder.decode(email, StandardCharsets.UTF_8);
-        password=URLDecoder.decode(password, StandardCharsets.UTF_8);
-        try {
-            email=decryptAES(email);
-            password=decryptAES(password);
-        }catch (Exception e){System.out.println(e.getMessage());}
-        Optional<Admin> admin = adminRepository.findByEmail(email);
-        if (admin.isPresent()) {
-            if (passwordEncoder.matches(password, admin.get().getPassword())) {
-                return admin.get();
-            } else {
-                return null;
-            }
+    // @Override
+    // public Admin adminlogin(String email, String password) {
+    //     email=URLDecoder.decode(email, StandardCharsets.UTF_8);
+    //     password=URLDecoder.decode(password, StandardCharsets.UTF_8);
+    //     try {
+    //         email=decryptAES(email);
+    //         password=decryptAES(password);
+    //     }catch (Exception e){System.out.println(e.getMessage());}
+    //     Optional<Admin> admin = adminRepository.findByEmail(email);
+    //     if (admin.isPresent()) {
+    //         if (passwordEncoder.matches(password, admin.get().getPassword())) {
+    //             return admin.get();
+    //         } else {
+    //             return null;
+    //         }
 
-        }
-        return null;
-    }
+    //     }
+    //     return null;
+    // }
     @Override
 
     public ResponseEntity<String> saveTourist(TouristSignUpDTO tourist) {

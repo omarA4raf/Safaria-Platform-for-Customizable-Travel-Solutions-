@@ -1,8 +1,11 @@
 package com.safaria.backend.controller;
 
+import com.safaria.backend.DTO.UserInfoDTO;
+import com.safaria.backend.DTO.UserLoginDTO;
 import com.safaria.backend.entity.*;
 import com.safaria.backend.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URLDecoder;
@@ -11,7 +14,7 @@ import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/api")
 public class LoginController {
     @Autowired
     Iservices serv;
@@ -20,28 +23,20 @@ public class LoginController {
         return "Hello ,World! :) ";
     }
 
-    @GetMapping("/touristlogin/")
-    public Tourist touristlogin(@RequestParam String email, @RequestParam String password) {
-        return serv.touristlogin(email,password);
+    @GetMapping("/touristlogin")
+    public ResponseEntity<UserInfoDTO> touristlogin(@RequestBody UserLoginDTO dto) {
+        System.out.println("Ahmed");
+        return serv.touristlogin(dto.getEmail(),dto.getPassword());
     }
-    /*
-    * ------------------------------------------------------
-    *
-    * ------------------------------------------------------
-    *
-    * ------------------------------------------------------
-    *
-    *
-    *
-    *
-    * --------> this endpoint should be edited
-    * */
-    @GetMapping("/tourguidelogin/")
-    public TourProvider tourProviderlogin(@RequestParam String email, @RequestParam String password) {
-        return serv.tourProviderlogin(email, password);
+  
+    @GetMapping("/tourproviderlogin")
+    public ResponseEntity<UserInfoDTO> tourProviderlogin(@RequestBody UserLoginDTO dto) {
+        System.out.println("Ahmed");
+        return serv.tourProviderlogin(dto.getEmail(),dto.getPassword());
     }
-    @GetMapping("/adminlogin/")
-    public Admin adminlogin(@RequestParam String email, @RequestParam String password) {
-        return serv.adminlogin(email, password);
-    }
+    // @GetMapping("/adminlogin/")
+    // public ResponseEntity<UserInfoDTO> adminlogin(@RequestBody UserLoginDTO dto) {
+    //     return serv.adminlogin(dto.getEmail(),dto.getPassword());
+    // }
+   
 }
