@@ -24,7 +24,7 @@ public class TourController {
     }
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> createTour( @RequestPart("tourData")  TourRequestDTO tourdto, @RequestPart("images") List<MultipartFile> images) {
+    public ResponseEntity<Map<String, String>> createTour( @RequestPart("tourData")  TourRequestDTO tourdto, @RequestPart("images") List<MultipartFile> images) {
         System.out.println();
         System.out.println();
         System.out.println();
@@ -32,7 +32,7 @@ public class TourController {
         System.out.println("Received tourData: " + tourdto);
         System.out.println("Received images: " + images.size());
         String result = tourService.createTourWithSchedules(tourdto, images);
-        return ResponseEntity.ok(Map.of("message", result).toString()); // Return JSON response
+        return ResponseEntity.ok(Map.of("message", result)); // Return JSON response
     }
 
     @GetMapping("/all")
