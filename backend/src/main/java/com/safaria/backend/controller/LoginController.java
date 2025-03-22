@@ -4,13 +4,19 @@ import com.safaria.backend.DTO.UserInfoDTO;
 import com.safaria.backend.DTO.UserLoginDTO;
 import com.safaria.backend.entity.*;
 import com.safaria.backend.service.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
+import org.springframework.http.MediaType;
+
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -23,17 +29,24 @@ public class LoginController {
         return "Hello ,World! :) ";
     }
 
-    @GetMapping("/touristlogin")
-    public ResponseEntity<UserInfoDTO> touristlogin(@RequestBody UserLoginDTO dto) {
+    @GetMapping("/touristlogin/")
+    public ResponseEntity<UserInfoDTO> touristlogin(@RequestParam String email, @RequestParam String password) {
         System.out.println("Ahmed");
-        return serv.touristlogin(dto.getEmail(),dto.getPassword());
+        return serv.touristlogin(email,password);
     }
   
-    @GetMapping("/tourproviderlogin")
-    public ResponseEntity<UserInfoDTO> tourProviderlogin(@RequestBody UserLoginDTO dto) {
+    @GetMapping("/tourproviderlogin/")
+    public ResponseEntity<UserInfoDTO> tourProviderlogin(@RequestParam String email, @RequestParam String password) {
         System.out.println("Ahmed");
-        return serv.tourProviderlogin(dto.getEmail(),dto.getPassword());
+        return serv.tourProviderlogin(email,password);
     }
+    // @GetMapping("/getImage")
+    // public ResponseEntity<byte[]> getImage() throws IOException {
+    //     byte[] image = Files.readAllBytes(Paths.get());
+    //     return ResponseEntity.ok()
+    //             .contentType(MediaType.IMAGE_JPEG)
+    //             .body(image);
+    // }
     // @GetMapping("/adminlogin/")
     // public ResponseEntity<UserInfoDTO> adminlogin(@RequestBody UserLoginDTO dto) {
     //     return serv.adminlogin(dto.getEmail(),dto.getPassword());

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class TourguideDashboardService {
-  private apiUrl = 'https://your-backend-api.com'; // Replace with your backend API URL
+  private apiUrl = 'https://localhost:8080/api'; // Replace with your backend API URL
 
   constructor(private http: HttpClient) {}
 

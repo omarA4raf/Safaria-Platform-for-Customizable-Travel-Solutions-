@@ -26,7 +26,7 @@ public class UserInfoDTO {
     private List<String> myReviews;
     private float rating;
     private String type;
-    private MultipartFile profileImage;
+    
 
 
 public UserInfoDTO(Tourist tourist) {
@@ -57,7 +57,7 @@ public UserInfoDTO(TourProvider tourProvider) {
     this.myTrips = new ArrayList<>();
     this.myClients = new ArrayList<>();
     this.myReviews = new ArrayList<>();
-    this.rating=-1;
+    this.rating=5;
 }}
 
    
