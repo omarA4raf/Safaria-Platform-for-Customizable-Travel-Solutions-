@@ -44,25 +44,27 @@ public class TourService {
 
     // ✅ Create Tour with Multiple Schedules
     @Transactional
-    public String createTourWithSchedules(TourRequestDTO dto) {
+    public String createTourWithSchedules(TourRequestDTO dto,List<MultipartFile> images) {
+        System.out.println("___________entered...................");
         Tour tour = new Tour();
         tour.setTitle(dto.getTitle());
         tour.setDescription(dto.getDescription());
         tour.setDestinationCountry(dto.getDestinationCountry());
-        tour.setCategory(Tour.Category.valueOf(dto.getCategory()));
+//        tour.setCategory(Tour.Category.valueOf(dto.getCategory()));
         tour.setCurrency(dto.getCurrency());
         tour.setTourismTypes(dto.getTourismTypes());
-        TourProvider tourProvider = tourProviderRepository.findById(dto.getTourProviderId())
+        // tttttttttttttttttttttttttttttttttttttttttttttttttthis for test only remove 2 and return the value
+        TourProvider tourProvider = tourProviderRepository.findById(2 /*dto.getTourProviderId()*/)
                 .orElseThrow(() -> new RuntimeException("Tour Provider not found"));
         tour.setTourProvider(tourProvider);
         // Save images to filesystem and create Image objects for the tour
-        List<Image> imageEntities = saveImagesAndCreateEntities(dto.getImages(), tour);
+        List<Image> imageEntities = saveImagesAndCreateEntities(images, tour);
         tour.setImages(imageEntities);
         Tour savedTour = tourRepository.save(tour);
 
         List<TourSchedule> schedules = dto.getSchedules().stream().map(scheduleDTO -> createSchedule(scheduleDTO, savedTour)).collect(Collectors.toList());
         tourScheduleRepository.saveAll(schedules);
-
+        System.out.println("so what is the issue?");
         return "tour is created successfully";
     }
     // Helper method to save images to the filesystem and create Image entities
@@ -116,8 +118,38 @@ public class TourService {
     }
 
     // ✅ Get All Tours
-    public List<Tour> getAllTours() {
-        return tourRepository.findAll();
+    public List<TourRequestDTO> getAllTours() {
+        List<Tour> tours = tourRepository.findAll();
+        List<TourRequestDTO> tourRequestDTOList = new ArrayList<>();
+        List<TourScheduleDTO> tourScheduleDTOs = new ArrayList<>();
+        for (Tour tour : tours) {
+            List<TourSchedule> tourSchedules = tourScheduleRepository.findByTour_TourId(tour.getTourId());
+            for(TourSchedule tourSchedule :tourSchedules){
+                TourScheduleDTO tourScheduleDTO = new TourScheduleDTO();
+                tourScheduleDTO.setPrice(tourSchedule.getPrice());
+                tourScheduleDTO.setStartDate(String.valueOf(tourSchedule.getStartDate()));
+                tourScheduleDTO.setEndDate(String.valueOf(tourSchedule.getEndDate()));
+                tourScheduleDTO.setAvailableSeats(tourSchedule.getAvailableSeats());
+                tourScheduleDTOs.add(tourScheduleDTO);
+            }
+
+            TourRequestDTO tourRequestDTO = new TourRequestDTO();
+            // Map fields from `Tour` to `TourRequestDTO`
+            // Set the fields from Tour object to TourRequestDTO
+            tourRequestDTO.setTitle(tour.getTitle());
+            tourRequestDTO.setDescription(tour.getDescription());
+            tourRequestDTO.setDestinationCountry(tour.getDestinationCountry());
+//            tourRequestDTO.setCategory(String.valueOf(tour.getCategory()));
+            tourRequestDTO.setTourProviderId(tour.getTourProvider().getUserId());
+            tourRequestDTO.setCurrency(tour.getCurrency());
+            tourRequestDTO.setTourismTypes(tour.getTourismTypes());
+            tourRequestDTO.setSchedules(tourScheduleDTOs);
+            tourRequestDTO.setDescription(tour.getDescription());
+            // Map more fields as needed...
+
+            tourRequestDTOList.add(tourRequestDTO); // Add the DTO to the list
+        }
+        return tourRequestDTOList;
     }
 
     // ✅ Get a Tour by ID (Including Its Schedules)
@@ -135,7 +167,7 @@ public class TourService {
         tour.setTitle(dto.getTitle());
         tour.setDescription(dto.getDescription());
         tour.setDestinationCountry(dto.getDestinationCountry());
-        tour.setCategory(Tour.Category.valueOf(dto.getCategory()));
+//        tour.setCategory(Tour.Category.valueOf(dto.getCategory()));
         tour.setCurrency(dto.getCurrency());
         tour.setTourismTypes(dto.getTourismTypes());
         TourProvider tourProvider = tourProviderRepository.findById(dto.getTourProviderId())

@@ -31,8 +31,8 @@ public class Tour {
     private String currency; // Currency code (e.g., USD, EUR)
 
     @Enumerated(EnumType.STRING) // Store enum as string in DB
-    @Column(name = "Category")
-    private Category category;
+//    @Column(name = "Category")
+//    private Category category;
 
     @ElementCollection // To store multiple tourism types
     @CollectionTable(name = "Tour_TourismTypes", joinColumns = @JoinColumn(name = "TourID"))
@@ -46,7 +46,7 @@ public class Tour {
 
     @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
-    public enum Category {
-        PRE_PACKAGED, CUSTOMIZED
-    }
+//    public enum Category {
+//        PRE_PACKAGED, CUSTOMIZED
+//    }
 }

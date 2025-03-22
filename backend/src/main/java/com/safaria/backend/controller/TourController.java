@@ -4,11 +4,15 @@ import com.safaria.backend.DTO.TourRequestDTO;
 import com.safaria.backend.DTO.TourScheduleDTO;
 import com.safaria.backend.entity.Tour;
 import com.safaria.backend.service.TourService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:4200") // Allow requests from Angular frontend
 @RestController
 @RequestMapping("/api/tours")
 public class TourController {
@@ -19,13 +23,20 @@ public class TourController {
         this.tourService = tourService;
     }
 
-    @PostMapping(value = "/create", consumes = "multipart/form-data")
-    public ResponseEntity<String> createTour( @ModelAttribute TourRequestDTO dto) {
-        return ResponseEntity.ok(tourService.createTourWithSchedules(dto));
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> createTour( @RequestPart("tourData")  TourRequestDTO tourdto, @RequestPart("images") List<MultipartFile> images) {
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println(tourdto);
+        System.out.println("Received tourData: " + tourdto);
+        System.out.println("Received images: " + images.size());
+        String result = tourService.createTourWithSchedules(tourdto, images);
+        return ResponseEntity.ok(Map.of("message", result).toString()); // Return JSON response
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Tour>> getAllTours() {
+    public ResponseEntity<List<TourRequestDTO>> getAllTours() {
         return ResponseEntity.ok(tourService.getAllTours());
     }
 
