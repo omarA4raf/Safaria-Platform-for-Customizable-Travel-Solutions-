@@ -1,17 +1,26 @@
 package com.safaria.backend.controller;
 
+import com.safaria.backend.DTO.UserInfoDTO;
+import com.safaria.backend.DTO.UserLoginDTO;
 import com.safaria.backend.entity.*;
 import com.safaria.backend.service.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
+import org.springframework.http.MediaType;
+
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/api")
 public class LoginController {
     @Autowired
     Iservices serv;
@@ -21,27 +30,26 @@ public class LoginController {
     }
 
     @GetMapping("/touristlogin/")
-    public Tourist touristlogin(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<UserInfoDTO> touristlogin(@RequestParam String email, @RequestParam String password) {
+        System.out.println("Ahmed");
         return serv.touristlogin(email,password);
     }
-    /*
-    * ------------------------------------------------------
-    *
-    * ------------------------------------------------------
-    *
-    * ------------------------------------------------------
-    *
-    *
-    *
-    *
-    * --------> this endpoint should be edited
-    * */
-    @GetMapping("/tourguidelogin/")
-    public TourProvider tourProviderlogin(@RequestParam String email, @RequestParam String password) {
-        return serv.tourProviderlogin(email, password);
+  
+    @GetMapping("/tourproviderlogin/")
+    public ResponseEntity<UserInfoDTO> tourProviderlogin(@RequestParam String email, @RequestParam String password) {
+        System.out.println("Ahmed");
+        return serv.tourProviderlogin(email,password);
     }
-    @GetMapping("/adminlogin/")
-    public Admin adminlogin(@RequestParam String email, @RequestParam String password) {
-        return serv.adminlogin(email, password);
-    }
+    // @GetMapping("/getImage")
+    // public ResponseEntity<byte[]> getImage() throws IOException {
+    //     byte[] image = Files.readAllBytes(Paths.get());
+    //     return ResponseEntity.ok()
+    //             .contentType(MediaType.IMAGE_JPEG)
+    //             .body(image);
+    // }
+    // @GetMapping("/adminlogin/")
+    // public ResponseEntity<UserInfoDTO> adminlogin(@RequestBody UserLoginDTO dto) {
+    //     return serv.adminlogin(dto.getEmail(),dto.getPassword());
+    // }
+   
 }

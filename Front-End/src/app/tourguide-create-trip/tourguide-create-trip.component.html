@@ -32,7 +32,6 @@
     </div>
 </nav>
 
-<!-- Page Content -->
 <div class="container my-5">
     <h2 class="mb-4">Create New Trip</h2>
     <form (ngSubmit)="onSubmit()">
@@ -57,7 +56,7 @@
                                 }}</small>
                         </div>
 
-                        <!-- Destination Country (New Field) -->
+                        <!-- Destination Country -->
                         <div class="mb-3 col-3">
                             <label for="destinationCountry" class="form-label">Destination Country</label>
                             <select class="form-control" id="destinationCountry" [(ngModel)]="trip.destinationCountry"
@@ -78,13 +77,18 @@
                                 }}</small>
                         </div>
 
-                        <!-- Available Seats -->
+                        <!-- Currency -->
                         <div class="mb-3 col-3">
-                            <label for="availableSeats" class="form-label">Available Seats</label>
-                            <input type="number" class="form-control" id="availableSeats"
-                                [(ngModel)]="trip.availableSeats" name="availableSeats" required />
-                            <small class="text-danger" *ngIf="errorMessages['availableSeats']">{{
-                                errorMessages['availableSeats'] }}</small>
+                            <label for="currency" class="form-label">Currency</label>
+                            <select class="form-control" id="currency" [(ngModel)]="trip.currency" name="currency"
+                                required>
+                                <option value="" disabled selected>Select currency</option>
+                                <option *ngFor="let currency of currencies" [value]="currency.code">
+                                    {{ currency.name }} ({{ currency.symbol }})
+                                </option>
+                            </select>
+                            <small class="text-danger" *ngIf="errorMessages['currency']">{{ errorMessages['currency']
+                                }}</small>
                         </div>
 
                         <!-- Free Cancellation Deadline -->
@@ -100,26 +104,26 @@
                                 errorMessages['freeCancellationDeadline'] }}</small>
                         </div>
 
-                        <!-- Tourism Type (New Field) -->
+                        <!-- Tourism Type -->
                         <div class="mb-3">
                             <label class="form-label ">Select Tourism Type:</label>
                             <div class="checkbox-container">
                                 <label class="checkbox-inline" *ngFor="let type of tourismTypes">
                                     <input type="checkbox" [value]="type" (change)="toggleTourismType(type, $event)" />
                                     <i class="fa" [ngClass]="{
-                        'fa-landmark': type === 'cultural',
-                        'fa-hiking': type === 'adventure',
-                        'fa-umbrella-beach': type === 'beach',
-                        'fa-monument': type === 'historical',
-                        'fa-paw': type === 'wildlife',
-                        'fa-praying-hands': type === 'religious'
-                    }"></i> {{ type | titlecase }}
+                          'fa-landmark': type === 'cultural',
+                          'fa-hiking': type === 'adventure',
+                          'fa-umbrella-beach': type === 'beach',
+                          'fa-monument': type === 'historical',
+                          'fa-paw': type === 'wildlife',
+                          'fa-praying-hands': type === 'religious'
+                      }"></i> {{ type | titlecase }}
                                 </label>
                             </div>
                             <small class="text-danger" *ngIf="errorMessages['tourismTypes']">{{
-                                errorMessages['tourismTypes'] }}</small>
+                                errorMessages['tourismTypes']
+                                }}</small>
                         </div>
-
 
                         <!-- Description -->
                         <div class="mb-3">
@@ -196,21 +200,41 @@
                             <div *ngFor="let dateRange of trip.availableDates; let i = index" class="mb-3">
                                 <div class="row">
                                     <!-- From Date -->
-                                    <div class="col-md-5">
+                                    <div class="col-3">
                                         <label for="startDate{{i}}" class="form-label">From</label>
                                         <input type="date" class="form-control" [(ngModel)]="dateRange.startDate"
                                             name="startDate{{i}}" required />
                                     </div>
                                     <!-- To Date -->
-                                    <div class="col-md-5">
+                                    <div class="col-3">
                                         <label for="endDate{{i}}" class="form-label">To</label>
                                         <input type="date" class="form-control" [(ngModel)]="dateRange.endDate"
                                             name="endDate{{i}}" required />
                                     </div>
+                                    <!-- Available Seats -->
+                                    <div class="col-3">
+                                        <label for="availableSeats{{i}}" class="form-label">Available Seats</label>
+                                        <input type="number" class="form-control" id="availableSeats{{i}}"
+                                            [(ngModel)]="dateRange.availableSeats" name="availableSeats{{i}}"
+                                            required />
+                                    </div>
+                                    <!-- Budget -->
+                                    <div class="col-2">
+                                        <label for="budget{{i}}" class="form-label">Budget</label>
+                                        <input type="number" class="form-control" id="budget{{i}}"
+                                            [(ngModel)]="dateRange.budget" name="budget{{i}}" required />
+                                    </div>
+                                    <!-- Delete Button -->
+                                    <div class="col-1 d-flex align-items-end">
+                                        <button type="button" class="btn btn-danger" (click)="removeDateRange(i)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <small class="text-danger" *ngIf="errorMessages['availableDates']">{{
-                                errorMessages['availableDates'] }}</small>
+                                errorMessages['availableDates']
+                                }}</small>
                             <!-- Add Date Range Button -->
                             <button type="button" class="btn btn-secondary" (click)="addDateRange()">Add Another Trip
                                 Date</button>
@@ -222,17 +246,24 @@
 
         <!-- Submit and Save as Draft Buttons -->
         <div class="mt-4">
-            <button type="submit" class="btn btn-warning w-100" [disabled]="isLoading">
-                <span *ngIf="!isLoading">
+            <button type="submit" class="btn btn-warning w-100" [disabled]="createIsLoading">
+                <span *ngIf="!createIsLoading">
                     <i class="fas fa-plus"></i> Create Trip
                 </span>
-                <span *ngIf="isLoading">
+                <span *ngIf="createIsLoading">
                     Creating Trip...
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                 </span>
             </button>
-            <button type="button" class="btn btn-secondary w-100 mt-2" (click)="saveDraft()">
-                Save as Draft
+            <button type="button" class="btn btn-secondary w-100 mt-2" (click)="saveDraft()"
+                [disabled]="SavingisLoading || !hasData()">
+                <span *ngIf="!SavingisLoading">
+                    <i class="fas fa-plus"></i> Save as draft
+                </span>
+                <span *ngIf="SavingisLoading">
+                    Saving Trip...
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                </span>
             </button>
         </div>
     </form>

@@ -12,7 +12,6 @@ import { TourguideDashboardService } from './tourguide-dashboard.service';
   templateUrl: './tourguide-dashboard.component.html',
   styleUrls: ['./tourguide-dashboard.component.css'],
 })
-
 export class TourguideDashboardComponent implements OnInit {
   // Properties to hold data
   name: string = '';
@@ -28,11 +27,13 @@ export class TourguideDashboardComponent implements OnInit {
   clientReviews: any[] = []; // Initialize as empty array
   showUploadText: boolean = false;
   profile: { image: string } = { image: '' }; // Add profile property
+  tourGuideData: any;
 
   constructor(
     private router: Router,
     private apiService: TourguideDashboardService
-  ) {}
+  ) {const navigation = this.router.getCurrentNavigation();
+    this.tourGuideData = navigation?.extras.state?.['tourGuideData'];}
 
   ngOnInit(): void {
     this.fetchData();
@@ -40,50 +41,62 @@ export class TourguideDashboardComponent implements OnInit {
 
   // Fetch all data from the backend
   fetchData(): void {
-    this.apiService.getName().subscribe((data) => {
-      this.name = data.name || 'No Name Provided';
-    });
 
-    this.apiService.getEmail().subscribe((data) => {
-      this.email = data.email || 'No Email Provided';
-    });
+    this.name = this.tourGuideData.name || 'No Name Provided';
+        this.email = this.tourGuideData.email || 'No Email Provided';
+        this.country = this.tourGuideData.country || 'No Country Provided';
+        this.phone = this.tourGuideData.phoneNumber || 'No Phone Number Provided';
+        this.password = this.tourGuideData.password || '********';
+        this.tourismTypes = this.tourGuideData.tourismTypes;
+        this.rating = this.tourGuideData.rating !== null && this.tourGuideData.rating !== undefined ? this.tourGuideData.rating : 5;
+        this.about = this.tourGuideData.aboutMe;
+        this.clientReviews = this.tourGuideData.myReviews;
+        this.clients = this.tourGuideData.myClients;
+        this.trips = this.tourGuideData.myTrips;
+    // this.apiService.getName().subscribe((data) => {
+    //   this.name = data.name || 'No Name Provided';
+    // });
 
-    this.apiService.getCountry().subscribe((data) => {
-      this.country = data.country || 'No Country Provided';
-    });
+    // this.apiService.getEmail().subscribe((data) => {
+    //   this.email = data.email || 'No Email Provided';
+    // });
 
-    this.apiService.getPhoneNumber().subscribe((data) => {
-      this.phone = data.phone || 'No Phone Number Provided';
-    });
+    // this.apiService.getCountry().subscribe((data) => {
+    //   this.country = data.country || 'No Country Provided';
+    // });
 
-    this.apiService.getPassword().subscribe((data) => {
-      this.password = data.password || '********';
-    });
+    // this.apiService.getPhoneNumber().subscribe((data) => {
+    //   this.phone = data.phone || 'No Phone Number Provided';
+    // });
 
-    this.apiService.getTourismTypes().subscribe((data) => {
-      this.tourismTypes = data;
-    });
+    // this.apiService.getPassword().subscribe((data) => {
+    //   this.password = data.password || '********';
+    // });
 
-    // Fetch rating, but if the backend returns null/undefined, keep the default value of 5
-    this.apiService.getRating().subscribe((data) => {
-      this.rating = data.rating !== null && data.rating !== undefined ? data.rating : 5;
-    });
+    // this.apiService.getTourismTypes().subscribe((data) => {
+    //   this.tourismTypes = data;
+    // });
 
-    this.apiService.getAbout().subscribe((data) => {
-      this.about = data.about || 'No information provided yet.';
-    });
+    // // Fetch rating, but if the backend returns null/undefined, keep the default value of 5
+    // this.apiService.getRating().subscribe((data) => {
+    //   this.rating = data.rating !== null && data.rating !== undefined ? data.rating : 5;
+    // });
 
-    this.apiService.getTrips().subscribe((data) => {
-      this.trips = data; // Assign data directly (empty array if no data)
-    });
+    // this.apiService.getAbout().subscribe((data) => {
+    //   this.about = data.about || 'No information provided yet.';
+    // });
 
-    this.apiService.getClients().subscribe((data) => {
-      this.clients = data; // Assign data directly (empty array if no data)
-    });
+    // this.apiService.getTrips().subscribe((data) => {
+    //   this.trips = data; // Assign data directly (empty array if no data)
+    // });
 
-    this.apiService.getClientReviews().subscribe((data) => {
-      this.clientReviews = data; // Assign data directly (empty array if no data)
-    });
+    // this.apiService.getClients().subscribe((data) => {
+    //   this.clients = data; // Assign data directly (empty array if no data)
+    // });
+
+    // this.apiService.getClientReviews().subscribe((data) => {
+    //   this.clientReviews = data; // Assign data directly (empty array if no data)
+    // });
   }
 
   // Method to handle logout
@@ -131,11 +144,12 @@ export class TourguideDashboardComponent implements OnInit {
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.profile.image = e.target.result; // Update the profile image
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      this.apiService.uploadProfileImage(formData).subscribe((responce) => {
+        this.profile.image = responce.imageUrl; // Update the profile image URL
+      });
     }
   }
 }

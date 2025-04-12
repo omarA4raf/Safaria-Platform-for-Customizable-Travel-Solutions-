@@ -1,15 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CompanyDashboardService } from './company-dashboard.service'; // Import the services
-import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { TouristDashboardProfileService } from './tourist-dashboard-profile.service';
+
 
 @Component({
-  imports: [CommonModule, HttpClientModule],
-  templateUrl: './company-dashboard.component.html',
-  styleUrls: ['./company-dashboard.component.css'],
+  selector: 'app-tourist-dashboard-profile',
+  standalone: true,
+  imports: [CommonModule, HttpClientModule, FormsModule],  
+  templateUrl: './tourist-dashboard-profile.component.html',
+  styleUrl: './tourist-dashboard-profile.component.css'
 })
-export class CompanyDashboardComponent implements OnInit {
+export class TouristDashboardProfileComponent implements OnInit {
   // Properties to hold data
   name: string = '';
   email: string = '';
@@ -27,7 +31,7 @@ export class CompanyDashboardComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private apiService: CompanyDashboardService
+    private apiService: TouristDashboardProfileService
   ) {}
 
   ngOnInit(): void {
@@ -91,7 +95,7 @@ export class CompanyDashboardComponent implements OnInit {
 
   // Method to handle navigation to create a new trip
   navigateToCreateTrip(): void {
-    this.router.navigate(['/companycreatetrip']);
+    this.router.navigate(['/tourguidecreatetrip']);
   }
 
   // Method to handle editing the profile

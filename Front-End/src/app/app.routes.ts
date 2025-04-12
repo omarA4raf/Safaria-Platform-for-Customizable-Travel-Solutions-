@@ -8,6 +8,7 @@ import { CompanySignUpComponent } from './company-sign-up/company-sign-up.compon
 import { CompanyDashboardComponent } from './company-dashboard/company-dashboard.component';
 import { TourguideDashboardComponent } from './tourguide-dashboard/tourguide-dashboard.component';
 import { TouristDashboardHomeComponent } from './tourist-dashboard-home/tourist-dashboard-home.component';
+import { TouristDashboardProfileComponent } from './tourist-dashboard-profile/tourist-dashboard-profile.component';
 import { CompanyCreateTripComponent } from './company-create-trip/company-create-trip.component';
 import { TourguideCreateTripComponent } from './tourguide-create-trip/tourguide-create-trip.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
@@ -24,6 +25,7 @@ export const routes: Routes = [
   { path: 'companydashboard', component: CompanyDashboardComponent }, // company dashboard route
   { path: 'tourguidesdashboard', component: TourguideDashboardComponent }, // tourguide dashboard route
   { path: 'touristdashboardhome', component: TouristDashboardHomeComponent }, // tourist dashboard home route
+  { path: 'touristdashboardprofile', component: TouristDashboardProfileComponent }, // tourist dashboard home route
   { path: 'companycreatetrip', component: CompanyCreateTripComponent }, // company create trip route
   { path: 'tourguidecreatetrip', component: TourguideCreateTripComponent }, // tourguide create trip route
   { path: 'admindashboard', component: AdminDashboardComponent }, // admin dashboard route

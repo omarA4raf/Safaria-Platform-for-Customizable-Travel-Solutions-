@@ -6,7 +6,7 @@ import * as CryptoJS from 'crypto-js';
 import { formatDate } from '@angular/common';
 const secretKey = CryptoJS.enc.Utf8.parse("dsvbsduf76A1xZ9g");
 const iv = CryptoJS.enc.Utf8.parse("1234567890123456");
-const baseUrl = 'http://localhost:8080/login';
+const baseUrl = 'http://localhost:8080/api';
 const httpOptions = {
 		  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 		};
@@ -32,15 +32,15 @@ export class LoginServices {
 
   login(email:string,password:string,role:any): Observable<any> {
     const params = new HttpParams()
-        .set('email', encodeURIComponent(this.encryptAES(email))) // Automatically encodes the parameter
-        .set('password', encodeURIComponent(this.encryptAES(password)));
+        .set('email',email ) // Automatically encodes the parameter
+        .set('password', password);
     if(role == 'Tourist'){
-        return this.http.get<any>(`${baseUrl}/touristlogin/`,{params});}
-    else if(role == 'Tour Guide'){
-        return this.http.get<any>(`${baseUrl}/tourguidelogin/`,{params});
+        return this.http.get<any>(`${baseUrl}/touristlogin/`,{params:params,responseType: 'json'});}
+    else if(role == 'Tour Guide'||role == 'Company'){
+        return this.http.get<any>(`${baseUrl}/tourproviderlogin/`,{params:params,responseType: 'json'});
     }
     else{
-        return this.http.get<any>(`${baseUrl}/adminlogin/`,{params});
+        return this.http.get<any>(`${baseUrl}/adminlogin/`,{params,responseType: 'json'});
     }
   }
 
