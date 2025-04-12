@@ -431,6 +431,7 @@ export class CompanyCreateTripComponent implements OnInit {
     // Set loading state to true
     this.createIsLoading = true;
 
+
 // Prepare form data
 const formData = new FormData();
 
@@ -516,23 +517,28 @@ this.http.post('http://localhost:8080/api/tours/create', formData).subscribe({
       images: this.images.filter((img) => img.file),
     });
 
+
     // Prepare form data
     const draftData = new FormData();
     draftData.append('title', this.trip.title);
     draftData.append('destinationCountry', this.trip.destinationCountry);
     draftData.append('tourismTypes', JSON.stringify(this.trip.tourismTypes));
     if (this.trip.duration !== null) {
+
       draftData.append('duration', this.trip.duration.toString());
     }
     draftData.append('description', this.trip.description);
     draftData.append('availableDates', JSON.stringify(this.trip.availableDates));
+
     if (this.trip.freeCancellationDeadline !== null) {
       draftData.append(
         'freeCancellationDeadline',
         this.trip.freeCancellationDeadline.toString()
       );
     }
+
     draftData.append('currency', this.trip.currency);
+
 
     // Append images
     this.images.forEach((image, index) => {
@@ -548,6 +554,7 @@ this.http.post('http://localhost:8080/api/tours/create', formData).subscribe({
     // Send data to backend
     this.http.post('http://localhost:8080/draftTrips', draftData).subscribe({
       next: (response) => {
+
         console.log('Trip is saved in draft successfully:', response);
         this.SavingisLoading = false; // Reset loading state
         this.router.navigate(['/companydashboard']);
@@ -558,6 +565,7 @@ this.http.post('http://localhost:8080/api/tours/create', formData).subscribe({
       },
     });
   }
+
 
   // Method to handle logout
   logout(): void {

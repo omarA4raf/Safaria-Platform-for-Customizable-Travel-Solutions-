@@ -12,56 +12,83 @@ export class CompanyDashboardService {
 
   // Fetch Name
   getName(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/name`);
+    const formData = new FormData();
+    formData.append('key', 'value'); // Add any necessary data to the FormData object
+    return this.http.post(`${this.apiUrl}/name`, formData);
   }
 
   // Fetch Email
   getEmail(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/email`);
+    const formData = new FormData();
+    formData.append('key', 'value'); // Add any necessary data to the FormData object
+    return this.http.post(`${this.apiUrl}/email`, formData);
   }
 
   // Fetch Country
   getCountry(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/country`);
+    const formData = new FormData();
+    formData.append('key', 'value'); // Add any necessary data to the FormData object
+    return this.http.post(`${this.apiUrl}/country`, formData);
   }
 
   // Fetch Phone Number
   getPhoneNumber(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/phone`);
+    const formData = new FormData();
+    formData.append('key', 'value'); // Add any necessary data to the FormData object
+    return this.http.post(`${this.apiUrl}/phone`, formData);
   }
 
   // Fetch Password
   getPassword(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/password`);
+    const formData = new FormData();
+    formData.append('key', 'value'); // Add any necessary data to the FormData object
+    return this.http.post(`${this.apiUrl}/password`, formData);
   }
 
   // Fetch Tourism types
   getTourismTypes(): Observable<any> {
-    return this.http.get('/api/tourismTypes');
+    const formData = new FormData();
+    formData.append('key', 'value'); // Add any necessary data to the FormData object
+    return this.http.post('/api/tourismTypes', formData);
   }
 
   // Fetch Rating
   getRating(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/rating`);
+    const formData = new FormData();
+    formData.append('key', 'value'); // Add any necessary data to the FormData object
+    return this.http.post(`${this.apiUrl}/rating`, formData);
   }
 
   // Fetch About Me (optional)
   getAbout(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/about`);
+    const formData = new FormData();
+    formData.append('key', 'value'); // Add any necessary data to the FormData object
+    return this.http.post(`${this.apiUrl}/about`, formData);
   }
 
   // Fetch Trips (optional)
   getTrips(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/trips`);
+    const formData = new FormData();
+    formData.append('key', 'value'); // Add any necessary data to the FormData object
+    return this.http.post(`${this.apiUrl}/trips`, formData);
   }
 
   // Fetch Clients (optional)
   getClients(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/clients`);
+    const formData = new FormData();
+    formData.append('key', 'value'); // Add any necessary data to the FormData object
+    return this.http.post(`${this.apiUrl}/clients`, formData);
   }
 
   // Fetch Client Reviews (optional)
   getClientReviews(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/client-reviews`);
+    const formData = new FormData();
+    formData.append('key', 'value'); // Add any necessary data to the FormData object
+    return this.http.post(`${this.apiUrl}/client-reviews`, formData);
+  }
+
+  // Add this method to the CompanyDashboardService
+  uploadProfileImage(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/upload-profile-image`, formData);
   }
 }

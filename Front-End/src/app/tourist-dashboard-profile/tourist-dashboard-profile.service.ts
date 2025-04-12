@@ -5,8 +5,9 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class TourguideDashboardService {
-  private apiUrl = 'https://localhost:8080/api'; // Replace with your backend API URL
+
+export class TouristDashboardProfileService {
+  private apiUrl = 'https://your-backend-api.com'; // Replace with your backend API URL
 
   constructor(private http: HttpClient) {}
 
