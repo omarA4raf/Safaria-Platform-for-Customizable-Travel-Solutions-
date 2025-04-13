@@ -8,6 +8,7 @@ import com.safaria.backend.DTO.TourProviderSignUpDTO;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.OptionalInt;
 
 
 @Entity
@@ -53,8 +54,8 @@ public class TourProvider {
     private Boolean type;
     @Column(name = "Enabled")
     private boolean enabled = false;
-    @Column(name = "aboutme")
-    private boolean aboutMe;
+    // @Column(name = "aboutme" , nullable = true)
+    //  private boolean aboutMe;
 
     public String getPassword() {
         return password;
