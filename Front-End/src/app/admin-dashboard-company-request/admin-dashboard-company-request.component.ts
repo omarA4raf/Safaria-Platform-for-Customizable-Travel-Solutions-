@@ -1,73 +1,100 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Import CommonModule
-import { Router } from '@angular/router'; // Import Router
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { AdminDashboardCompanyRequestService } from './admin-dashboard-company-request.service';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { SafePipe } from '../services/safe.pipe';
 
-interface User {
+interface CompanyRequest {
   id: number;
-  profilePicture: string;
   name: string;
   email: string;
-  role: number;
+  type: 'company';
+  documentUrl: string;
+  status: 'pending' | 'approved' | 'rejected';
+  submittedAt: Date;
 }
 
 @Component({
-  standalone: true, // Mark as standalone
-  imports: [CommonModule], // Import CommonModule here
+  standalone: true,
+  imports: [CommonModule, HttpClientModule, FormsModule, SafePipe],
   selector: 'app-admin-dashboard-company-request',
   templateUrl: './admin-dashboard-company-request.component.html',
   styleUrls: ['./admin-dashboard-company-request.component.css'],
 })
+export class AdminDashboardCompanyRequestComponent implements OnInit {
+  requests: CompanyRequest[] = [];
+  selectedRequest: CompanyRequest | null = null;
+  searchTerm: string = '';
+  showDocumentModal = false;
 
-export class AdminDashboardCompanyRequestComponent   {
-  constructor(private router: Router) {} // Inject Router
-  private users: User[] = [
-    {
-      id: 1,
-      profilePicture: 'assets/images/profile-placeholder.png',
-      name: 'John Doe',
-      email: 'abcd@email.com',
-      role: 1,
-    },
-    {
-      id: 2,
-      profilePicture: 'assets/images/profile-placeholder.png',
-      name: 'Jane Smith',
-      email: 'abcd@email.com',
-      role: 2,
-    },
-    {
-      id: 3,
-      profilePicture: 'assets/images/profile-placeholder.png',
-      name: 'Alice Johnson',
-      email: 'abcd@email.com',
-      role: 3,
-    },
-  ];
+  constructor(
+    private requestService: AdminDashboardCompanyRequestService,
+    private router: Router
+  ) {}
 
-  getUsers(): User[] {
-    return this.users;
+  ngOnInit(): void {
+    this.fetchRequests();
   }
 
-  deleteUser(id: number): void {
-    this.users = this.users.filter((user) => user.id !== id);
+  fetchRequests(): void {
+    this.requestService.getRequests().subscribe((requests) => {
+      this.requests = requests;
+    });
   }
 
-  getRoleName(role: number): string {
-    switch (role) {
-      case 1:
-        return 'Tourist';
-      case 2:
-        return 'Company';
-      case 3:
-        return 'Tour Guide';
-      default:
-        return 'Unknown';
+  viewDocument(request: CompanyRequest): void {
+    this.selectedRequest = request;
+    this.showDocumentModal = true;
+  }
+
+  approveRequest(id: number): void {
+    if (confirm('Are you sure you want to approve this request?')) {
+      this.requestService.approveRequest(id).subscribe(() => {
+        this.fetchRequests();
+        this.closeModal();
+      });
     }
   }
 
-  // Method to handle logout
+  rejectRequest(id: number): void {
+    if (confirm('Are you sure you want to reject this request?')) {
+      this.requestService.rejectRequest(id).subscribe(() => {
+        this.fetchRequests();
+        this.closeModal();
+      });
+    }
+  }
+
+  deleteRequest(id: number): void {
+    if (confirm('Are you sure you want to delete this request?')) {
+      this.requestService.deleteRequest(id).subscribe(() => {
+        this.requests = this.requests.filter((r) => r.id !== id);
+      });
+    }
+  }
+
+  closeModal(): void {
+    this.showDocumentModal = false;
+    this.selectedRequest = null;
+  }
+
+  get filteredRequests(): CompanyRequest[] {
+    if (!this.searchTerm) return this.requests;
+    return this.requests.filter(request => 
+      request.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      request.email.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
+
+  getDocumentType(url: string): string {
+    return url.endsWith('.pdf') ? 'PDF' : 'Image';
+  }
+
   logout(): void {
-    this.router.navigate(['/']); // Navigate to the home page
-    sessionStorage.clear(); // Clear sessionStorage
+    localStorage.clear();
+    sessionStorage.clear();
+    this.router.navigate(['/']);
   }
 }

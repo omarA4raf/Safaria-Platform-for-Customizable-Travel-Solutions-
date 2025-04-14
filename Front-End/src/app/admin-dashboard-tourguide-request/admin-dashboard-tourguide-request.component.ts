@@ -1,115 +1,101 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Import CommonModule
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { AdminDashboardTourguideRequestService } from './admin-dashboard-tourguide-request.service';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms'; // Import FormsModule
+import { SafePipe } from '../services/safe.pipe';
 
-
-interface User {
+interface Request {
   id: number;
-  profilePicture: string;
   name: string;
   email: string;
-  role: number;
+  type: 'tourguide';
+  documentUrl: string;
+  status: 'pending' | 'approved' | 'rejected';
+  submittedAt: Date;
 }
+
 
 @Component({
   selector: 'app-admin-dashboard-tourguide-request',
-  imports: [CommonModule], // Import CommonModule here
+  imports: [CommonModule, HttpClientModule, FormsModule, SafePipe], // Add FormsModule here
   standalone: true, // Mark as standalone
   templateUrl: './admin-dashboard-tourguide-request.component.html',
   styleUrl: './admin-dashboard-tourguide-request.component.css'
 })
 export class AdminDashboardTourguideRequestComponent {
-  [x: string]: any;
-  private users: User[] = [
-    {
-      id: 1,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'John Doe',
-      email: 'abcd@email.com',
-      role: 1,
-    },
-    {
-      id: 2,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'Jane Smith',
-      email: 'abcd@email.com',
-      role: 2,
-    },
-    {
-      id: 3,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'Alice Johnson',
-      email: 'abcd@email.com',
-      role: 3,
-    },
-    {
-    id: 4,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'John Doe',
-      email: 'abcd@email.com',
-      role: 1,
-    },
-    {
-      id: 5,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'Jane Smith',
-      email: 'abcd@email.com',
-      role: 2,
-    },
-    {
-      id: 6,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'Alice Johnson',
-      email: 'abcd@email.com',
-      role: 3,
-    },
-    {
-      id: 6,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'Alice Johnson',
-      email: 'abcd@email.com',
-      role: 3,
-    },
-    {
-      id: 6,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'Alice Johnson',
-      email: 'abcd@email.com',
-      role: 3,
-    },
-    {
-      id: 6,
-      profilePicture: '/assets/img/client 2.jpeg',
-      name: 'Alice Johnson',
-      email: 'abcd@email.com',
-      role: 3,
-    }
-  ];
+  requests: Request[] = [];
+  selectedRequest: Request | null = null;
+  searchTerm: string = '';
+  showDocumentModal = false;
 
-  getUsers(): User[] {
-    return this.users;
+   constructor(
+    private admindashboardtourguiderequest: AdminDashboardTourguideRequestService, 
+    private router: Router
+  ) {}
+ 
+  ngOnInit(): void {
+    this.fetchRequests();
   }
 
-  deleteUser(id: number): void {
-    this.users = this.users.filter((user) => user.id !== id);
+  fetchRequests(): void {
+    this.admindashboardtourguiderequest.getRequests().subscribe((requests) => {
+      this.requests = requests;
+    });
   }
 
-  getRoleName(role: number): string {
-    switch (role) {
-      case 1:
-        return 'Tourist';
-      case 2:
-        return 'Company';
-      case 3:
-        return 'Tour Guide';
-      default:
-        return 'Unknown';
+  viewDocument(request: Request): void {
+    this.selectedRequest = request;
+    this.showDocumentModal = true;
+  }
+
+  approveRequest(id: number): void {
+    if (confirm('Are you sure you want to approve this request?')) {
+      this.admindashboardtourguiderequest.approveRequest(id).subscribe(() => {
+        this.fetchRequests();
+        this.closeModal();
+      });
     }
   }
-    // Method to handle logout
+
+  rejectRequest(id: number): void {
+    if (confirm('Are you sure you want to reject this request?')) {
+      this.admindashboardtourguiderequest.rejectRequest(id).subscribe(() => {
+        this.fetchRequests();
+        this.closeModal();
+      });
+    }
+  }
+
+  deleteRequest(id: number): void {
+    if (confirm('Are you sure you want to delete this request?')) {
+      this.admindashboardtourguiderequest.deleteRequest(id).subscribe(() => {
+        this.requests = this.requests.filter((r) => r.id !== id);
+      });
+    }
+  }
+
+  closeModal(): void {
+    this.showDocumentModal = false;
+    this.selectedRequest = null;
+  }
+
+  get filteredRequests(): Request[] {
+    if (!this.searchTerm) return this.requests;
+    return this.requests.filter(request => 
+      request.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      request.email.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
+
+  getDocumentType(url: string): string {
+    return url.endsWith('.pdf') ? 'PDF' : 'Image';
+  }
+
   logout(): void {
-    localStorage.clear(); // Clear localStorage
-    sessionStorage.clear(); // Clear sessionStorage
-    this['router'].navigate(['/']); // Navigate to the home page
+    localStorage.clear();
+    sessionStorage.clear();
+    this.router.navigate(['/']);
   }
 }

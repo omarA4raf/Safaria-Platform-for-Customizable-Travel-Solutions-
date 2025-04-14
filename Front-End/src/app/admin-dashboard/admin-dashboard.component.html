@@ -1,5 +1,5 @@
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
     <!-- Brand Name -->
     <a style="color: #ffa500;" class="navbar-brand fw-bold" href="#">Safaria</a>
@@ -37,24 +37,33 @@
   </div>
 </nav>
 
-
 <div class="container-fluid">
   <div class="row">
     <!-- Sidebar -->
     <div class="col-md-2 bg-dark text-white p-4">
-      <h4 class="mb-4 ">Admin Panel</h4>
+      <h4 class="mb-4">Admin Panel</h4>
       <ul class="nav flex-column">
         <li class="nav-item">
-          <a class="nav-link text-white active" href="#">Manage Users</a>
+          <a class="nav-link text-white active" style="color: #ffa500 !important;" href="#">Manage Users</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white" href="#" style="color: #ffa500 !important;">Companies Requests</a>
+          <a class="nav-link text-white" href="/admindashboardcompanyrequest">Companies Requests</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white" href="#">Tour Guides Requests</a>
+          <a class="nav-link text-white" href="/admindashboardtourguiderequest">Tour Guides Requests</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">Reported users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">Blog & Review Moderation</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">Points & Rewards System Oversight</a>
         </li>
       </ul>
     </div>
+
     <!-- Main Content -->
     <div class="col-md-10 p-4">
       <!-- Header -->
@@ -68,15 +77,14 @@
 
       <!-- Search and Add User -->
       <div class="d-flex justify-content-between mb-4">
-        <input type="text" class="form-control w-50" placeholder="Search User" />
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">Add User</button>
+        <input type="text" class="form-control w-50" placeholder="Search User" [(ngModel)]="searchTerm" />
+        <button class="btn btn-primary" (click)="openAddModal()">Add User</button>
       </div>
 
       <!-- User Table -->
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>Profile</th>
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
@@ -84,15 +92,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let user of users">
-            <td>
-              <img [src]="user.profilePicture" alt="Profile" class="rounded-circle" width="40" height="40" />
-            </td>
+          <tr *ngFor="let user of filteredUsers">
             <td>{{ user.name }}</td>
             <td>{{ user.email }}</td>
             <td>{{ getRoleName(user.role) }}</td>
             <td>
-              <button class="btn btn-warning btn-sm me-2">Edit</button>
+              <button class="btn btn-warning btn-sm me-2" (click)="startEdit(user)">Edit</button>
               <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id)">Delete</button>
             </td>
           </tr>
@@ -101,96 +106,115 @@
     </div>
 
     <!-- Add User Modal -->
-    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form (ngSubmit)="addUser()">
-              <div class="mb-3">
-                <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control" id="name" [(ngModel)]="newUser.name" name="name" required>
-              </div>
-              <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" [(ngModel)]="newUser.email" name="email" required>
-              </div>
-              <div class="mb-3">
-                <label for="role" class="form-label">Role</label>
-                <select class="form-control" id="role" [(ngModel)]="newUser.role" name="role" required>
-                  <option value="1">Tourist</option>
-                  <option value="2">Company</option>
-                  <option value="3">Tour Guide</option>
-                </select>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Add User</button>
-              </div>
-            </form>
-          </div>
-        </div>
+    <ng-template #addUserModal let-modal>
+      <div class="modal-header">
+        <h5 class="modal-title">Add New User</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
       </div>
-    </div>
-  </div>
-</div>
-
-  <!-- info part -->
-  <footer class="text-white py-4" style="background-color: #71a7b8">
-    <div class="container">
-      <div class="row">
-        <!-- Left Side - Brand & Social Icons -->
-        <div class="col-md-4">
-          <h4>Safaria</h4>
-          <div class="social-icons mt-3">
-            <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
-            <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-lg"></i></a>
-            <a href="#" class="text-white me-3"><i class="fab fa-youtube fa-lg"></i></a>
-            <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+      <div class="modal-body">
+        <form (ngSubmit)="addUser()">
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" [(ngModel)]="newUser.name" name="name" required>
           </div>
-        </div>
-
-        <!-- Center & Right Side - Topics -->
-        <div class="col-md-8">
-          <div class="row">
-            <!-- Column 1 -->
-            <div class="col-md-4">
-              <h5>Explore</h5>
-              <ul class="list-unstyled">
-                <li><a href="#" class="text-white">Destinations</a></li>
-                <li><a href="#" class="text-white">Tours</a></li>
-                <li><a href="#" class="text-white">Experiences</a></li>
-              </ul>
-            </div>
-
-            <!-- Column 2 -->
-            <div class="col-md-4">
-              <h5>Company</h5>
-              <ul class="list-unstyled">
-                <li><a href="#" class="text-white">About Us</a></li>
-                <li><a href="#" class="text-white">Careers</a></li>
-                <li><a href="#" class="text-white">Blog</a></li>
-              </ul>
-            </div>
-
-            <!-- Column 3 -->
-            <div class="col-md-4">
-              <h5>Support</h5>
-              <ul class="list-unstyled">
-                <li><a href="#" class="text-white">Contact Us</a></li>
-                <li><a href="#" class="text-white">FAQs</a></li>
-                <li><a href="#" class="text-white">Help Center</a></li>
-              </ul>
-            </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" [(ngModel)]="newUser.email" name="email" required>
           </div>
-        </div>
+          <div class="mb-3">
+            <label for="role" class="form-label">Role</label>
+            <select class="form-control" id="role" [(ngModel)]="newUser.role" name="role" required>
+              <option value="1">Tourist</option>
+              <option value="2">Company</option>
+              <option value="3">Tour Guide</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Close</button>
+            <button type="submit" class="btn btn-primary">Add User</button>
+          </div>
+        </form>
       </div>
+    </ng-template>
 
-      <!-- Bottom Line -->
-      <hr class="mt-4 mb-2 border-white" />
-      <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
-    </div>
-  </footer>
+    <!-- Edit User Modal -->
+    <ng-template #editUserModal let-modal>
+      <div class="modal-header">
+        <h5 class="modal-title">Edit User</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form *ngIf="editUserData" (ngSubmit)="updateUser()">
+          <div class="mb-3">
+            <label for="editName" class="form-label">Name</label>
+            <input type="text" class="form-control" id="editName" [(ngModel)]="editUserData.name" name="name" required>
+          </div>
+          <div class="mb-3">
+            <label for="editEmail" class="form-label">Email</label>
+            <input type="email" class="form-control" id="editEmail" [(ngModel)]="editUserData.email" name="email"
+              required>
+          </div>
+          <!-- In your edit modal template -->
+          <div class="mb-3">
+            <label for="editRole" class="form-label">Role</label>
+            <select class="form-control" id="editRole" [(ngModel)]="editUserData.role" name="role" required
+              [ngModelOptions]="{standalone: false}">
+              <option [value]="1">Tourist</option>
+              <option [value]="2">Company</option>
+              <option [value]="3">Tour Guide</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Close</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </ng-template>
+
+    <!-- Footer -->
+    <footer class="text-white py-4" style="background-color: #71a7b8">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <h4>Safaria</h4>
+            <div class="social-icons mt-3">
+              <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+              <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+              <a href="#" class="text-white me-3"><i class="fab fa-youtube fa-lg"></i></a>
+              <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <div class="row">
+              <div class="col-md-4">
+                <h5>Explore</h5>
+                <ul class="list-unstyled">
+                  <li><a href="#" class="text-white">Destinations</a></li>
+                  <li><a href="#" class="text-white">Tours</a></li>
+                  <li><a href="#" class="text-white">Experiences</a></li>
+                </ul>
+              </div>
+              <div class="col-md-4">
+                <h5>Company</h5>
+                <ul class="list-unstyled">
+                  <li><a href="#" class="text-white">About Us</a></li>
+                  <li><a href="#" class="text-white">Careers</a></li>
+                  <li><a href="#" class="text-white">Blog</a></li>
+                </ul>
+              </div>
+              <div class="col-md-4">
+                <h5>Support</h5>
+                <ul class="list-unstyled">
+                  <li><a href="#" class="text-white">Contact Us</a></li>
+                  <li><a href="#" class="text-white">FAQs</a></li>
+                  <li><a href="#" class="text-white">Help Center</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr class="mt-4 mb-2 border-white" />
+        <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
+      </div>
+    </footer>
