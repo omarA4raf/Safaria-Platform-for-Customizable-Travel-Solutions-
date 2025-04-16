@@ -22,21 +22,11 @@ html {
 }
 
 /* First Section Styles */
-h2 {
-  color: #174750; /* Dark blue text */
-
-}
-.first-section {
-  background-color: white;
-  margin-top: 1.5rem;
-  padding: 20px 0; /* Add padding to the top and bottom */
-}
-
 .section {
   position: relative;
   overflow: hidden;
   border-radius: 10px;
-  height: 500px; /* Set a fixed height for the sections */
+  height: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -46,6 +36,7 @@ h2 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  position: relative; /* Ensure image stays in normal flow */
 }
 
 .overlay {
@@ -55,15 +46,17 @@ h2 {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  z-index: 1; /* Place overlay above image but below text/buttons */
 }
 
 .text {
   position: absolute;
   top: 25%;
-  color: #ffa500; /* Orange text */
-  /* font-size: 24px; */
+  color: #ffa500;
   font-weight: bold;
-  text-align: center; /* Center-align the text */
+  text-align: center;
+  z-index: 2; /* Ensure text is above overlay */
+  width: 100%; /* Make text span full width */
 }
 
 .btn-custom {
@@ -71,16 +64,17 @@ h2 {
   bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #004d40; /* Dark green button */
+  background-color: #004d40;
   color: white;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
   font-size: 16px;
+  z-index: 2; /* Ensure button is above overlay */
 }
 
 .btn-custom:hover {
-  background-color: #174750; /* Darker green on hover */
+  background-color: #174750;
   color: #fff;
 }
 

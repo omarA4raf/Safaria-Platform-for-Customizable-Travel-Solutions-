@@ -10,8 +10,6 @@ import { RouterModule } from '@angular/router'; // Import RouterModule for routi
   styleUrls: ['./app.component.css'] // Link to the styles
 })
 export class AppComponent {
-  title(title: any) {
-    throw new Error('Method not implemented.');
-  }
-  // Component logic here
+  title = 'Safaria';
+
 };

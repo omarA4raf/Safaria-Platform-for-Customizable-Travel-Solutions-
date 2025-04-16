@@ -14,6 +14,7 @@ import { TourguideCreateTripComponent } from './tourguide-create-trip/tourguide-
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { AdminDashboardTourguideRequestComponent } from './admin-dashboard-tourguide-request/admin-dashboard-tourguide-request.component';
 import { AdminDashboardCompanyRequestComponent } from './admin-dashboard-company-request/admin-dashboard-company-request.component';
+import { TouristCustomizeTourFirstComponent } from './tourist-customize-tour-first/tourist-customize-tour-first.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent }, // Default route
@@ -37,4 +38,8 @@ export const routes: Routes = [
     path: 'admindashboardtourguiderequest',
     component: AdminDashboardTourguideRequestComponent,
   }, // admin dashboard for tour guide request route
+  {
+    path: 'touristcustomizetourfirstcomponent',
+    component: TouristCustomizeTourFirstComponent,
+  }, // tourist customize tour first component route
 ];

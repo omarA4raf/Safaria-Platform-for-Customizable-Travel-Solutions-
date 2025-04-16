@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { ApiService } from './tourist-dashboard-home.service'; // Import the ApiService
 
 @Component({
   selector: 'app-tourist-dashboard-home',
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule, RouterLink],
+  standalone: true,
   templateUrl: './tourist-dashboard-home.component.html',
   styleUrls: ['./tourist-dashboard-home.component.css'],
 })
