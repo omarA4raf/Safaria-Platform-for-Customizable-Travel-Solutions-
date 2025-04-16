@@ -6,9 +6,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ApiService {
+  private apiUrl = 'http://localhost:8080/api';
+
   constructor(private http: HttpClient) {}
 
   getTrips(): Observable<any[]> {
-    return this.http.get<any[]>('your-api-endpoint');
+    return this.http.get<any[]>(`${this.apiUrl}/trips`);
   }
 }

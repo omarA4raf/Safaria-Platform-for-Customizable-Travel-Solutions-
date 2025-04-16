@@ -6,89 +6,133 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class CompanyDashboardService {
-  private apiUrl = 'https://your-backend-api.com'; // Replace with your backend API URL
+  private apiUrl = 'http://localhost:8080/api/companies';
 
   constructor(private http: HttpClient) {}
 
-  // Fetch Name
-  getName(): Observable<any> {
-    const formData = new FormData();
-    formData.append('key', 'value'); // Add any necessary data to the FormData object
-    return this.http.post(`${this.apiUrl}/name`, formData);
+  // Get complete company profile
+  getCompanyProfile(companyId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${companyId}/profile`);
   }
 
-  // Fetch Email
-  getEmail(): Observable<any> {
-    const formData = new FormData();
-    formData.append('key', 'value'); // Add any necessary data to the FormData object
-    return this.http.post(`${this.apiUrl}/email`, formData);
+  // Update company profile
+  updateCompanyProfile(companyId: string, profileData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${companyId}/profile`, profileData);
   }
 
-  // Fetch Country
-  getCountry(): Observable<any> {
-    const formData = new FormData();
-    formData.append('key', 'value'); // Add any necessary data to the FormData object
-    return this.http.post(`${this.apiUrl}/country`, formData);
+  // Get specific profile fields
+  getName(companyId: string): Observable<string> {
+    return this.http.get(`${this.apiUrl}/${companyId}/name`, {
+      responseType: 'text',
+    });
   }
 
-  // Fetch Phone Number
-  getPhoneNumber(): Observable<any> {
-    const formData = new FormData();
-    formData.append('key', 'value'); // Add any necessary data to the FormData object
-    return this.http.post(`${this.apiUrl}/phone`, formData);
+  getEmail(companyId: string): Observable<string> {
+    return this.http.get(`${this.apiUrl}/${companyId}/email`, {
+      responseType: 'text',
+    });
   }
 
-  // Fetch Password
-  getPassword(): Observable<any> {
-    const formData = new FormData();
-    formData.append('key', 'value'); // Add any necessary data to the FormData object
-    return this.http.post(`${this.apiUrl}/password`, formData);
+  getCountry(companyId: string): Observable<string> {
+    return this.http.get(`${this.apiUrl}/${companyId}/country`, {
+      responseType: 'text',
+    });
   }
 
-  // Fetch Tourism types
-  getTourismTypes(): Observable<any> {
-    const formData = new FormData();
-    formData.append('key', 'value'); // Add any necessary data to the FormData object
-    return this.http.post('/api/tourismTypes', formData);
+  getPhoneNumber(companyId: string): Observable<string> {
+    return this.http.get(`${this.apiUrl}/${companyId}/phone`, {
+      responseType: 'text',
+    });
   }
 
-  // Fetch Rating
-  getRating(): Observable<any> {
-    const formData = new FormData();
-    formData.append('key', 'value'); // Add any necessary data to the FormData object
-    return this.http.post(`${this.apiUrl}/rating`, formData);
+  // Tourism types operations
+  getTourismTypes(companyId: string): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/${companyId}/tourism-types`);
   }
 
-  // Fetch About Me (optional)
-  getAbout(): Observable<any> {
-    const formData = new FormData();
-    formData.append('key', 'value'); // Add any necessary data to the FormData object
-    return this.http.post(`${this.apiUrl}/about`, formData);
+  updateTourismTypes(companyId: string, types: string[]): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${companyId}/tourism-types`, {
+      types,
+    });
   }
 
-  // Fetch Trips (optional)
-  getTrips(): Observable<any> {
-    const formData = new FormData();
-    formData.append('key', 'value'); // Add any necessary data to the FormData object
-    return this.http.post(`${this.apiUrl}/trips`, formData);
+  // Rating operations
+  getRating(companyId: string): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/${companyId}/rating`);
   }
 
-  // Fetch Clients (optional)
-  getClients(): Observable<any> {
-    const formData = new FormData();
-    formData.append('key', 'value'); // Add any necessary data to the FormData object
-    return this.http.post(`${this.apiUrl}/clients`, formData);
+  // About section operations
+  getAbout(companyId: string): Observable<string> {
+    return this.http.get(`${this.apiUrl}/${companyId}/about`, {
+      responseType: 'text',
+    });
   }
 
-  // Fetch Client Reviews (optional)
-  getClientReviews(): Observable<any> {
-    const formData = new FormData();
-    formData.append('key', 'value'); // Add any necessary data to the FormData object
-    return this.http.post(`${this.apiUrl}/client-reviews`, formData);
+  updateAbout(companyId: string, aboutText: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${companyId}/about`, {
+      about: aboutText,
+    });
   }
 
-  // Add this method to the CompanyDashboardService
-  uploadProfileImage(formData: FormData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/upload-profile-image`, formData);
+  // Trips operations
+  getTrips(companyId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${companyId}/trips`);
+  }
+
+  getUpcomingTrips(companyId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${companyId}/trips/upcoming`);
+  }
+
+  getPastTrips(companyId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${companyId}/trips/past`);
+  }
+
+  // Clients operations
+  getClients(companyId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${companyId}/clients`);
+  }
+
+  getActiveClients(companyId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${companyId}/clients/active`);
+  }
+
+  // Reviews operations
+  getClientReviews(companyId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${companyId}/reviews`);
+  }
+
+  getRecentReviews(companyId: string, limit: number = 5): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.apiUrl}/${companyId}/reviews/recent?limit=${limit}`
+    );
+  }
+
+  // Profile image operations
+  uploadProfileImage(
+    companyId: string,
+    imageFile: File
+  ): Observable<{ imageUrl: string }> {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    return this.http.post<{ imageUrl: string }>(
+      `${this.apiUrl}/${companyId}/profile-image`,
+      formData
+    );
+  }
+
+  deleteProfileImage(companyId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${companyId}/profile-image`);
+  }
+
+  // Password operations (handled separately for security)
+  changePassword(
+    companyId: string,
+    currentPassword: string,
+    newPassword: string
+  ): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${companyId}/change-password`, {
+      currentPassword,
+      newPassword,
+    });
   }
 }

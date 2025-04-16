@@ -3,7 +3,8 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-
+import { AuthService } from '../services/auth.service';
+import { TourguideCreateTripService } from './tourguide-create-trip.service';
 
 @Component({
   selector: 'app-tourguide-create-trip',
@@ -12,8 +13,13 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './tourguide-create-trip.component.html',
   styleUrl: './tourguide-create-trip.component.css',
 })
-export class TourguideCreateTripComponent {
-  constructor(private router: Router, private http: HttpClient) {}
+export class TourguideCreateTripComponent implements OnInit {
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private authService: AuthService,
+    private tripService: TourguideCreateTripService
+  ) {}
 
   // Loading state for the submit button
   createIsLoading: boolean = false;
@@ -158,6 +164,14 @@ export class TourguideCreateTripComponent {
   };
 
   ngOnInit(): void {
+    if (
+      !this.authService.isLoggedIn() ||
+      this.authService.getUserType() !== 'TOUR_GUIDE'
+    ) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+      return;
+    }
     this.initializeCountries();
   }
 
@@ -411,7 +425,6 @@ export class TourguideCreateTripComponent {
 
   // Handle form submission
   onSubmit(): void {
-
     console.log('Form Data to be Sent:', {
       title: this.trip.title,
       destinationCountry: this.trip.destinationCountry,
@@ -426,6 +439,13 @@ export class TourguideCreateTripComponent {
 
     // Validate form inputs
     if (!this.validateForm()) {
+      return;
+    }
+
+    // Verify authentication
+    if (!this.authService.isLoggedIn() || !this.authService.getUserId()) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
       return;
     }
 
@@ -449,6 +469,7 @@ export class TourguideCreateTripComponent {
       );
     }
     formData.append('currency', this.trip.currency);
+    formData.append('tourGuideId', this.authService.getUserId()!);
 
     // Append images
     this.images.forEach((image, index) => {
@@ -461,16 +482,26 @@ export class TourguideCreateTripComponent {
       }
     });
 
-    // Send data to backend
-    this.http.post('https://your-backend-api.com/trips', formData).subscribe({
+    // Send data to backend using the service
+    this.tripService.createTrip(formData).subscribe({
       next: (response) => {
         console.log('Trip created successfully:', response);
         this.createIsLoading = false;
-        this.router.navigate(['/companydashboard']);
+        this.router.navigate(['/tourguidedashboard']); // Updated to correct dashboard
+
+        // Optional: Show success message
+        alert('Trip created successfully!');
       },
       error: (error) => {
         console.error('Error creating trip:', error);
         this.createIsLoading = false;
+
+        // Show user-friendly error message
+        alert(
+          `Error creating trip: ${
+            error.error?.message || 'Please try again later.'
+          }`
+        );
       },
     });
   }
@@ -494,15 +525,22 @@ export class TourguideCreateTripComponent {
       this.trip.freeCancellationDeadline !== null ||
       this.trip.currency ||
       this.images.some((image) => image.file !== null);
-  
+
     if (!hasData) {
       alert('Cannot save an empty draft. Please fill in at least one field.');
       return;
     }
-  
+
+    // Verify authentication
+    if (!this.authService.isLoggedIn() || !this.authService.getUserId()) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+      return;
+    }
+
     // Set loading state to true
     this.SavingisLoading = true;
-  
+
     console.log('Form Data to be Sent:', {
       title: this.trip.title,
       destinationCountry: this.trip.destinationCountry,
@@ -514,7 +552,7 @@ export class TourguideCreateTripComponent {
       currency: this.trip.currency,
       images: this.images.filter((img) => img.file),
     });
-  
+
     // Prepare form data
     const draftData = new FormData();
     draftData.append('title', this.trip.title);
@@ -524,7 +562,10 @@ export class TourguideCreateTripComponent {
       draftData.append('duration', this.trip.duration.toString());
     }
     draftData.append('description', this.trip.description);
-    draftData.append('availableDates', JSON.stringify(this.trip.availableDates));
+    draftData.append(
+      'availableDates',
+      JSON.stringify(this.trip.availableDates)
+    );
     if (this.trip.freeCancellationDeadline !== null) {
       draftData.append(
         'freeCancellationDeadline',
@@ -532,7 +573,9 @@ export class TourguideCreateTripComponent {
       );
     }
     draftData.append('currency', this.trip.currency);
-  
+    draftData.append('tourGuideId', this.authService.getUserId()!);
+    draftData.append('isDraft', 'true');
+
     // Append images
     this.images.forEach((image, index) => {
       if (image.file) {
@@ -543,25 +586,34 @@ export class TourguideCreateTripComponent {
         );
       }
     });
-  
-    // Send data to backend
-    this.http.post('https://your-backend-api.com/draftTrips', draftData).subscribe({
+
+    // Send data to backend using the service
+    this.tripService.saveDraft(draftData).subscribe({
       next: (response) => {
-        console.log('Trip is saved in draft successfully:', response);
-        this.SavingisLoading = false; // Reset loading state
-        this.router.navigate(['/companydashboard']);
+        console.log('Trip saved as draft successfully:', response);
+        this.SavingisLoading = false;
+        this.router.navigate(['/tourguidedashboard']); // Updated to correct dashboard
+
+        // Optional: Show success message
+        alert('Draft saved successfully!');
       },
       error: (error) => {
-        console.error('Error saving trip as draft:', error);
-        this.SavingisLoading = false; // Reset loading state
+        console.error('Error saving draft:', error);
+        this.SavingisLoading = false;
+
+        // Show user-friendly error message
+        alert(
+          `Error saving draft: ${
+            error.error?.message || 'Please try again later.'
+          }`
+        );
       },
     });
   }
 
   // Method to handle logout
   logout(): void {
-    localStorage.clear(); // Clear localStorage
-    sessionStorage.clear(); // Clear sessionStorage
-    this.router.navigate(['/']); // Navigate to the home page
+    this.authService.logout();
+    this.router.navigate(['/login']); // Redirect to login page
   }
 }

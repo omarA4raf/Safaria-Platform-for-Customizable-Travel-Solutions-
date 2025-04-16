@@ -12,8 +12,7 @@ import { TouristDashboardProfileComponent } from './tourist-dashboard-profile/to
 import { CompanyCreateTripComponent } from './company-create-trip/company-create-trip.component';
 import { TourguideCreateTripComponent } from './tourguide-create-trip/tourguide-create-trip.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
-import { AdminDashboardTourguideRequestComponent } from './admin-dashboard-tourguide-request/admin-dashboard-tourguide-request.component';
-import { AdminDashboardCompanyRequestComponent } from './admin-dashboard-company-request/admin-dashboard-company-request.component';
+import { AdminDashboardTourproviderComponent } from './admin-dashboard-tourprovider/admin-dashboard-tourprovider.component';
 import { TouristCustomizeTourFirstComponent } from './tourist-customize-tour-first/tourist-customize-tour-first.component';
 
 export const routes: Routes = [
@@ -31,12 +30,8 @@ export const routes: Routes = [
   { path: 'tourguidecreatetrip', component: TourguideCreateTripComponent }, // tourguide create trip route
   { path: 'admindashboard', component: AdminDashboardComponent }, // admin dashboard route
   {
-    path: 'admindashboardcompanyrequest',
-    component: AdminDashboardCompanyRequestComponent,
-  }, // admin dashboard for company request route
-  {
-    path: 'admindashboardtourguiderequest',
-    component: AdminDashboardTourguideRequestComponent,
+    path: 'admindashboardtourprovider',
+    component: AdminDashboardTourproviderComponent,
   }, // admin dashboard for tour guide request route
   {
     path: 'touristcustomizetourfirstcomponent',

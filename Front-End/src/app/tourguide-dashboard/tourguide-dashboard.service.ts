@@ -6,12 +6,20 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class TourguideDashboardService {
-  private apiUrl = 'https://your-backend-api.com'; // Replace with your backend API URL
+  private apiUrl = 'http://localhost:8080/api';
+  private currentUserId: string | null = null;
 
   constructor(private http: HttpClient) {}
 
+  setUserId(userId: string): void {
+    this.currentUserId = userId;
+  }
+
   // Fetch Name
   getName(): Observable<any> {
+    if (!this.currentUserId) {
+      throw new Error('User ID not set');
+    }
     const formData = new FormData();
     formData.append('key', 'value'); // Add any necessary data to the FormData object
     return this.http.post(`${this.apiUrl}/name`, formData);
@@ -19,6 +27,9 @@ export class TourguideDashboardService {
 
   // Fetch Email
   getEmail(): Observable<any> {
+    if (!this.currentUserId) {
+      throw new Error('User ID not set');
+    }
     const formData = new FormData();
     formData.append('key', 'value'); // Add any necessary data to the FormData object
     return this.http.post(`${this.apiUrl}/email`, formData);

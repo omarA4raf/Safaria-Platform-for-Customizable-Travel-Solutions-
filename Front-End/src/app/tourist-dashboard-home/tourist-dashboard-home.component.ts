@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { ApiService } from './tourist-dashboard-home.service'; // Import the ApiService
+import { ApiService } from './tourist-dashboard-home.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-tourist-dashboard-home',
@@ -11,12 +12,21 @@ import { ApiService } from './tourist-dashboard-home.service'; // Import the Api
   templateUrl: './tourist-dashboard-home.component.html',
   styleUrls: ['./tourist-dashboard-home.component.css'],
 })
+export class TouristDashboardHomeComponent implements OnInit {
 
-export class TouristDashboardHomeComponent {
-  constructor(private apiService: ApiService) {} // Inject the ApiService
+  constructor(
+    private apiService: ApiService,
+    private authService: AuthService,
+    private router: Router
+  ) {} // Inject the ApiService
   trips: any[] = []; // Initialize as empty array
 
   ngOnInit(): void {
+    if (!this.authService.isLoggedIn() || this.authService.getUserType() !== 'TOURIST') {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+      return;
+    }
     this.fetchData();
   }
 

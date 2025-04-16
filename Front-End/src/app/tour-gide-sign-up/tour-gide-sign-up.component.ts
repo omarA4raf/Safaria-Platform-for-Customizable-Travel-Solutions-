@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { SignUpServices } from '../services/signup_sevices';
 import { tourguide } from '../objects/tourguide';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-tour-gide-sign-up',
@@ -41,7 +42,8 @@ export class TourGideSignUpComponent implements OnInit {
 
   constructor(
     private signup_services: SignUpServices,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -196,7 +198,6 @@ export class TourGideSignUpComponent implements OnInit {
 
     this.isLoading = true;
 
-
     const formData = new FormData();
     formData.append('username', this.tourguideName);
     formData.append('email', this.tourguideemail);
@@ -213,12 +214,17 @@ export class TourGideSignUpComponent implements OnInit {
     }
 
     this.signup_services.signup(formData, 'Tour Guide').subscribe({
-      next: (data) => {
-        if (data == null) {
-          this.errorMessage = 'Email or Username already exists.';
+      next: (response) => {
+        if (response?.token) {
+          this.authService.setSession({
+            token: response.token,
+            userId: response.userId,
+            userType: 'TOUR_GUIDE',
+          });
+          alert('You have successfully signed up!');
+          this.router.navigate(['/tourguidedashboard']);
         } else {
-          alert('You have successfully signed up. Please verify your email!');
-          this.router.navigate(['/login']);
+          this.errorMessage = 'Email or Username already exists.';
         }
       },
       error: (error) => {
@@ -229,7 +235,5 @@ export class TourGideSignUpComponent implements OnInit {
         this.isLoading = false;
       },
     });
-
-    console.log(formData)
   }
 }
