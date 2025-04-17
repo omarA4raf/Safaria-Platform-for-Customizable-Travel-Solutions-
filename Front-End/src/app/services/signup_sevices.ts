@@ -62,8 +62,8 @@ export class SignUpServices {
             catchError(this.handleSignupError)
           );
           */
-         if(role == 'Tour Guide') return this.http.post(`${this.baseUrl}/tourguidesignup`,userData)
-         else return this.http.post(`${this.baseUrl}/companysignup`,userData)
+         if(role == 'Tour Guide') return this.http.post(`${this.baseUrl}/tourguidesignup`,userData,{responseType : 'text'})
+         else return this.http.post(`${this.baseUrl}/companysignup`,userData,{responseType : 'text'})
 
       }
       
@@ -80,7 +80,7 @@ export class SignUpServices {
             catchError(this.handleSignupError)
           );
           */
-          return this.http.post(`${this.baseUrl}/touristsignup`,userData)
+          return this.http.post(`${this.baseUrl}/touristsignup`,userData,{responseType : 'text'})
       }
 
       return throwError(() => new Error('Invalid user role'));
