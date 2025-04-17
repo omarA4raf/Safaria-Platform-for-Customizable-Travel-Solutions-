@@ -17,7 +17,7 @@ interface TourProviderRequest {
   providedIn: 'root'
 })
 export class AdminDashboardTourproviderService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = 'http://localhost:8080/admin';
   private fakeRequests: TourProviderRequest[] = [
     {
       id: 1,
@@ -57,7 +57,7 @@ export class AdminDashboardTourproviderService {
     }
   ];
 
-  private useFakeData = true;
+  private useFakeData = false;
 
   constructor(private http: HttpClient) {}
 
@@ -68,7 +68,7 @@ export class AdminDashboardTourproviderService {
     return this.http.get<TourProviderRequest[]>(`${this.apiUrl}/tour-providers/requests`);
   }
 
-  approveRequest(id: number): Observable<void> {
+  approveRequest(id: number): Observable<any> {
     if (this.useFakeData) {
       const request = this.fakeRequests.find(r => r.id === id);
       if (request) {
@@ -76,15 +76,15 @@ export class AdminDashboardTourproviderService {
       }
       return of(undefined).pipe(delay(500));
     }
-    return this.http.put<void>(`${this.apiUrl}/tour-providers/${id}/approve`, {});
+    return this.http.post(`${this.apiUrl}/tour-providers/approve${id}`,null, { responseType: 'text'});
   }
 
-  rejectRequest(id: number): Observable<void> {
+  rejectRequest(id: number): Observable<any> {
     if (this.useFakeData) {
       this.fakeRequests = this.fakeRequests.filter(r => r.id !== id);
       return of(undefined).pipe(delay(500));
     }
-    return this.http.delete<void>(`${this.apiUrl}/tour-providers/${id}/reject`);
+    return this.http.delete(`${this.apiUrl}/tour-providers/reject${id}`,{responseType :'text'});
   }
 
   deleteRequest(id: number): Observable<void> {
@@ -92,6 +92,6 @@ export class AdminDashboardTourproviderService {
       this.fakeRequests = this.fakeRequests.filter(r => r.id !== id);
       return of(undefined).pipe(delay(500));
     }
-    return this.http.delete<void>(`${this.apiUrl}/tour-providers/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/tour-providers/reject${id}`);
   }
 }

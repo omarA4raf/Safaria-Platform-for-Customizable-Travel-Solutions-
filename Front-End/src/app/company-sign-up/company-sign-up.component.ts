@@ -221,7 +221,7 @@ export class CompanySignUpComponent implements OnInit {
     for (const pair of formData.entries()) {
       console.log('before', pair[0], pair[1]);
     }
-
+/*
     this.signup_services.signup(formData, 'Company').subscribe({
       next: (response) => {
         if (response?.token) {
@@ -243,6 +243,24 @@ export class CompanySignUpComponent implements OnInit {
       complete: () => {
         this.isLoading = false;
       }
+    });
+    */
+    this.signup_services.signup(formData, 'Company').subscribe({
+      next: (data) => {
+        if (data == null) {
+          this.errorMessage = 'Email or Username already exists.';
+        } else {
+          alert('You have successfully signed up. Please verify your email!');
+          this.router.navigate(['/login']);
+        }
+      },
+      error: (error) => {
+        console.error('Signup failed:', error);
+        this.errorMessage = 'An error occurred. Please try again later.';
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
     });
   }
 }

@@ -57,10 +57,14 @@ export class SignUpServices {
         if (!(userData instanceof FormData)) {
           return throwError(() => new Error('FormData required for this role'));
         }
-        return this.http.post(`${this.baseUrl}/${endpoint}`, userData, options)
+        /*return this.http.post(`${this.baseUrl}/${endpoint}`, userData, options)
           .pipe(
             catchError(this.handleSignupError)
           );
+          */
+         if(role == 'Tour Guide') return this.http.post(`${this.baseUrl}/tourguidesignup`,userData)
+         else return this.http.post(`${this.baseUrl}/companysignup`,userData)
+
       }
       
       // For Tourist, we expect a regular object
@@ -70,10 +74,13 @@ export class SignUpServices {
           password: this.encryptAES(userData.password),
           email: this.encryptAES(userData.email)
         };
-        return this.http.post(`${this.baseUrl}/${endpoint}`, encryptedData, options)
+       /* return this.http.post(`${this.baseUrl}/${endpoint}`, encryptedData, options)
+         
           .pipe(
             catchError(this.handleSignupError)
           );
+          */
+          return this.http.post(`${this.baseUrl}/touristsignup`,userData)
       }
 
       return throwError(() => new Error('Invalid user role'));

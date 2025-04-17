@@ -105,7 +105,10 @@ export class LoginComponent {
               this.router.navigate(['/tourguidesdashboard']);
             } else if (this.selectedUserKind === 'Company') {
               this.router.navigate(['/companydashboard']);
-            } else {
+            } else if(this.selectedUserKind === 'Admin'){
+              this.router.navigate(['/admindashboard']);
+            }
+            else {
               console.error('Unknown user kind:', this.selectedUserKind);
               this.errorMessage = 'Unknown user kind. Please contact support.';
             }

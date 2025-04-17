@@ -5,7 +5,7 @@ import { catchError } from 'rxjs/operators';
 import * as CryptoJS from 'crypto-js';
 
 export type UserRole = 'Tourist' | 'Tour Guide' | 'Company' | 'Admin';
-
+const baseUrl = 'http://localhost:8080/api';
 @Injectable({
   providedIn: 'root'
 })
@@ -48,12 +48,12 @@ export class LoginServices {
    * @param role User role
    * @returns Observable with login response
    */
-  login(email: string, password: string, role: UserRole): Observable<any> {
+  login(email: string, password: string, role: string): Observable<any> {
     if (!email || !password || !role) {
       return throwError(() => new Error('All credentials are required'));
     }
 
-    try {
+    /*try {
       const params = new HttpParams()
         .set('email', encodeURIComponent(this.encryptAES(email)))
         .set('password', encodeURIComponent(this.encryptAES(password)));
@@ -69,6 +69,18 @@ export class LoginServices {
     } catch (error) {
       return throwError(() => error);
     }
+    */
+    const params = new HttpParams()
+    .set('email',email ) // Automatically encodes the parameter
+    .set('password', password);
+if(role == 'Tourist'){
+    return this.http.get<any>(`${baseUrl}/touristlogin/`,{params:params,responseType: 'json'});}
+else if(role == 'Tour Guide'||role == 'Company'){
+    return this.http.get<any>(`${baseUrl}/tourproviderlogin/`,{params:params,responseType: 'json'});
+}
+else{
+    return this.http.get<any>(`${baseUrl}/adminlogin/`,{params,responseType: 'json'});
+}
   }
 
   /**

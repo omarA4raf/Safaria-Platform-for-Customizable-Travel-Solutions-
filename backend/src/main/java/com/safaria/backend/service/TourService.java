@@ -1,0 +1,212 @@
+package com.safaria.backend.service;
+
+
+import com.safaria.backend.DTO.TourRequestDTO;
+import com.safaria.backend.DTO.TourScheduleDTO;
+import com.safaria.backend.entity.Tour;
+import com.safaria.backend.entity.TourSchedule;
+import com.safaria.backend.entity.TourProvider;
+import com.safaria.backend.repository.TourRepository;
+import com.safaria.backend.repository.TourScheduleRepository;
+import com.safaria.backend.repository.TourProviderRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.safaria.backend.entity.Image;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class TourService {
+    // Directory for storing images
+//    @Value("${file.upload-dir}")
+    private static  String IMAGE_DIRECTORY =  "C:\\Users\\Abdalrahman\\Desktop\\graduation Project\\Safaria-Platform-for-Customizable-Travel-Solutions-\\backend\\src\\main\\java\\com\\safaria\\backend\\tourImages";
+
+    private final TourRepository tourRepository;
+    private final TourScheduleRepository tourScheduleRepository;
+    private final TourProviderRepository tourProviderRepository;
+
+    public TourService(TourRepository tourRepository, TourScheduleRepository tourScheduleRepository, TourProviderRepository tourProviderRepository) {
+        this.tourRepository = tourRepository;
+        this.tourScheduleRepository = tourScheduleRepository;
+        this.tourProviderRepository = tourProviderRepository;
+    }
+
+    // ✅ Create Tour with Multiple Schedules
+    @Transactional
+    public String createTourWithSchedules(TourRequestDTO dto,List<MultipartFile> images) {
+        System.out.println("___________entered...................");
+        Tour tour = new Tour();
+        tour.setTitle(dto.getTitle());
+        tour.setDescription(dto.getDescription());
+        tour.setDestinationCountry(dto.getDestinationCountry());
+//        tour.setCategory(Tour.Category.valueOf(dto.getCategory()));
+        tour.setCurrency(dto.getCurrency());
+        tour.setTourismTypes(dto.getTourismTypes());
+        // tttttttttttttttttttttttttttttttttttttttttttttttttthis for test only remove 2 and return the value
+        TourProvider tourProvider = tourProviderRepository.findById(2 /*dto.getTourProviderId()*/)
+                .orElseThrow(() -> new RuntimeException("Tour Provider not found"));
+        tour.setTourProvider(tourProvider);
+        // Save images to filesystem and create Image objects for the tour
+        List<Image> imageEntities = saveImagesAndCreateEntities(images, tour);
+        tour.setImages(imageEntities);
+        Tour savedTour = tourRepository.save(tour);
+
+        List<TourSchedule> schedules = dto.getSchedules().stream().map(scheduleDTO -> createSchedule(scheduleDTO, savedTour)).collect(Collectors.toList());
+        tourScheduleRepository.saveAll(schedules);
+        System.out.println("so what is the issue?");
+        return "tour is created successfully";
+    }
+    // Helper method to save images to the filesystem and create Image entities
+    private List<Image> saveImagesAndCreateEntities(List<MultipartFile> images, Tour tour) {
+        List<Image> imageEntities = new ArrayList<>();
+
+        if (images != null && !images.isEmpty()) {
+            for (MultipartFile image : images) {
+                try {
+                    // Generate unique filename
+                    String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+                    Path path = Paths.get(IMAGE_DIRECTORY, fileName);
+
+                    // Create directories if they don't exist
+                    Files.createDirectories(path.getParent());
+
+                    // Save image to filesystem
+                    image.transferTo(path.toFile());
+
+                    // Create Image entity and set imageUrl (relative path)
+                    Image imageEntity = new Image();
+                    imageEntity.setImageUrl("tours/" + fileName);  // Store relative path
+                    imageEntity.setTour(tour);  // Link image to the tour
+
+                    // Add to list
+                    imageEntities.add(imageEntity);
+
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to save image: " + image.getOriginalFilename(), e);
+                }
+            }
+        }
+        return imageEntities;
+    }
+
+    private TourSchedule createSchedule(TourScheduleDTO scheduleDTO, Tour tour) {
+        TourSchedule schedule = new TourSchedule();
+//        schedule.setDuration(scheduleDTO.getDuration());
+        schedule.setPrice(scheduleDTO.getPrice());
+        schedule.setAvailableSeats(scheduleDTO.getAvailableSeats());
+
+        try {
+            schedule.setStartDate(LocalDate.parse(scheduleDTO.getStartDate()));
+            schedule.setEndDate(LocalDate.parse(scheduleDTO.getEndDate()));
+        } catch (DateTimeParseException e) {
+            throw new RuntimeException("Invalid date format, use YYYY-MM-DD");
+        }
+
+        schedule.setTour(tour);
+        return schedule;
+    }
+
+    // ✅ Get All Tours
+    public List<TourRequestDTO> getAllTours() {
+        List<Tour> tours = tourRepository.findAll();
+        List<TourRequestDTO> tourRequestDTOList = new ArrayList<>();
+        List<TourScheduleDTO> tourScheduleDTOs = new ArrayList<>();
+        for (Tour tour : tours) {
+            List<TourSchedule> tourSchedules = tourScheduleRepository.findByTour_TourId(tour.getTourId());
+            for(TourSchedule tourSchedule :tourSchedules){
+                TourScheduleDTO tourScheduleDTO = new TourScheduleDTO();
+                tourScheduleDTO.setPrice(tourSchedule.getPrice());
+                tourScheduleDTO.setStartDate(String.valueOf(tourSchedule.getStartDate()));
+                tourScheduleDTO.setEndDate(String.valueOf(tourSchedule.getEndDate()));
+                tourScheduleDTO.setAvailableSeats(tourSchedule.getAvailableSeats());
+                tourScheduleDTOs.add(tourScheduleDTO);
+            }
+
+            TourRequestDTO tourRequestDTO = new TourRequestDTO();
+            // Map fields from `Tour` to `TourRequestDTO`
+            // Set the fields from Tour object to TourRequestDTO
+            tourRequestDTO.setTitle(tour.getTitle());
+            tourRequestDTO.setDescription(tour.getDescription());
+            tourRequestDTO.setDestinationCountry(tour.getDestinationCountry());
+//            tourRequestDTO.setCategory(String.valueOf(tour.getCategory()));
+            tourRequestDTO.setTourProviderId(tour.getTourProvider().getUserId());
+            tourRequestDTO.setCurrency(tour.getCurrency());
+            tourRequestDTO.setTourismTypes(tour.getTourismTypes());
+            tourRequestDTO.setSchedules(tourScheduleDTOs);
+            tourRequestDTO.setDescription(tour.getDescription());
+            // Map more fields as needed...
+
+            tourRequestDTOList.add(tourRequestDTO); // Add the DTO to the list
+        }
+        return tourRequestDTOList;
+    }
+
+    // ✅ Get a Tour by ID (Including Its Schedules)
+    public Tour getTourById(Integer tourId) {
+        return tourRepository.findById(tourId)
+                .orElseThrow(() -> new RuntimeException("Tour not found"));
+    }
+
+    // ✅ Update a Tour
+    @Transactional
+    public Tour updateTour(Integer tourId, TourRequestDTO dto) {
+        Tour tour = tourRepository.findById(tourId)
+                .orElseThrow(() -> new RuntimeException("Tour not found"));
+
+        tour.setTitle(dto.getTitle());
+        tour.setDescription(dto.getDescription());
+        tour.setDestinationCountry(dto.getDestinationCountry());
+//        tour.setCategory(Tour.Category.valueOf(dto.getCategory()));
+        tour.setCurrency(dto.getCurrency());
+        tour.setTourismTypes(dto.getTourismTypes());
+        TourProvider tourProvider = tourProviderRepository.findById(dto.getTourProviderId())
+                .orElseThrow(() -> new RuntimeException("Tour Provider not found"));
+        tour.setTourProvider(tourProvider);
+
+        return tourRepository.save(tour);
+    }
+
+    // ✅ Delete a Tour (Cascade Delete Its Schedules)
+    @Transactional
+    public void deleteTour(Integer tourId) {
+        Tour tour = tourRepository.findById(tourId)
+                .orElseThrow(() -> new RuntimeException("Tour not found"));
+        tourRepository.delete(tour);
+    }
+
+    // ✅ Add New Schedules to an Existing Tour
+    @Transactional
+    public String addSchedulesToTour(Integer tourId, List<TourScheduleDTO> scheduleDTOs) {
+        Tour tour = tourRepository.findById(tourId)
+                .orElseThrow(() -> new RuntimeException("Tour not found"));
+
+        List<TourSchedule> newSchedules = scheduleDTOs.stream()
+                .map(scheduleDTO -> createSchedule(scheduleDTO, tour))
+                .collect(Collectors.toList());
+
+        tourScheduleRepository.saveAll(newSchedules);
+        return "Schedules added successfully";
+    }
+
+    // ✅ Delete a Specific Schedule from a Tour
+    @Transactional
+    public void deleteSchedule(Integer scheduleId) {
+        Optional<TourSchedule> schedule = tourScheduleRepository.findById(scheduleId);
+        if (schedule.isPresent()) {
+            tourScheduleRepository.delete(schedule.get());
+        } else {
+            throw new RuntimeException("Tour Schedule not found");
+        }
+    }
+}

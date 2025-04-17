@@ -42,7 +42,7 @@ export class AdminDashboardTourproviderComponent implements OnInit{
   ) {}
 
   ngOnInit(): void {
-    if (!this.authService.isLoggedIn()) {
+    /*if (!this.authService.isLoggedIn()) {
       // Use window.location.href for full page reload in SSR
       if (typeof window !== 'undefined') {
         window.location.href = '/login';
@@ -50,6 +50,7 @@ export class AdminDashboardTourproviderComponent implements OnInit{
         this.router.navigate(['/login']);
       }
     }
+    */
     this.fetchRequests();
   }
 

@@ -38,7 +38,7 @@ export class AdminDashboardComponent implements OnInit {
   editUserData: User | null = null;
   searchTerm: string = '';
   currentUserRole: string | null = null;
-
+  editedUser: User | null = null;
   @ViewChild('addUserModal') addUserModal!: ElementRef;
   @ViewChild('editUserModal') editUserModal!: ElementRef;
 
@@ -51,7 +51,7 @@ export class AdminDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     // Check authentication and admin role
-    if (!this.authService.isLoggedIn()) {
+   /* if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
       return;
     }
@@ -64,6 +64,7 @@ export class AdminDashboardComponent implements OnInit {
       this.router.navigate(['/']);
       return;
     }
+    */
 
     this.fetchUsers();
   }
@@ -80,9 +81,9 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  deleteUser(id: number): void {
+  deleteUser(id: number,role:number): void {
     if (confirm('Are you sure you want to delete this user?')) {
-      this.adminService.deleteUser(id).subscribe({
+      this.adminService.deleteUser(id,this.getRoleName(role)).subscribe({
         next: () => {
           this.users = this.users.filter((user) => user.id !== id);
         },
@@ -117,6 +118,13 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   startEdit(user: User): void {
+    this.editedUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    };
+    
     this.editUserData = { ...user };
     this.openEditModal();
   }
@@ -124,7 +132,7 @@ export class AdminDashboardComponent implements OnInit {
   updateUser(): void {
     if (this.editUserData) {
       console.log('Updating user with data:', this.editUserData); // Debug log
-      this.adminService.updateUser(this.editUserData).subscribe({
+      this.adminService.updateUser(this.editedUser,this.editUserData).subscribe({
         next: (updatedUser) => {
           console.log('Updated user received:', updatedUser); // Debug log
           const index = this.users.findIndex((u) => u.id === updatedUser.id);

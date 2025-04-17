@@ -212,7 +212,7 @@ export class TourGideSignUpComponent implements OnInit {
     if (this.idDocument) {
       formData.append('approvalDocument', this.idDocument);
     }
-
+/*
     this.signup_services.signup(formData, 'Tour Guide').subscribe({
       next: (response) => {
         if (response?.token) {
@@ -225,6 +225,25 @@ export class TourGideSignUpComponent implements OnInit {
           this.router.navigate(['/tourguidedashboard']);
         } else {
           this.errorMessage = 'Email or Username already exists.';
+        }
+      },
+      error: (error) => {
+        console.error('Signup failed:', error);
+        this.errorMessage = 'An error occurred. Please try again later.';
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
+    });
+    */
+   
+    this.signup_services.signup(formData, 'Tour Guide').subscribe({
+      next: (data) => {
+        if (data == null) {
+          this.errorMessage = 'Email or Username already exists.';
+        } else {
+          alert('You have successfully signed up. Please verify your email!');
+          this.router.navigate(['/login']);
         }
       },
       error: (error) => {
