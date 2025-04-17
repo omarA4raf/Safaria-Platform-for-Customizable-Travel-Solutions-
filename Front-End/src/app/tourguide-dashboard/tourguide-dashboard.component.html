@@ -1,0 +1,250 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <!-- Brand Name -->
+    <a style="color: #ffa500;" class="navbar-brand fw-bold" href="#">Safaria</a>
+
+    <!-- Toggle Button for Mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar Links -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">About me</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">My trips</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">Clients</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">Reviews</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" (click)="logout()" style="cursor: pointer;">
+            Log out <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Profile Part -->
+<div class="container mt-4">
+  <h4 class="profile-word mb-3">Profile</h4>
+  <div class="row align-items-center">
+    <!-- Profile Image (1/4 of the width) -->
+    <div class="col-md-4 text-center">
+      <div class="profile-image-container" (mouseenter)="showUploadText = true" (mouseleave)="showUploadText = false">
+        <img [src]="profile.image || '/assets/img/profile pic 7.jpg'" class="img-fluid rounded profile-img"
+          alt="Profile Image" />
+        <div class="upload-text" *ngIf="showUploadText" (click)="fileInput.click()">Upload Picture</div>
+        <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none;" />
+      </div>
+    </div>
+
+    <!-- User Info (3/4 of the width) -->
+    <div class="col-md-8 pt-5">
+      <p><strong>Name:</strong> {{ name }}</p>
+      <p><strong>Email:</strong> {{ email }}</p>
+      <p><strong>Country:</strong> {{ country }}</p>
+      <p><strong>Phone Number:</strong> {{ phone }}</p>
+      <p><strong>Password:</strong> {{ password }}</p>
+      <p><strong>Tourism Types:</strong> {{ tourismTypes }}</p>
+      <p><strong>Rating: </strong>
+        <span id="rating-value" class="text-dark">{{ rating }} </span>
+        <span id="rating-stars" class="text-warning" [innerHTML]="renderStars(rating)"></span>
+      </p>
+      <button class="btn btn-sm btn-outline-dark edit-btn" (click)="editProfile()">
+        <i class="fas fa-edit"></i> Edit
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- About CV -->
+<div class="container m-5">
+  <h4 class="mb-3" style="color: #174750;">About me</h4>
+  <p id="about-me">{{ about || 'No information provided yet.' }}</p>
+  <button class="btn btn-sm btn-outline-dark edit-btn" (click)="editAbout()">
+    <i class="fas fa-edit"></i> Edit
+  </button>
+</div>
+
+<!-- Trips List -->
+<div class="container m-5">
+  <h5 class="fw-bold mb-3" (click)="navigateToCreateTrip()" style="cursor: pointer; color: #174750;">
+      My trips:
+      <span class="text-secondary">
+          <i class="fas fa-plus"></i> create new trips
+      </span>
+  </h5>
+
+  <div class="list-container">
+      <div *ngIf="trips.length > 0; else noTrips" class="list-list d-flex flex-nowrap overflow-auto">
+          <div class="list-card position-relative overflow-hidden rounded-3" *ngFor="let trip of trips"
+              style="flex: 0 0 auto; width: 18rem;">
+              <!-- Background Image -->
+              <img [src]="trip.image || '/assets/img/default-trip.jpg'" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ trip.title }}" />
+
+              <!-- Dark Transparent Overlay -->
+              <div class="overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
+
+              <!-- Trip Info (Displayed on Image) -->
+              <div class="list-info position-absolute bottom-0 start-0 p-3 text-white w-100">
+                  <h6 class="fw-bold mb-1">{{ trip.title }}</h6>
+                  <p class="text-white-50 mb-1 company-title">{{ trip.company || 'No company provided' }}</p>
+                  <div class="d-flex align-items-center">
+                      <span id="rating-value" class="text-white me-2">{{ trip.rating || 0 }}</span>
+                      <span id="rating-stars" class="text-warning" [innerHTML]="renderStars(trip.rating || 0)"></span>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <ng-template #noTrips>
+          <p class="text-secondary">There are no trips yet.</p>
+      </ng-template>
+  </div>
+</div>
+
+<!-- Clients List -->
+<div class="container m-5">
+  <h5 class="fw-bold mb-3" style="color: #174750;">
+      My Clients:
+  </h5>
+
+  <div class="list-container">
+      <div *ngIf="clients.length > 0; else noClients" class="list-list d-flex flex-nowrap overflow-auto">
+          <div class="list-card position-relative overflow-hidden rounded-3" *ngFor="let client of clients"
+              style="flex: 0 0 auto; width: 18rem;">
+              <!-- Background Image -->
+              <img [src]="client.image || '/assets/img/default-client.jpg'" class="card-img-top w-100 h-100 object-fit-cover"
+                  alt="{{ client.clientName }}" />
+
+              <!-- Dark Transparent Overlay -->
+              <div class="overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
+
+              <!-- list Info (Displayed on Image) -->
+              <div class="list-info position-absolute bottom-0 start-0 p-3 text-white w-100">
+                  <h6 class="fw-bold mb-1">{{ client.clientName }}</h6>
+                  <p class="text-white-50 mb-1 company-title">{{ client.Address || 'No address provided' }}</p>
+                  <div class="d-flex align-items-center justify-content-between">
+                      <!-- Rating Section -->
+                      <div class="d-flex align-items-center">
+                          <span id="rating-value" class="text-white me-2">{{ client.rating || 0 }}</span>
+                          <span id="rating-stars" class="text-warning"
+                              [innerHTML]="renderStars(client.rating || 0)"></span>
+                      </div>
+
+                      <!-- Message Icon -->
+                      <div>
+                          <i class="fa-regular fa-comment text-warning fs-5"></i>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <ng-template #noClients>
+          <p class="text-secondary">There are no clients yet.</p>
+      </ng-template>
+  </div>
+</div>
+
+<!-- Client Reviews Section -->
+<div class="container m-5 client-reviews-container">
+  <h5 class="fw-bold mb-3" style="color: #174750;">
+      My Reviews:
+  </h5>
+  <div class="client-reviews-list d-flex flex-nowrap overflow-auto">
+      <div *ngIf="clientReviews.length > 0; else noReviews">
+          <!-- Client Review Card -->
+          <div class="client-review-card" *ngFor="let review of clientReviews">
+              <!-- Rectangle Card -->
+              <div class="card-body">
+                  <!-- Client Image and Name -->
+                  <div class="d-flex align-items-center mb-3">
+                      <img [src]="review.image || '/assets/img/default-reviewer.jpg'" class="client-image rounded-circle" alt="{{ review.name }}" />
+                      <h6 class="client-name ms-3">{{ review.name || 'Anonymous' }}</h6>
+                  </div>
+
+                  <!-- Review Rating -->
+                  <div class="rating mb-3">
+                      <span id="rating-value" class="text-black me-2">{{ review.rating || 0 }}</span>
+                      <span class="text-warning" [innerHTML]="renderStars(review.rating || 0)"></span>
+                  </div>
+
+                  <!-- Text Review -->
+                  <p class="review-text">{{ review.review || 'No review provided' }}</p>
+              </div>
+          </div>
+      </div>
+      <ng-template #noReviews>
+          <p class="text-secondary">There are no reviews yet.</p>
+      </ng-template>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="text-white py-4" style="background-color: #71a7b8">
+  <div class="container">
+    <div class="row">
+      <!-- Left Side - Brand & Social Icons -->
+      <div class="col-md-4">
+        <h4>Safaria</h4>
+        <div class="social-icons mt-3">
+          <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+          <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+          <a href="#" class="text-white me-3"><i class="fab fa-youtube fa-lg"></i></a>
+          <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+        </div>
+      </div>
+
+      <!-- Center & Right Side - Topics -->
+      <div class="col-md-8">
+        <div class="row">
+          <!-- Column 1 -->
+          <div class="col-md-4">
+            <h5>Explore</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">Destinations</a></li>
+              <li><a href="#" class="text-white">Tours</a></li>
+              <li><a href="#" class="text-white">Experiences</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="col-md-4">
+            <h5>tourguide</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">About Us</a></li>
+              <li><a href="#" class="text-white">Careers</a></li>
+              <li><a href="#" class="text-white">Blog</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 3 -->
+          <div class="col-md-4">
+            <h5>Support</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">Contact Us</a></li>
+              <li><a href="#" class="text-white">FAQs</a></li>
+              <li><a href="#" class="text-white">Help Center</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Line -->
+    <hr class="mt-4 mb-2 border-white" />
+    <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
+  </div>
+</footer>

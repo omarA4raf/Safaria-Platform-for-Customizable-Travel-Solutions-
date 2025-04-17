@@ -1,0 +1,321 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container p-0">
+    <a style="color: #ffa500;" class="navbar-brand fw-bold" href="#">Safaria</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/companydashboard">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">About me</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">My trips</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">Clients</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">Reviews</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" (click)="logout()" style="cursor: pointer;">
+            Log out <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container my-5">
+  <h2 class="mb-4">Create New Trip</h2>
+  <form (ngSubmit)="onSubmit()">
+    <!-- Collapsible Sections -->
+    <div class="accordion shadow" id="tripFormAccordion">
+      <!-- Trip Details Section -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+            Trip Details
+          </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show">
+          <div class="accordion-body row">
+            <!-- Trip Title -->
+            <div class="mb-3">
+              <label for="tripTitle" class="form-label">Trip Title</label>
+              <input type="text" class="form-control" id="tripTitle" [(ngModel)]="trip.title" name="title" required />
+              <small class="text-danger" *ngIf="errorMessages['title']">{{ errorMessages['title']
+                }}</small>
+            </div>
+
+            <!-- Destination Country -->
+            <div class="mb-3 col-3">
+              <label for="destinationCountry" class="form-label">Destination Country</label>
+              <select class="form-control" id="destinationCountry" [(ngModel)]="trip.destinationCountry"
+                name="destinationCountry" required>
+                <option value="" disabled selected>Select a country</option>
+                <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
+              </select>
+              <small class="text-danger" *ngIf="errorMessages['destinationCountry']">{{
+                errorMessages['destinationCountry'] }}</small>
+            </div>
+
+            <!-- Duration -->
+            <div class="mb-3 col-3">
+              <label for="duration" class="form-label">Duration (in days)</label>
+              <input type="number" class="form-control" id="duration" [(ngModel)]="trip.duration" name="duration"
+                required />
+              <small class="text-danger" *ngIf="errorMessages['duration']">{{ errorMessages['duration']
+                }}</small>
+            </div>
+
+            <!-- Currency -->
+            <div class="mb-3 col-3">
+              <label for="currency" class="form-label">Currency</label>
+              <select class="form-control" id="currency" [(ngModel)]="trip.currency" name="currency" required>
+                <option value="" disabled selected>Select currency</option>
+                <option *ngFor="let currency of currencies" [value]="currency.code">
+                  {{ currency.name }} ({{ currency.symbol }})
+                </option>
+              </select>
+              <small class="text-danger" *ngIf="errorMessages['currency']">{{ errorMessages['currency']
+                }}</small>
+            </div>
+
+            <!-- Free Cancellation Deadline -->
+            <div class="mb-3 col-3">
+              <label for="freeCancellationDeadline" class="form-label">Free Cancellation Deadline (in
+                hours)</label>
+              <input type="number" class="form-control" id="freeCancellationDeadline"
+                [(ngModel)]="trip.freeCancellationDeadline" name="freeCancellationDeadline" required />
+              <small class="text-muted">Enter the number of hours before the trip when free cancellation
+                will no longer
+                be available (e.g., 48 hours).</small>
+              <small class="text-danger" *ngIf="errorMessages['freeCancellationDeadline']">{{
+                errorMessages['freeCancellationDeadline'] }}</small>
+            </div>
+
+            <!-- Tourism Type -->
+            <div class="mb-3">
+              <label class="form-label ">Select Tourism Type:</label>
+              <div class="checkbox-container">
+                <label class="checkbox-inline" *ngFor="let type of tourismTypes">
+                  <input type="checkbox" [value]="type" (change)="toggleTourismType(type, $event)" />
+                  <i class="fa" [ngClass]="{
+                        'fa-landmark': type === 'cultural',
+                        'fa-hiking': type === 'adventure',
+                        'fa-umbrella-beach': type === 'beach',
+                        'fa-monument': type === 'historical',
+                        'fa-paw': type === 'wildlife',
+                        'fa-praying-hands': type === 'religious'
+                    }"></i> {{ type | titlecase }}
+                </label>
+              </div>
+              <small class="text-danger" *ngIf="errorMessages['tourismTypes']">{{
+                errorMessages['tourismTypes']
+                }}</small>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea class="form-control" id="description" [(ngModel)]="trip.description" name="description" rows="5"
+                required></textarea>
+              <small class="text-danger" *ngIf="errorMessages['description']">{{
+                errorMessages['description'] }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Images Section -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingTwo">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseTwo">
+            Images
+          </button>
+        </h2>
+        <div id="collapseTwo" class="accordion-collapse collapse">
+          <div class="accordion-body">
+            <div class="mb-4">
+              <h4 class="mb-3">Upload Trip Pictures</h4>
+              <div class="row">
+                <!-- Dynamic Image Upload Boxes -->
+                <div class="col-md-3 mb-3" *ngFor="let image of images; let i = index">
+                  <div class="image-upload-box" (click)="triggerFileInput(i)">
+                    <input type="file" [id]="'fileInput' + i" class="d-none" (change)="onFileSelected($event, i)"
+                      accept="image/*" required />
+                    <div *ngIf="!image.url"
+                      class="upload-placeholder d-flex flex-column align-items-center justify-content-center">
+                      <i class="fas fa-camera fa-3x text-secondary"></i>
+                      <p class="mt-2">Click to upload</p>
+                    </div>
+                    <img *ngIf="image.url" [src]="image.url" class="uploaded-image" alt="Trip Image" />
+                    <button *ngIf="image.url" class="btn btn-danger btn-sm delete-btn" (click)="removeImage(i)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Add More Images Button -->
+                <div class="col-md-3 mb-3">
+                  <div class="image-upload-box add-more d-flex flex-column align-items-center justify-content-center"
+                    (click)="addImageBox()">
+                    <i class="fas fa-plus fa-3x text-secondary"></i>
+                    <p class="mt-2">Add more</p>
+                  </div>
+                </div>
+              </div>
+              <small class="text-danger" *ngIf="errorMessages['images']">{{ errorMessages['images']
+                }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Available Dates Section -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingThree">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseThree">
+            Available Dates
+          </button>
+        </h2>
+        <div id="collapseThree" class="accordion-collapse collapse">
+          <div class="accordion-body">
+            <div class="mb-3">
+              <h5>Available Dates</h5>
+              <div *ngFor="let dateRange of trip.availableDates; let i = index" class="mb-3">
+                <div class="row">
+                  <!-- From Date -->
+                  <div class="col-3">
+                    <label for="startDate{{i}}" class="form-label">From</label>
+                    <input type="date" class="form-control" [(ngModel)]="dateRange.startDate" name="startDate{{i}}"
+                      required />
+                  </div>
+                  <!-- To Date -->
+                  <div class="col-3">
+                    <label for="endDate{{i}}" class="form-label">To</label>
+                    <input type="date" class="form-control" [(ngModel)]="dateRange.endDate" name="endDate{{i}}"
+                      required />
+                  </div>
+                  <!-- Available Seats -->
+                  <div class="col-3">
+                    <label for="availableSeats{{i}}" class="form-label">Available Seats</label>
+                    <input type="number" class="form-control" id="availableSeats{{i}}"
+                      [(ngModel)]="dateRange.availableSeats" name="availableSeats{{i}}" required />
+                  </div>
+                  <!-- Budget -->
+                  <div class="col-2">
+                    <label for="budget{{i}}" class="form-label">Budget</label>
+                    <input type="number" class="form-control" id="budget{{i}}" [(ngModel)]="dateRange.budget"
+                      name="budget{{i}}" required />
+                  </div>
+                  <!-- Delete Button -->
+                  <div class="col-1 d-flex align-items-end">
+                    <button type="button" class="btn btn-danger" (click)="removeDateRange(i)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <small class="text-danger" *ngIf="errorMessages['availableDates']">{{
+                errorMessages['availableDates']
+                }}</small>
+              <!-- Add Date Range Button -->
+              <button type="button" class="btn btn-secondary" (click)="addDateRange()">Add Another Trip
+                Date</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit and Save as Draft Buttons -->
+    <div class="mt-4">
+      <button type="submit" class="btn btn-warning w-100" [disabled]="createIsLoading">
+        <span *ngIf="!createIsLoading">
+          <i class="fas fa-plus"></i> Create Trip
+        </span>
+        <span *ngIf="createIsLoading">
+          Creating Trip...
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        </span>
+      </button>
+      <button type="button" class="btn btn-secondary w-100 mt-2" (click)="saveDraft()"
+        [disabled]="SavingisLoading || !hasData()">
+        <span *ngIf="!SavingisLoading">
+          <i class="fas fa-plus"></i> Save as draft
+        </span>
+        <span *ngIf="SavingisLoading">
+          Saving Trip...
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        </span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Footer -->
+<footer class="text-white py-4 pb-2" style="background-color: #71a7b8">
+  <div class="container shadow-none p-0">
+    <div class="row">
+      <!-- Left Side - Brand & Social Icons -->
+      <div class="col-md-4">
+        <h4>Safaria</h4>
+        <div class="social-icons mt-3">
+          <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+          <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+          <a href="#" class="text-white me-3"><i class="fab fa-youtube fa-lg"></i></a>
+          <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+        </div>
+      </div>
+
+      <!-- Center & Right Side - Topics -->
+      <div class="col-md-8">
+        <div class="row">
+          <!-- Column 1 -->
+          <div class="col-md-4">
+            <h5>Explore</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">Destinations</a></li>
+              <li><a href="#" class="text-white">Tours</a></li>
+              <li><a href="#" class="text-white">Experiences</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="col-md-4">
+            <h5>Company</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">About Us</a></li>
+              <li><a href="#" class="text-white">Careers</a></li>
+              <li><a href="#" class="text-white">Blog</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 3 -->
+          <div class="col-md-4">
+            <h5>Support</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">Contact Us</a></li>
+              <li><a href="#" class="text-white">FAQs</a></li>
+              <li><a href="#" class="text-white">Help Center</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Line -->
+    <hr class="mt-4 mb-2 border-white" />
+    <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
+  </div>
+</footer>

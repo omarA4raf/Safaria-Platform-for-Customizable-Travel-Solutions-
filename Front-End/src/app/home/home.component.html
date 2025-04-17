@@ -1,0 +1,211 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-50 fixed-top">
+  <div class="container">
+    <!-- Brand Name -->
+    <a class="navbar-brand text-white fw-bold" href="#">Safaria</a>
+
+    <!-- Toggle Button for Mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+
+    <!-- Navbar Links -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">Tours</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">Custom Plans</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">Tour guide assistant</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">Blog</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="#">Support</a>
+        </li>
+
+        <!-- User Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-user"></i> Account
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" routerLink="/login">Login</a></li>
+            <li><a class="dropdown-item" routerLink="/signup">Sign Up</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Welcome Section -->
+<section class="welcome">
+  <div class="overlay"></div>
+  <div class="content text-center text-white">
+    <h2>Welcome to</h2>
+    <h1 class="SafariaName fw-bold">Safaria</h1>
+    <p>Platform for Customizable Travel Solutions</p>
+    <div class="buttons">
+      <button class="btn btn-outline-light me-3" routerLink="/signup">Sign up</button>
+      <button class="btn btn-outline-light" routerLink="/login">Login</button>
+    </div>
+  </div>
+</section>
+
+<div class="container-fluid">
+  <!-- First Row -->
+  <div class="first-third row align-items-center p-5 pt-0">
+    <div class="col-md-6 p-5 mt-5">
+      <h2 class="section-title">
+        What you can do with <strong>Safaria</strong> ?
+      </h2>
+      <p class="section-text">
+        Plan your dream trip effortlessly with customized tours, curated
+        packages, and expert tour guide assistance.
+      </p>
+    </div>
+    <div class="col-md-6 mt-5">
+      <img src="/assets/img/ff8584574175ebac7c3d59010276f50f.jpg" class="img-fluid rounded shadow"
+        alt="Viewing Telescope" />
+    </div>
+  </div>
+
+  <!-- Second Row -->
+  <div class="second-other row align-items-center p-5">
+    <div class="col-md-6">
+      <img src="/assets/img/5843e2c94410ffd5399be9712f4ba05d.jpg" class="img-fluid rounded shadow" alt="Boat Tour" />
+    </div>
+    <div class="col-md-6 p-5">
+      <h2 class="section-title">Customized Tour</h2>
+      <p class="section-text">
+        Create personalized tours by selecting cities, activities, budget, and
+        transport options with automated planning and easy editing.
+      </p>
+    </div>
+  </div>
+
+  <!-- third Row -->
+  <div class="first-third row align-items-center p-5">
+    <div class="col-md-6 p-5">
+      <h2 class="section-title">Pre-Packaged Tours</h2>
+      <p class="section-text">
+        Explore curated trip packages from trusted companies, including
+        transport, accommodation, and events.
+      </p>
+    </div>
+    <div class="col-md-6">
+      <img src="/assets/img/eb114fa66d1e4e11efc20eb5fea7e5df.jpg" class="img-fluid rounded shadow"
+        alt="Viewing Telescope" />
+    </div>
+  </div>
+
+  <!-- forth Row -->
+  <div class="second-other row align-items-center p-5">
+    <div class="col-md-6">
+      <img src="/assets/img/e73db164bbe81f22b68ae3536f624c24.jpg" class="img-fluid rounded shadow" alt="Boat Tour" />
+    </div>
+    <div class="col-md-6 p-5">
+      <h2 class="section-title">Tour Guide Assistance</h2>
+      <p class="section-text">
+        Find and connect with expert tour guides by expertise, language, and
+        rating for tailored experiences.
+      </p>
+    </div>
+  </div>
+
+  <!-- fifth Row -->
+  <div class="row align-items-center p-5 bg-white">
+    <h2 class="section-title ms-5">What also we provide?</h2>
+    <div class="col-md-6 p-5 pt-4">
+      <ul class="section-text">
+        <li>
+          Share your experiences, reviews, and completed tour plans to earn
+          points for discounts and special offers.
+        </li>
+        <li>
+          Rate and review trips, attractions, and guides to help others while
+          exploring top-rated services.
+        </li>
+      </ul>
+    </div>
+    <div class="col-md-6 p-5 pt-4">
+      <ul class="section-text">
+        <li>
+          Pay conveniently with multiple payment options and local currency
+          support for a smooth transaction experience.
+        </li>
+        <li>
+          Access FAQs, troubleshooting guides, and chatbot assistance to enhance
+          your user experience.
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- info part -->
+<footer class="text-white py-4" style="background-color: #71a7b8">
+  <div class="container">
+    <div class="row">
+      <!-- Left Side - Brand & Social Icons -->
+      <div class="col-md-4">
+        <h4>Safaria</h4>
+        <div class="social-icons mt-3">
+          <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+          <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+          <a href="#" class="text-white me-3"><i class="fab fa-youtube fa-lg"></i></a>
+          <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+        </div>
+      </div>
+
+      <!-- Center & Right Side - Topics -->
+      <div class="col-md-8">
+        <div class="row">
+          <!-- Column 1 -->
+          <div class="col-md-4">
+            <h5>Explore</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">Destinations</a></li>
+              <li><a href="#" class="text-white">Tours</a></li>
+              <li><a href="#" class="text-white">Experiences</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="col-md-4">
+            <h5>Company</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">About Us</a></li>
+              <li><a href="#" class="text-white">Careers</a></li>
+              <li><a href="#" class="text-white">Blog</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 3 -->
+          <div class="col-md-4">
+            <h5>Support</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">Contact Us</a></li>
+              <li><a href="#" class="text-white">FAQs</a></li>
+              <li><a href="#" class="text-white">Help Center</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Line -->
+    <hr class="mt-4 mb-2 border-white" />
+    <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
+  </div>
+</footer>

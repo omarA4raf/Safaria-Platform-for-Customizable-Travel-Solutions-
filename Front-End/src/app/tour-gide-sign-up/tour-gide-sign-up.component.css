@@ -1,0 +1,97 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container-fluid {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    gap: 30px; /* Increased space between left and right sections */
+}
+
+.left-section {
+    height: 98vh; 
+    background: url('/assets/img/tourguide.jpg') no-repeat center center; /* Updated image */
+    background-size: cover;
+    position: relative;
+}
+
+.right-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+}
+
+.signup-form {
+    width: 100%;
+    max-width: 500px;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-height: 90vh; /* Ensure form fits within viewport */
+    overflow-y: auto; /* Enable scrolling for long forms */
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+}
+
+.btn-success {
+    background-color: #174750;
+    border: none;
+}
+
+.btn-success:hover {
+    background-color: #103339;
+}
+
+p a {
+    color: #174750;
+    text-decoration: none;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
+
+/* Style the select dropdown */
+select {
+    appearance: none;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: white;
+}
+
+/* Checkbox styling */
+.checkbox-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.checkbox-inline {
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.checkbox-inline input {
+    margin-right: 5px;
+}
+
+.checkbox-inline i {
+    font-size: 18px;
+    margin-right: 5px;
+    color: #28a745;
+}
