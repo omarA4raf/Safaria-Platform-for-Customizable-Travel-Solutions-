@@ -12,10 +12,10 @@ import java.util.OptionalInt;
 
 
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "TourProvider") // Explicitly set the table name
+@Data
 public class TourProvider {
    
 

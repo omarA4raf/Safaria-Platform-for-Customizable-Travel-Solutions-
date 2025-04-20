@@ -3,17 +3,18 @@ package com.safaria.backend.DTO;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.safaria.backend.entity.TourProvider;
 import com.safaria.backend.entity.Tourist;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 
-@Data
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 @AllArgsConstructor
-public class UserInfoDTO {
+public class UserInfoDTO  {
     private String name;
     private String email;
     private String password;
@@ -26,6 +27,7 @@ public class UserInfoDTO {
     private List<String> myReviews;
     private float rating;
     private String type;
+    private String token;
     
 
 
@@ -58,6 +60,11 @@ public UserInfoDTO(TourProvider tourProvider) {
     this.myClients = new ArrayList<>();
     this.myReviews = new ArrayList<>();
     this.rating=5;
-}}
+}
+
+    public void setToken(String token) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+}
 
    

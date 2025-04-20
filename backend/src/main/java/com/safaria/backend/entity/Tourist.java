@@ -1,16 +1,9 @@
 package com.safaria.backend.entity;
-
-
 import com.safaria.backend.DTO.TouristSignUpDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import lombok.ToString;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import org.springframework.http.HttpStatus;
 
 
 //import javax.persistence.*;

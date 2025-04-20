@@ -70,48 +70,48 @@ public class services implements Iservices {
      private  FileSystemService fileSystemService;
 
 
-    @Override
-    public ResponseEntity<UserInfoDTO> touristlogin(String email, String password) {
-        Optional<Tourist> tourist = touristRepository.findByEmail(email);
+    // @Override
+    // public ResponseEntity<UserInfoDTO> touristlogin(String email, String password) {
+    //     Optional<Tourist> tourist = touristRepository.findByEmail(email);
         
 
-        if (tourist.isPresent()) {
-                if (passwordEncoder.matches(password, tourist.get().getPassword())) {
-                    UserInfoDTO dto = new UserInfoDTO(tourist.get());
-                    dto.setType("Tourist");
+    //     if (tourist.isPresent()) {
+    //             if (passwordEncoder.matches(password, tourist.get().getPassword())) {
+    //                 UserInfoDTO dto = new UserInfoDTO(tourist.get());
+    //                 dto.setType("Tourist");
 
-                    return ResponseEntity.status(200).body(dto);
-                } else {
-                    return ResponseEntity.status(404).build();
-                }
+    //                 return ResponseEntity.status(200).body(dto);
+    //             } else {
+    //                 return ResponseEntity.status(404).build();
+    //             }
 
-        }
-        return ResponseEntity.status(404).build();
+    //     }
+    //     return ResponseEntity.status(404).build();
     
-    }
-    @Override
-    public ResponseEntity<UserInfoDTO>  tourProviderlogin(String email, String password) {
+    // }
+    // @Override
+    // public ResponseEntity<UserInfoDTO>  tourProviderlogin(String email, String password) {
        
-        Optional<TourProvider> tourProvider = tourProviderRepository.findByEmail(email);
+    //     Optional<TourProvider> tourProvider = tourProviderRepository.findByEmail(email);
         
 
-        if (tourProvider.isPresent()) {
-                if (passwordEncoder.matches(password, tourProvider.get().getPassword())) {
-                    UserInfoDTO dto = new UserInfoDTO(tourProvider.get());
-                    if(tourProvider.get().getType())
-                      dto.setType("Tour Guide");
-                    else
-                      dto.setType("Company");
+    //     if (tourProvider.isPresent()) {
+    //             if (passwordEncoder.matches(password, tourProvider.get().getPassword())) {
+    //                 UserInfoDTO dto = new UserInfoDTO(tourProvider.get());
+    //                 if(tourProvider.get().getType())
+    //                   dto.setType("Tour Guide");
+    //                 else
+    //                   dto.setType("Company");
 
 
-                    return ResponseEntity.status(200).body(dto);
-                } else {
-                    return ResponseEntity.status(404).build();
-                }
+    //                 return ResponseEntity.status(200).body(dto);
+    //             } else {
+    //                 return ResponseEntity.status(404).build();
+    //             }
 
-        }
-        return ResponseEntity.status(404).build();
-    }
+    //     }
+    //     return ResponseEntity.status(404).build();
+    // }
     // @Override
     // public Admin adminlogin(String email, String password) {
     //     email=URLDecoder.decode(email, StandardCharsets.UTF_8);

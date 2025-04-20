@@ -1,15 +1,13 @@
 package com.safaria.backend.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "Tour")
 public class Tour {
 
