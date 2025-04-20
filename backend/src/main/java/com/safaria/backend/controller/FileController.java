@@ -20,16 +20,28 @@ import java.util.*;
 public class FileController {
     @Autowired
     private FileSystemService fileSystemService;
+    private MediaType getMediaTypeForFileName(String filename) {
+        if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
+            return MediaType.IMAGE_JPEG;
+        } else if (filename.endsWith(".png")) {
+            return MediaType.IMAGE_PNG;
+        } else if (filename.endsWith(".gif")) {
+            return MediaType.IMAGE_GIF;
+        } else {
+            return MediaType.APPLICATION_OCTET_STREAM; // fallback
+        }
+    }
     @GetMapping("files/{filename:.+}")
     public ResponseEntity<Resource> getFile(@PathVariable String filename) {
         try {
             Path filePath = Paths.get("Upload/Documents").resolve("TourProvider").resolve(filename).normalize();
             UrlResource urlResource = new UrlResource(filePath.toUri());
-            System.out.println(filePath.toUri());
             if (urlResource.exists() && urlResource.isReadable()) {
+                MediaType mediaType = getMediaTypeForFileName(filename);
+
                 // ✅ Cast only here when passing into the body
                 return ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_PDF)
+                        .contentType(mediaType)
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + urlResource.getFilename() + "\"")
                         .body((Resource) urlResource);
             } else {

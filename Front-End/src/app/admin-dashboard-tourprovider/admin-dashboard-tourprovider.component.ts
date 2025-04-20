@@ -76,6 +76,7 @@ export class AdminDashboardTourproviderComponent implements OnInit{
     this.selectedRequest = request;
     this.generatedUrl="http://localhost:8080/files/"+this.selectedRequest.documentUrl.substring(this.selectedRequest.documentUrl.lastIndexOf('\\') + 1);
     this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.generatedUrl)
+    alert(this.generatedUrl)
     this.showDocumentModal = true;
   }
 
