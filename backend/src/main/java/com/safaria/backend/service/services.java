@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -23,6 +24,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
@@ -51,7 +53,20 @@ public class services implements Iservices {
             return null;
         }
     }
+    public boolean isPdfOrImage(MultipartFile file) {
+        // Get content type from the file
+        String contentType = file.getContentType();
 
+        // Check for PDF or image MIME types
+        if (contentType != null) {
+            if (contentType.equals("application/pdf")) {
+                return true;  // It's a PDF
+            } else if (contentType.startsWith("image/")) {
+                return false;  // It's an image (jpeg, png, gif, etc.)
+            }
+        }
+        return false;  // Neither PDF nor image
+    }
 
 
     @Autowired
@@ -154,7 +169,14 @@ public class services implements Iservices {
 
         tourProvider.setPassword(passwordEncoder.encode(tourProvider.getPassword()));
         String directory = "Documents/TourProvider";
-        String uniqueFileName = this.fileSystemService.generateUniqueFileName(directory, "pdf");
+        String uniqueFileName="";
+        if(isPdfOrImage(tourProvider.getApprovalDocument())){
+            uniqueFileName = this.fileSystemService.generateUniqueFileName(directory, "pdf");
+        }
+        else{
+            uniqueFileName = this.fileSystemService.generateUniqueFileName(directory, "jpg");
+
+        }
         String relativeFilePath = Paths.get(directory, uniqueFileName).toString();
 
         try {
@@ -223,6 +245,7 @@ public class services implements Iservices {
         Optional<List<Tourist>>tourists= Optional.of(this.touristRepository.findAll());
         Optional<List<Admin>>admins= Optional.of(this.adminRepository.findAll());
         List<UserEditDto> users = new ArrayList<UserEditDto>();
+
         providers.ifPresent(list -> {
             for (TourProvider P : list) {
                 users.add(new UserEditDto(P));

@@ -1,10 +1,13 @@
 package com.safaria.backend.controller;
 
 import com.safaria.backend.service.FileSystemService;
+import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,28 +20,25 @@ import java.util.*;
 public class FileController {
     @Autowired
     private FileSystemService fileSystemService;
-    @GetMapping("files/{folder}/{filename:.+}")
-    public ResponseEntity<byte[]> getPdf(
-            @PathVariable String folder,
-            @PathVariable String filename) throws IOException {
-
-        // Build relative path
-        String relativePath = "Documents/" + folder + "/" + filename;
-
-        byte[] fileBytes = loadFile(relativePath); // implement this
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDisposition(ContentDisposition.inline().filename(filename).build());
-
-        return new ResponseEntity<>(fileBytes, headers, HttpStatus.OK);
-    }
-    public byte[] loadFile(String relativePath) throws IOException {
-        Path path = Paths.get(relativePath);
-        if (!Files.exists(path)) {
-            throw new IOException("File not found: " + relativePath);
+    @GetMapping("files/{filename:.+}")
+    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
+        try {
+            Path filePath = Paths.get("Upload/Documents").resolve("TourProvider").resolve(filename).normalize();
+            UrlResource urlResource = new UrlResource(filePath.toUri());
+            System.out.println(filePath.toUri());
+            if (urlResource.exists() && urlResource.isReadable()) {
+                // ✅ Cast only here when passing into the body
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + urlResource.getFilename() + "\"")
+                        .body((Resource) urlResource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (MalformedURLException e) {
+            return ResponseEntity.badRequest().build();
         }
-        return Files.readAllBytes(path);
     }
+
 
 }

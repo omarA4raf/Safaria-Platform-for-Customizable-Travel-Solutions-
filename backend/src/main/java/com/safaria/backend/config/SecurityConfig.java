@@ -18,8 +18,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()); // Allow all requests
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.disable())  // Disable X-Frame-Options header
+                        .contentSecurityPolicy(csp ->
+                                csp.policyDirectives("frame-ancestors 'self' http://localhost:4200") // Allow iframe from localhost:4200 (your Angular app)
+                        ) // ✅ allow iframes from same origin
+                )
+                .csrf(csrf -> csrf.disable()) // optional if you're not doing POST/PUTs yet
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/files/**").permitAll()
+                        .anyRequest().permitAll() // ✅ Only call once
+                );
         return http.build();
     }
 }
