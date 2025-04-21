@@ -10,7 +10,7 @@ export type UserRole = 'Tourist' | 'Tour Guide' | 'Company' | 'Admin';
   providedIn: 'root'
 })
 export class LoginServices {
-  private readonly baseUrl = 'http://localhost:8080/login';
+  private readonly baseUrl = 'http://localhost:8080/auth/api/login';
   private readonly encryptionKey = CryptoJS.enc.Utf8.parse('dsvbsduf76A1xZ9g'); // 16-byte key
   private readonly encryptionIV = CryptoJS.enc.Utf8.parse('1234567890123456'); // 16-byte IV
 
@@ -54,12 +54,12 @@ export class LoginServices {
     }
 
     try {
-      const params = new HttpParams()
-        .set('email', encodeURIComponent(this.encryptAES(email)))
-        .set('password', encodeURIComponent(this.encryptAES(password)));
+      const params = {email,
+        password
+      }
 
       const endpoint = this.getLoginEndpoint(role);
-      return this.http.get<any>(`${this.baseUrl}/${endpoint}`, { params })
+      return this.http.post<any>(`${this.baseUrl}/${endpoint}`, params )
         .pipe(
           catchError(error => {
             console.error('Login error:', error);
@@ -78,12 +78,12 @@ export class LoginServices {
    */
   private getLoginEndpoint(role: UserRole): string {
     const endpoints = {
-      'Tourist': 'touristlogin',
-      'Tour Guide': 'tourguidelogin',
-      'Company': 'companylogin',
-      'Admin': 'adminlogin'
+      'Tourist': 'tourist',
+      'Tour Guide': 'tourprovider',
+      'Company': 'tourprovider',
+      'Admin': 'admin'
     };
-    return endpoints[role] || 'adminlogin';
+    return endpoints[role] || 'admin';
   }
 
   /**

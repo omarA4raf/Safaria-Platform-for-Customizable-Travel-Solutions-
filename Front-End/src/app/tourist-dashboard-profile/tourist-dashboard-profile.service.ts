@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 
 export class TouristDashboardProfileService {
-  private apiUrl = 'https://your-backend-api.com'; // Replace with your backend API URL
+  private apiUrl = 'http://localhost:8080/api'; // Replace with your backend API URL
 
   constructor(private http: HttpClient) {}
 

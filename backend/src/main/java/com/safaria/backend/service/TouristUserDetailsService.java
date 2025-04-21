@@ -5,9 +5,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.safaria.backend.DTO.CustomUserDetails;
 import com.safaria.backend.entity.Tourist;
 import com.safaria.backend.repository.TouristRepository;
-import org.springframework.security.core.userdetails.User;
 
 
 @Service("touristUserDetailsService")
@@ -21,11 +21,8 @@ public class TouristUserDetailsService implements UserDetailsService {
         Tourist tourist = touristRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Tourist not found"));
 
-        return User.builder()
-                .username(tourist.getEmail())
-                .password(tourist.getPassword()) // already encoded
-                .roles("TOURIST")
-                .build();
+                return new CustomUserDetails(tourist.getUserId(), tourist.getEmail(), tourist.getPassword(), "TOURIST");
+
     }
 }
 

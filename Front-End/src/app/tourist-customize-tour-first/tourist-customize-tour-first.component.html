@@ -1,1 +1,179 @@
-<p>tourist-customize-tour-first works!</p>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top shadow-sm custom-navbar p-2">
+    <div class="container">
+        <!-- Brand Name -->
+        <a class="navbar-brand" href="#">Safaria</a>
+
+        <!-- Toggle Button for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link active" routerLink="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" routerLink="/touristdashboardprofile">Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Tours</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Custom Plans</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Tour guide assistant</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Support</a></li>
+                <li class="nav-item">
+                    <a class="nav-link logout-link" href="#">Log out <i
+                            class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container main-container mt-5 pt-5">
+
+    <!-- Progress Steps -->
+    <div class="progress-steps d-flex justify-content-between align-items-center mb-5 position-relative">
+
+        <ng-container *ngFor="let step of steps; let i = index">
+            <div class="d-flex align-items-center">
+
+                <!-- Circle -->
+                <div class="step-circle" [class.active]="currentStep >= i">
+                    {{ i + 1 }}
+                </div>
+
+                <!-- Line (Except after the last circle) -->
+                <div *ngIf="i < steps.length - 1" class="step-line" [class.active]="currentStep > i"></div>
+
+            </div>
+        </ng-container>
+
+    </div>
+
+    <h2 class="text-center mb-4">Customize Your Trip</h2>
+
+    <!-- Form -->
+    <form (ngSubmit)="onSubmit()">
+        <!-- Destination Selection -->
+        <div class="input-group mb-4">
+            <span class="input-group-text"><i class="fa fa-globe"></i></span>
+            <select [(ngModel)]="selectedDestination" name="destination" class="form-control" required>
+                <option value="" disabled selected>Select Your Destination Country</option>
+                <option *ngFor="let country of destinationSlugs" [value]="country.slug">
+                    {{ country.name }}
+                </option>
+            </select>
+        </div>
+        <div *ngIf="submitted && !selectedDestination" class="text-danger">
+            Destination country is required.
+        </div>
+
+        <!-- Tourism Type (Checkboxes) -->
+        <div class="mb-4">
+            <label class="form-label fw-bold">Select Tourism Type:</label>
+            <div class="row">
+                <div class="col-6 col-md-4 mb-2" *ngFor="let type of tourismTypes">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [value]="type" [id]="'type-' + type"
+                            (change)="toggleTourismType(type, $event)">
+                        <label class="form-check-label" [for]="'type-' + type">
+                            <i class="fa me-2" [ngClass]="{
+                  'fa-landmark': type === 'cultural',
+                  'fa-hiking': type === 'adventure',
+                  'fa-umbrella-beach': type === 'beach',
+                  'fa-monument': type === 'historical',
+                  'fa-paw': type === 'wildlife',
+                  'fa-praying-hands': type === 'religious'
+                }"></i> {{ type | titlecase }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="submitted && selectedTourismTypes.length === 0" class="text-danger">
+                At least one tourism type is required.
+            </div>
+        </div>
+
+
+        <!-- Trip Duration (Circular Selector) -->
+        <div class="mb-4">
+            <label class="form-label fw-bold">Select the duration of your trip:</label>
+            <div class="duration-selector text-center mb-4">
+                <div class="d-flex flex-wrap gap-2">
+                    <div *ngFor="let duration of tripDurations" class="duration-circle"
+                        [class.selected]="selectedDuration === duration" (click)="selectDuration(duration)">
+                        {{ duration }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+                <span *ngIf="!isLoading">Generate Itinerary </span><i class="fa-solid fa-arrow-right"></i>
+                <span *ngIf="isLoading">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Generating...
+                </span>
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Footer -->
+<footer class="text-white py-4 custom-footer" style="background-color: #71a7b8">
+    <div class="container">
+        <div class="row">
+            <!-- Left Side - Brand & Social Icons -->
+            <div class="col-md-4">
+                <h4>Safaria</h4>
+                <div class="social-icons mt-3">
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-youtube fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+                </div>
+            </div>
+
+            <!-- Center & Right Side - Topics -->
+            <div class="col-md-8">
+                <div class="row">
+                    <!-- Column 1 -->
+                    <div class="col-md-4">
+                        <h5>Explore</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Destinations</a></li>
+                            <li><a href="#" class="text-white">Tours</a></li>
+                            <li><a href="#" class="text-white">Experiences</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 2 -->
+                    <div class="col-md-4">
+                        <h5>Company</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">About Us</a></li>
+                            <li><a href="#" class="text-white">Careers</a></li>
+                            <li><a href="#" class="text-white">Blog</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 3 -->
+                    <div class="col-md-4">
+                        <h5>Support</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Contact Us</a></li>
+                            <li><a href="#" class="text-white">FAQs</a></li>
+                            <li><a href="#" class="text-white">Help Center</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Line -->
+        <hr class="mt-4 mb-2 border-white" />
+        <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
+    </div>
+</footer>

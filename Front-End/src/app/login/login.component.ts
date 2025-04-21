@@ -5,6 +5,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { LoginServices } from '../services/login_services';
+import { UserRole } from '../services/login_services';
 
 @Component({
   selector: 'app-login',
@@ -78,7 +79,7 @@ export class LoginComponent {
 
     // Send the data to the backend
     this.loginServices
-      .login(this.email, this.password, this.selectedUserKind)
+      .login(this.email, this.password, this.selectedUserKind as UserRole )
       .subscribe({
         next: (response: any) => {
           this.isLoading = false;
@@ -97,14 +98,20 @@ export class LoginComponent {
                 this.selectedUserKind.toLowerCase()
               );
             }
-
+            
             // Maintain your exact original navigation logic
             if (this.selectedUserKind === 'Tourist') {
               this.router.navigate(['/touristdashboardhome']);
             } else if (this.selectedUserKind === 'Tour Guide') {
               this.router.navigate(['/tourguidesdashboard']);
             } else if (this.selectedUserKind === 'Company') {
-              this.router.navigate(['/companydashboard']);
+              this.router.navigate(['/companydashboard']).then(success => {
+                console.log('Navigation success?', success);
+              }).catch(error => {
+                console.error('Navigation error:', error);
+              });
+              console.log(this.selectedUserKind)
+              // this.router.navigate(['/companydashboard']);
             } else {
               console.error('Unknown user kind:', this.selectedUserKind);
               this.errorMessage = 'Unknown user kind. Please contact support.';

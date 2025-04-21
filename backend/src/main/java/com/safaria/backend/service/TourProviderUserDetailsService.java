@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.userdetails.User;
 
-
+import com.safaria.backend.DTO.CustomUserDetails;
 import com.safaria.backend.entity.TourProvider;
 import com.safaria.backend.repository.TourProviderRepository;
 
@@ -31,11 +31,7 @@ public class TourProviderUserDetailsService implements UserDetailsService {
 
         
     
-        return User.builder()
-                .username(provider.getEmail())
-                .password(provider.getPassword())
-                .roles(role) // Spring will prefix this with ROLE_
-                .build();
+        return new CustomUserDetails(provider.getUserId(), provider.getEmail(), provider.getPassword(), role);
     }
     
 }

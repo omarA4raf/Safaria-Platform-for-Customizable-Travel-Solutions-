@@ -52,8 +52,13 @@ export class AdminDashboardComponent implements OnInit {
   ngOnInit(): void {
     // Check authentication and admin role
     if (!this.authService.isLoggedIn()) {
-      this.router.navigate(['/login']);
-      return;
+            // Use window.location.href for full page reload in SSR
+
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      } else {
+        this.router.navigate(['/login']);
+      }
     }
 
     this.currentUserRole = this.authService.getUserType();

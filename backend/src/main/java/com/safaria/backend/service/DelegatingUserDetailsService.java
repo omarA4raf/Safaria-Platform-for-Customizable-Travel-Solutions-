@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.safaria.backend.DTO.CustomUserDetails;
 import com.safaria.backend.service.TourProviderUserDetailsService;
 import com.safaria.backend.service.TouristUserDetailsService;
 

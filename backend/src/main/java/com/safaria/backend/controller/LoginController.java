@@ -1,7 +1,9 @@
 package com.safaria.backend.controller;
 
+import com.safaria.backend.DTO.CustomUserDetails;
 import com.safaria.backend.DTO.UserInfoDTO;
 import com.safaria.backend.DTO.UserLoginDTO;
+import com.safaria.backend.DTO.UserLoginRecieveDTO;
 import com.safaria.backend.entity.*;
 import com.safaria.backend.repository.TourProviderRepository;
 import com.safaria.backend.service.*;
@@ -49,11 +51,11 @@ public class LoginController {
     }
 
     @PostMapping("/login/tourist")
-    public ResponseEntity<?> touristLogin(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<?> touristLogin(@RequestBody UserLoginRecieveDTO userLoginRecieveDTO) {
         try {
-            UserDetails userDetails = delegatingUserDetailsService.loadUserByUsername("tourist:"+email);
+            CustomUserDetails userDetails = (CustomUserDetails)delegatingUserDetailsService.loadUserByUsername("tourist:"+userLoginRecieveDTO.getEmail());
     
-            if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+            if (!passwordEncoder.matches(userLoginRecieveDTO.getPassword(), userDetails.getPassword())) {
                 return ResponseEntity.status(401).body("Invalid password");
             }
     
@@ -66,7 +68,7 @@ public class LoginController {
             // dto.setType("Tourist");
             // dto.setToken(token);
     
-            return ResponseEntity.ok(token);
+            return ResponseEntity.ok(new UserLoginDTO(token,userDetails.getId(),userDetails.getRole()));
     
         } catch (UsernameNotFoundException ex) {
             return ResponseEntity.status(404).body("User not found");
@@ -79,13 +81,13 @@ public class LoginController {
     
   
     @PostMapping("/login/tourprovider")
-public ResponseEntity<?> tourProviderLogin(@RequestParam String email, @RequestParam String password) {
+public ResponseEntity<?> tourProviderLogin(@RequestBody UserLoginRecieveDTO userLoginRecieveDTO  ) {
     try {
         // Load user details based on email
-        UserDetails userDetails = delegatingUserDetailsService.loadUserByUsername("provider:"+email);
+        CustomUserDetails userDetails =(CustomUserDetails) delegatingUserDetailsService.loadUserByUsername("provider:"+userLoginRecieveDTO.getEmail());
 
         // Check if password matches
-        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+        if (!passwordEncoder.matches(userLoginRecieveDTO.getPassword(), userDetails.getPassword())) {
             return ResponseEntity.status(401).body("Invalid password");
         }
 
@@ -93,10 +95,10 @@ public ResponseEntity<?> tourProviderLogin(@RequestParam String email, @RequestP
      
 
         // Generate JWT token with email and role
-        String token = jwtService.generateToken(email, "PROVIDER");
+        String token = jwtService.generateToken(userDetails.getUsername(), "PROVIDER");
         
 
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(new UserLoginDTO(token,userDetails.getId(),userDetails.getRole()));
 
     } catch (UsernameNotFoundException ex) {
         return ResponseEntity.status(404).body("Provider not found");
