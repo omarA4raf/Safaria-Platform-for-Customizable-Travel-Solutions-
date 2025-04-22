@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 import java.io.IOException;
 import java.util.*;
 
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/")
 public class FileController {
