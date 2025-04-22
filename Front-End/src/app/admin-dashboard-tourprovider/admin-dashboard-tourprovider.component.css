@@ -123,3 +123,8 @@ footer p {
   width: 3rem;
   height: 3rem;
 }
+iframe {
+  position: relative;
+  z-index: 1000; /* Force above other elements */
+  pointer-events: auto !important; /* Enable clicks */
+}

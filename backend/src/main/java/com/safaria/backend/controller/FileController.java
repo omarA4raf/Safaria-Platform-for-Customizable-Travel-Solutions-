@@ -28,7 +28,7 @@ public class FileController {
         } else if (filename.endsWith(".gif")) {
             return MediaType.IMAGE_GIF;
         } else {
-            return MediaType.APPLICATION_OCTET_STREAM; // fallback
+            return MediaType.APPLICATION_PDF;
         }
     }
     @GetMapping("files/{filename:.+}")
@@ -43,7 +43,10 @@ public class FileController {
                 return ResponseEntity.ok()
                         .contentType(mediaType)
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + urlResource.getFilename() + "\"")
-                        .body((Resource) urlResource);
+                        .header("X-Content-Type-Options", "nosniff")
+                        .header("Cache-Control", "no-store")
+                        .header("X-Frame-Options", "ALLOW-FROM http://localhost:4200")
+                        .body(urlResource);
             } else {
                 return ResponseEntity.notFound().build();
             }

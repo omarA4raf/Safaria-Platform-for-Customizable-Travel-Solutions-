@@ -1,4 +1,5 @@
 package com.safaria.backend.config;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -18,5 +19,9 @@ public class WebConfig {
                         .allowCredentials(true);
             }
         };
+    }
+
+    public void addHeaders(HttpServletResponse response) {
+        response.setHeader("X-Frame-Options", "ALLOW-FROM http://localhost:4200");
     }
 }

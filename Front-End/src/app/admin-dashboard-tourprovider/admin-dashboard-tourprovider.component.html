@@ -161,7 +161,7 @@
                     <div class="modal-body text-center">
                         <div *ngIf="selectedRequest?.documentUrl?.endsWith('.pdf')">
                             <iframe *ngIf="selectedRequest?.documentUrl"
-                                [src]="pdfUrl" width="100%" height="500px"></iframe>
+                                [src]="pdfUrl" width="100%" height="500px" ></iframe>
                         </div>
                         <div *ngIf="!(selectedRequest?.documentUrl ?? '').endsWith('.pdf')">
                             <img [src]="pdfUrl" width="350" height="350" loading="lazy" class="img-fluid" alt="Document" />
