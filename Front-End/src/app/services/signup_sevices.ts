@@ -10,7 +10,7 @@ export type UserRole = 'Tourist' | 'Tour Guide' | 'Company';
   providedIn: 'root'
 })
 export class SignUpServices {
-  private readonly baseUrl = 'http://localhost:8080/api';
+  private readonly baseUrl = 'http://localhost:8080/auth/api';
   private readonly encryptionKey = CryptoJS.enc.Utf8.parse("dsvbsduf76A1xZ9g");
   private readonly encryptionIV = CryptoJS.enc.Utf8.parse("1234567890123456");
 

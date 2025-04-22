@@ -91,12 +91,12 @@ export class LoginComponent {
 
             // Store token using AuthService if available
             if (response.token) {
-              localStorage.setItem('safria_auth_token', response.token);
-              localStorage.setItem('user_id', response.userId);
-              localStorage.setItem(
-                'user_type',
-                this.selectedUserKind.toLowerCase()
-              );
+            this.authService.setSession({token:response.token,
+              userId:response.userId,
+              userType:response.role
+
+
+            })
             }
             
             // Maintain your exact original navigation logic

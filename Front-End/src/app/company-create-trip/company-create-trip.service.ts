@@ -16,7 +16,7 @@ export class CompanyCreateTripService {
 
   createTrip(formData: FormData): Observable<any> {
     // Automatically adds companyId via auth interceptor
-    return this.http.post(`${this.apiUrl}/trips`, formData);
+    return this.http.post(`${this.apiUrl}/tours/create`, formData);
   }
 
   saveDraft(formData: FormData): Observable<any> {

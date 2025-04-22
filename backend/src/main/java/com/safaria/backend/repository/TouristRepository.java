@@ -1,10 +1,12 @@
 package com.safaria.backend.repository;
 
 
-import com.safaria.backend.entity.Tourist;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.Optional;
+
+import com.safaria.backend.entity.Tourist;
 @Repository
 public interface TouristRepository extends JpaRepository<Tourist, Integer> {
 
@@ -18,6 +20,7 @@ public interface TouristRepository extends JpaRepository<Tourist, Integer> {
     // Spring Data JPA will automatically generate the basic CRUD methods.
     Optional <Tourist> findByUsername(String username);
     Optional<Tourist> findByEmail(String email);
+    Optional<Tourist> findById(Integer id);
 
     Boolean existsByEmail(String email );
     @Override
