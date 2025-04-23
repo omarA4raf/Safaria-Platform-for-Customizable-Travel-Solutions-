@@ -65,12 +65,12 @@ export class SignUpServices {
       
       // For Tourist, we expect a regular object
       if (role === 'Tourist') {
-        const encryptedData = {
+        const Data = {
           ...userData,
-          password: this.encryptAES(userData.password),
-          email: this.encryptAES(userData.email)
+          password: userData.password,
+          email: userData.email
         };
-        return this.http.post(`${this.baseUrl}/${endpoint}`, encryptedData, options)
+        return this.http.post(`${this.baseUrl}/${endpoint}`, Data, options)
           .pipe(
             catchError(this.handleSignupError)
           );

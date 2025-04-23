@@ -215,17 +215,10 @@ export class TourGideSignUpComponent implements OnInit {
 
     this.signup_services.signup(formData, 'Tour Guide').subscribe({
       next: (response) => {
-        if (response?.token) {
-          this.authService.setSession({
-            token: response.token,
-            userId: response.userId,
-            userType: 'TOUR_GUIDE',
-          });
+  
           alert('You have successfully signed up!');
-          this.router.navigate(['/tourguidesdashboard']);
-        } else {
-          this.errorMessage = 'Email or Username already exists.';
-        }
+          this.router.navigate(['/login']);
+        
       },
       error: (error) => {
         console.error('Signup failed:', error);

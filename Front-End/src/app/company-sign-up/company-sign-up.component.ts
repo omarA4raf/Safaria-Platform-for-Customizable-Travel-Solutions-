@@ -224,17 +224,9 @@ export class CompanySignUpComponent implements OnInit {
 
     this.signup_services.signup(formData, 'Company').subscribe({
       next: (response) => {
-        if (response?.token) {
-          this.authService.setSession({
-            token: response.token,
-            userId: response.userId,
-            userType: 'COMPANY'
-          });
           alert('Registration successful!');
-          this.router.navigate(['/companydashboard']);
-        } else {
-          this.errorMessage = 'Email or company name already exists.';
-        }
+          this.router.navigate(['/login']);
+        
       },
       error: (error) => {
         console.error('Registration failed:', error);
