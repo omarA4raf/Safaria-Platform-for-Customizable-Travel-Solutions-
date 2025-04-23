@@ -1,13 +1,10 @@
 package com.safaria.backend.DTO;
 
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -19,7 +16,7 @@ public class TourRequestDTO {
     private Integer tourProviderId;
     private String currency;
     private List<String> tourismTypes;
-    private List<TourScheduleDTO> schedules;
+    private List<TourScheduleDTO> availableDates;
 
     // Add a list of images from frontend (multipart uploads)
 //    private List<MultipartFile> images;

@@ -29,7 +29,6 @@ public class TourController {
         System.out.println();
         System.out.println();
         System.out.println(tourdto);
-        System.out.println("Received tourData: " + tourdto);
         System.out.println("Received images: " + images.size());
         String result = tourService.createTourWithSchedules(tourdto, images);
         return ResponseEntity.ok(Map.of("message", result)); // Return JSON response

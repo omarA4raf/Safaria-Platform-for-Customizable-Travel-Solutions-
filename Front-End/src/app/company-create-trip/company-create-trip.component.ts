@@ -38,7 +38,7 @@ export class CompanyCreateTripComponent implements OnInit {
     tourismTypes: [] as string[], // New field for tourism types
     duration: null as number | null,
     availableDates: [
-      { startDate: null, endDate: null, availableSeats: null, budget: null },
+      { startDate: null, endDate: null, availableSeats: null, price: null },
     ],
     description: '',
     freeCancellationDeadline: null as number | null, // New field for free cancellation deadline
@@ -294,7 +294,7 @@ export class CompanyCreateTripComponent implements OnInit {
       startDate: null,
       endDate: null,
       availableSeats: null,
-      budget: null,
+      price: null,
     });
   }
 
@@ -361,8 +361,8 @@ export class CompanyCreateTripComponent implements OnInit {
           isValid = false;
           break;
         }
-        if (!dateRange.budget || dateRange.budget <= 0) {
-          this.errorMessages['budget'] = 'Budget must be a positive number.';
+        if (!dateRange.price || dateRange.price <= 0) {
+          this.errorMessages['price'] = 'Price must be a positive number.';
           isValid = false;
           break;
         }
@@ -429,7 +429,7 @@ export class CompanyCreateTripComponent implements OnInit {
           dateRange.startDate ||
           dateRange.endDate ||
           dateRange.availableSeats !== null ||
-          dateRange.budget !== null
+          dateRange.price !== null
       ) ||
       this.trip.description ||
       this.trip.freeCancellationDeadline !== null ||
@@ -505,32 +505,38 @@ export class CompanyCreateTripComponent implements OnInit {
 
   private prepareFormData(): FormData {
     const formData = new FormData();
-    formData.append('title', this.trip.title);
-    formData.append('destinationCountry', this.trip.destinationCountry);
-    formData.append('tourismTypes', JSON.stringify(this.trip.tourismTypes));
-    
-    if (this.trip.duration !== null) {
-      formData.append('duration', this.trip.duration.toString());
-    }
-    
-    formData.append('description', this.trip.description);
-    formData.append('availableDates', JSON.stringify(this.trip.availableDates));
-    
-    if (this.trip.freeCancellationDeadline !== null) {
-      formData.append('freeCancellationDeadline', this.trip.freeCancellationDeadline.toString());
-    }
-    
-    formData.append('currency', this.trip.currency);
-
+  
+    // Create the tourData object exactly as per your trip structure
+    const tourData = {
+      title: this.trip.title,
+      destinationCountry: this.trip.destinationCountry,
+      tourismTypes: this.trip.tourismTypes,
+      duration: this.trip.duration,
+      availableDates: this.trip.availableDates, // array of { startDate, endDate, availableSeats, price }
+      description: this.trip.description,
+      freeCancellationDeadline: this.trip.freeCancellationDeadline,
+      currency: this.trip.currency,
+      tourProviderId:this.authService.getUserId()
+    };
+  
+    // Append tourData as JSON blob (important for Spring's @RequestPart)
+    formData.append(
+      'tourData',
+      new Blob([JSON.stringify(tourData)], { type: 'application/json' })
+    );
+  
+    // Append all image files with the same key "images"
     this.images.forEach((image, index) => {
       if (image.file) {
         const fileExtension = image.file.name.split('.').pop() || 'jpg';
         formData.append('images', image.file, `image_${index}.${fileExtension}`);
       }
     });
-
+  
     return formData;
-  }  // Method to handle logout
+  }
+  
+  
 
   private showSuccessMessage(message: string): void {
     // You can replace this with a toast notification or other UI feedback

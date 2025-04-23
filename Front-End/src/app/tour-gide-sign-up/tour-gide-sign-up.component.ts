@@ -222,7 +222,7 @@ export class TourGideSignUpComponent implements OnInit {
             userType: 'TOUR_GUIDE',
           });
           alert('You have successfully signed up!');
-          this.router.navigate(['/tourguidedashboard']);
+          this.router.navigate(['/tourguidesdashboard']);
         } else {
           this.errorMessage = 'Email or Username already exists.';
         }

@@ -422,25 +422,42 @@ export class TourguideCreateTripComponent implements OnInit {
       this.images.some((image) => image.file !== null)
     );
   }
-
-  // Handle form submission
-  onSubmit(): void {
-    console.log('Form Data to be Sent:', {
+  private prepareFormData(): FormData {
+    const formData = new FormData();
+  
+    // Create the tourData object exactly as per your trip structure
+    const tourData = {
       title: this.trip.title,
       destinationCountry: this.trip.destinationCountry,
       tourismTypes: this.trip.tourismTypes,
       duration: this.trip.duration,
-      availableDates: this.trip.availableDates,
+      availableDates: this.trip.availableDates, // array of { startDate, endDate, availableSeats, price }
       description: this.trip.description,
       freeCancellationDeadline: this.trip.freeCancellationDeadline,
       currency: this.trip.currency,
-      images: this.images.filter((img) => img.file),
+      tourProviderId:this.authService.getUserId()
+    };
+  
+    // Append tourData as JSON blob (important for Spring's @RequestPart)
+    formData.append(
+      'tourData',
+      new Blob([JSON.stringify(tourData)], { type: 'application/json' })
+    );
+  
+    // Append all image files with the same key "images"
+    this.images.forEach((image, index) => {
+      if (image.file) {
+        const fileExtension = image.file.name.split('.').pop() || 'jpg';
+        formData.append('images', image.file, `image_${index}.${fileExtension}`);
+      }
     });
+  
+    return formData;
+  }
 
-    // Validate form inputs
-    if (!this.validateForm()) {
-      return;
-    }
+  // Handle form submission
+  onSubmit(): void {
+    if (!this.validateForm()) return;
 
     // Verify authentication
     if (!this.authService.isLoggedIn() || !this.authService.getUserId()) {
@@ -449,59 +466,22 @@ export class TourguideCreateTripComponent implements OnInit {
       return;
     }
 
-    // Set loading state to true
     this.createIsLoading = true;
 
-    // Prepare form data
-    const formData = new FormData();
-    formData.append('title', this.trip.title);
-    formData.append('destinationCountry', this.trip.destinationCountry);
-    formData.append('tourismTypes', JSON.stringify(this.trip.tourismTypes));
-    if (this.trip.duration !== null) {
-      formData.append('duration', this.trip.duration.toString());
-    }
-    formData.append('description', this.trip.description);
-    formData.append('availableDates', JSON.stringify(this.trip.availableDates));
-    if (this.trip.freeCancellationDeadline !== null) {
-      formData.append(
-        'freeCancellationDeadline',
-        this.trip.freeCancellationDeadline.toString()
-      );
-    }
-    formData.append('currency', this.trip.currency);
-    formData.append('tourGuideId', this.authService.getUserId()!);
+    const formData = this.prepareFormData();
+    formData.append('companyId', this.authService.getUserId()!);
 
-    // Append images
-    this.images.forEach((image, index) => {
-      if (image.file) {
-        formData.append(
-          'images',
-          image.file,
-          `image_${index}.${image.file.type.split('/')[1]}`
-        );
-      }
-    });
-
-    // Send data to backend using the service
     this.tripService.createTrip(formData).subscribe({
       next: (response) => {
         console.log('Trip created successfully:', response);
         this.createIsLoading = false;
-        this.router.navigate(['/tourguidedashboard']); // Updated to correct dashboard
-
-        // Optional: Show success message
-        alert('Trip created successfully!');
+        this.showSuccessMessage('Trip created successfully!');
+        this.router.navigate(['/tourguidesdashboard']);
       },
       error: (error) => {
         console.error('Error creating trip:', error);
         this.createIsLoading = false;
-
-        // Show user-friendly error message
-        alert(
-          `Error creating trip: ${
-            error.error?.message || 'Please try again later.'
-          }`
-        );
+        this.showErrorMessage(error);
       },
     });
   }
@@ -592,7 +572,7 @@ export class TourguideCreateTripComponent implements OnInit {
       next: (response) => {
         console.log('Trip saved as draft successfully:', response);
         this.SavingisLoading = false;
-        this.router.navigate(['/tourguidedashboard']); // Updated to correct dashboard
+        this.router.navigate(['/tourguidesdashboard']); // Updated to correct dashboard
 
         // Optional: Show success message
         alert('Draft saved successfully!');
@@ -610,7 +590,15 @@ export class TourguideCreateTripComponent implements OnInit {
       },
     });
   }
+  private showSuccessMessage(message: string): void {
+    // You can replace this with a toast notification or other UI feedback
+    alert(message);
+  }
 
+  private showErrorMessage(error: any): void {
+    const errorMessage = error.error?.message || 'An error occurred. Please try again.';
+    alert(errorMessage);
+  }
   // Method to handle logout
   logout(): void {
     this.authService.logout();

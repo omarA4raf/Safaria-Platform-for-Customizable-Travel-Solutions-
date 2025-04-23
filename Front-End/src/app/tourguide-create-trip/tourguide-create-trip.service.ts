@@ -14,7 +14,7 @@ export class TourguideCreateTripService {
 
   // Method to create a new trip
   createTrip(formData: FormData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/trips`, formData);
+    return this.http.post(`${this.apiUrl}/tours/create`, formData);
   }
 
   // Method to save a trip as a draft

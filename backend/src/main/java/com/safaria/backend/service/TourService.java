@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 @Service
 public class TourService {
     // Directory for storing images
-//    @Value("${file.upload-dir}")
-    private static  String IMAGE_DIRECTORY =  "C:\\Users\\Abdalrahman\\Desktop\\graduation Project\\Safaria-Platform-for-Customizable-Travel-Solutions-\\backend\\src\\main\\java\\com\\safaria\\backend\\tourImages";
+@Value("${file.upload-dir}")
+private String UPLOAD_DIRECTORY;
 
     private final TourRepository tourRepository;
     private final TourScheduleRepository tourScheduleRepository;
@@ -54,7 +54,7 @@ public class TourService {
         tour.setCurrency(dto.getCurrency());
         tour.setTourismTypes(dto.getTourismTypes());
         // tttttttttttttttttttttttttttttttttttttttttttttttttthis for test only remove 2 and return the value
-        TourProvider tourProvider = tourProviderRepository.findById(2 /*dto.getTourProviderId()*/)
+        TourProvider tourProvider = tourProviderRepository.findById(dto.getTourProviderId())
                 .orElseThrow(() -> new RuntimeException("Tour Provider not found"));
         tour.setTourProvider(tourProvider);
         // Save images to filesystem and create Image objects for the tour
@@ -62,7 +62,7 @@ public class TourService {
         tour.setImages(imageEntities);
         Tour savedTour = tourRepository.save(tour);
 
-        List<TourSchedule> schedules = dto.getSchedules().stream().map(scheduleDTO -> createSchedule(scheduleDTO, savedTour)).collect(Collectors.toList());
+        List<TourSchedule> schedules = dto.getAvailableDates().stream().map(scheduleDTO -> createSchedule(scheduleDTO, savedTour)).collect(Collectors.toList());
         tourScheduleRepository.saveAll(schedules);
         System.out.println("so what is the issue?");
         return "tour is created successfully";
@@ -76,7 +76,7 @@ public class TourService {
                 try {
                     // Generate unique filename
                     String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-                    Path path = Paths.get(IMAGE_DIRECTORY, fileName);
+                    Path path = Paths.get(UPLOAD_DIRECTORY,"TripImages", fileName);
 
                     // Create directories if they don't exist
                     Files.createDirectories(path.getParent());
@@ -103,6 +103,8 @@ public class TourService {
     private TourSchedule createSchedule(TourScheduleDTO scheduleDTO, Tour tour) {
         TourSchedule schedule = new TourSchedule();
 //        schedule.setDuration(scheduleDTO.getDuration());
+System.out.println("Creating schedule with price: " + scheduleDTO.getPrice());
+
         schedule.setPrice(scheduleDTO.getPrice());
         schedule.setAvailableSeats(scheduleDTO.getAvailableSeats());
 
@@ -143,7 +145,7 @@ public class TourService {
             tourRequestDTO.setTourProviderId(tour.getTourProvider().getUserId());
             tourRequestDTO.setCurrency(tour.getCurrency());
             tourRequestDTO.setTourismTypes(tour.getTourismTypes());
-            tourRequestDTO.setSchedules(tourScheduleDTOs);
+            tourRequestDTO.setAvailableDates(tourScheduleDTOs);
             tourRequestDTO.setDescription(tour.getDescription());
             // Map more fields as needed...
 
