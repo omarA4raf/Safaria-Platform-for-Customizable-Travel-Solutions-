@@ -135,7 +135,7 @@
                                     (click)="rejectRequest(request.id)">
                                     Reject
                                 </button>
-                                <button class="btn btn-outline-danger btn-sm" (click)="deleteRequest(request.id)">
+                                <button class="btn btn-outline-danger btn-sm" (click)="rejectRequest(request.id)">
                                     Delete
                                 </button>
                             </td>
@@ -160,11 +160,11 @@
                     </div>
                     <div class="modal-body text-center">
                         <div *ngIf="selectedRequest?.documentUrl?.endsWith('.pdf')">
-                            <iframe *ngIf="selectedRequest?.documentUrl"
-                                [src]="selectedRequest?.documentUrl ?? '' | safe" width="100%" height="500px"></iframe>
+                            <iframe *ngIf="selectedRequest?.documentUrl "
+                                [src]="pdfUrl" width="100%" height="500px" ></iframe>
                         </div>
                         <div *ngIf="!(selectedRequest?.documentUrl ?? '').endsWith('.pdf')">
-                            <img [src]="selectedRequest?.documentUrl" class="img-fluid" alt="Document" />
+                            <img [src]="pdfUrl" width="350" height="350" loading="lazy" class="img-fluid" alt="Document" />
                         </div>
                     </div>
                     <div class="modal-footer">

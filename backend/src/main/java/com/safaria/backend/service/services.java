@@ -1,19 +1,18 @@
 package com.safaria.backend.service;
 
 
-import com.safaria.backend.DTO.TourProviderSignUpDTO;
+import com.safaria.backend.DTO.*;
 import com.safaria.backend.entity.*;
 import com.safaria.backend.repository.AdminRepository;
 import com.safaria.backend.repository.TourProviderRepository;
 import com.safaria.backend.repository.TouristRepository;
-import com.safaria.backend.DTO.TouristSignUpDTO;
-import com.safaria.backend.DTO.UserInfoDTO;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +24,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @org.springframework.stereotype.Service
@@ -53,7 +53,20 @@ public class services implements Iservices {
             return null;
         }
     }
+    public boolean isPdfOrImage(MultipartFile file) {
+        // Get content type from the file
+        String contentType = file.getContentType();
 
+        // Check for PDF or image MIME types
+        if (contentType != null) {
+            if (contentType.equals("application/pdf")) {
+                return true;  // It's a PDF
+            } else if (contentType.startsWith("image/")) {
+                return false;  // It's an image (jpeg, png, gif, etc.)
+            }
+        }
+        return false;  // Neither PDF nor image
+    }
 
 
     @Autowired
@@ -109,28 +122,30 @@ public class services implements Iservices {
     //                 return ResponseEntity.status(404).build();
     //             }
 
-    //     }
-    //     return ResponseEntity.status(404).build();
-    // }
-    // @Override
-    // public Admin adminlogin(String email, String password) {
+
+       
+     @Override
+     public ResponseEntity<Admin> adminlogin(String email, String password) {
+
     //     email=URLDecoder.decode(email, StandardCharsets.UTF_8);
     //     password=URLDecoder.decode(password, StandardCharsets.UTF_8);
     //     try {
     //         email=decryptAES(email);
     //         password=decryptAES(password);
     //     }catch (Exception e){System.out.println(e.getMessage());}
-    //     Optional<Admin> admin = adminRepository.findByEmail(email);
-    //     if (admin.isPresent()) {
-    //         if (passwordEncoder.matches(password, admin.get().getPassword())) {
-    //             return admin.get();
-    //         } else {
-    //             return null;
-    //         }
+        Optional<Admin> admin = adminRepository.findByEmail(email);
+         if (admin.isPresent()) {
+             if (passwordEncoder.matches(password, admin.get().getPassword())) {
 
-    //     }
-    //     return null;
-    // }
+                 return ResponseEntity.status(200).body(admin.get());
+             } else {
+                 return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+             }
+
+        }
+         return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+
+     }
     @Override
 
     public ResponseEntity<String> saveTourist(TouristSignUpDTO tourist) {
@@ -154,7 +169,14 @@ public class services implements Iservices {
 
         tourProvider.setPassword(passwordEncoder.encode(tourProvider.getPassword()));
         String directory = "Documents/TourProvider";
-        String uniqueFileName = this.fileSystemService.generateUniqueFileName(directory, "pdf");
+        String uniqueFileName="";
+        if(isPdfOrImage(tourProvider.getApprovalDocument())){
+            uniqueFileName = this.fileSystemService.generateUniqueFileName(directory, "pdf");
+        }
+        else{
+            uniqueFileName = this.fileSystemService.generateUniqueFileName(directory, "jpg");
+
+        }
         String relativeFilePath = Paths.get(directory, uniqueFileName).toString();
 
         try {
@@ -166,8 +188,7 @@ public class services implements Iservices {
             e.printStackTrace();
         }
 
-        
-        
+
         tourProviderRepository.save(new TourProvider(tourProvider,relativeFilePath,isTourGuide));
 
         
@@ -179,25 +200,155 @@ public class services implements Iservices {
     }
 
     @Override
-    public Optional<List<TourProvider>> getPendingProviders() {
+    public Optional<List<TourProviderRequestDTO>> getPendingProviders() {
         Optional<List<TourProvider>>pendingProviders=this.tourProviderRepository.findByIsApproved(false);
-
-        return pendingProviders;
+        List<TourProviderRequestDTO> pending=new ArrayList<TourProviderRequestDTO>();
+        pendingProviders.ifPresent(list -> {
+            for (TourProvider T : list) {
+                TourProviderRequestDTO t=new TourProviderRequestDTO();
+                t.setId(T.getUserId());
+                t.setName(T.getUsername());
+                t.setEmail(T.getEmail());
+                t.setType(T.getType()? "tourguide":"company");
+                t.setDocumentUrl(T.getApprovalDocumentPath());
+                t.setStatus("pending");
+                t.setSubmittedAt(T.getDate().toInstant());
+                pending.add(t);
+            }
+        });
+        return Optional.ofNullable(pending);
     }
 
     @Override
     public ResponseEntity<String> deleteTourProvider(Integer id) {
         this.tourProviderRepository.deleteById(id);
-        return ResponseEntity.status(200).body("Provider Disapproved");
+        return ResponseEntity.ok().body("Provider Disapproved");
+    }
+    @Override
+    public ResponseEntity<String> deleteTourist(Integer id) {
+        this.touristRepository.deleteById(id);
+        return ResponseEntity.ok().body("Provider Disapproved");
     }
     @Override
     public ResponseEntity<String> approveTourProvider(Integer id){
         Optional<TourProvider> tourProvider= this.tourProviderRepository.findById(id);
         if(tourProvider.isPresent()) {
             tourProvider.get().setIsApproved(true);
-            return ResponseEntity.status(200).body("Tour Provider Approved");
+            this.tourProviderRepository.save(tourProvider.get());
+            return ResponseEntity.ok().body("Tour Provider Approved");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tour Provider Not Found");
+    }
+    @Override
+    public List<UserEditDto> getUsers(){
+        Optional<List<TourProvider>>providers= Optional.of(this.tourProviderRepository.findAll());
+        Optional<List<Tourist>>tourists= Optional.of(this.touristRepository.findAll());
+        Optional<List<Admin>>admins= Optional.of(this.adminRepository.findAll());
+        List<UserEditDto> users = new ArrayList<UserEditDto>();
+
+        providers.ifPresent(list -> {
+            for (TourProvider P : list) {
+                users.add(new UserEditDto(P));
+            }
+        });
+
+        tourists.ifPresent(list -> {
+            for (Tourist T : list) {
+                users.add(new UserEditDto(T));
+            }
+        });
+        admins.ifPresent(list -> {
+            for (Admin A : list) {
+                users.add(new UserEditDto(A));
+            }
+        });
+        Collections.shuffle(users);
+        return users;
+    }
+    @Override
+    public ResponseEntity<String> updateUser(UserEditDto user,Integer id,Integer role){
+        if(role==1){
+            Optional<Tourist> tourist=this.touristRepository.findById(id);
+            if(tourist.isPresent()){
+                tourist.get().setUsername(user.getName());
+                tourist.get().setEmail(user.getEmail());
+                if(user.getRole() == 1) {
+                    this.touristRepository.save(tourist.get());
+                }
+                else if(user.getRole() == 2){
+                    TourProvider provider=new TourProvider(tourist.get(),false);
+                    this.tourProviderRepository.save(provider);
+                    this.touristRepository.deleteById(id);
+                }
+                else if(user.getRole() == 3){
+                    TourProvider provider=new TourProvider(tourist.get(),true);
+                    this.tourProviderRepository.save(provider);
+                    this.touristRepository.deleteById(id);
+                }
+                else{
+                    Admin admin =new Admin(tourist.get());
+                    this.adminRepository.save(admin);
+                    this.touristRepository.deleteById(id);
+                }
+                return ResponseEntity.status(200).body("User Updated");
+            }
+        }
+        else if(role == 2 || role ==3){
+            Optional<TourProvider> provider=this.tourProviderRepository.findById(id);
+            if(provider.isPresent()){
+                provider.get().setUsername(user.getName());
+                provider.get().setEmail(user.getEmail());
+                if(user.getRole()==1){
+                    Tourist tourist=new Tourist(provider.get());
+                    this.touristRepository.save(tourist);
+                    this.tourProviderRepository.deleteById(id);
+                }
+                else if(user.getRole() ==4){
+                    Admin admin =new Admin(provider.get());
+                    this.adminRepository.save(admin);
+                    this.tourProviderRepository.deleteById(id);
+                }
+                else if(user.getRole() == role) this.tourProviderRepository.save(provider.get());
+                else {
+                    provider.get().setType(!provider.get().getType());
+                    this.tourProviderRepository.save(provider.get());
+                }
+                return ResponseEntity.status(200).body("User Updated");
+            }
+        }
+        else{
+            Optional<Admin> admin =this.adminRepository.findById(id);
+            if (admin.isPresent()) {
+                admin.get().setUsername(user.getName());
+                admin.get().setEmail(user.getEmail());
+
+                if (user.getRole() == 1) {
+                    this.touristRepository.save(new Tourist(admin.get()));
+                    this.adminRepository.deleteById(id);
+                } else if (user.getRole() == 2) {
+                    TourProvider provider = new TourProvider(admin.get(), false);
+                    this.tourProviderRepository.save(provider);
+                    this.adminRepository.deleteById(id);
+                } else if (user.getRole() == 3) {
+                    TourProvider provider = new TourProvider(admin.get(), true);
+                    this.tourProviderRepository.save(provider);
+                    this.adminRepository.deleteById(id);
+                } else {
+                    this.adminRepository.save(admin.get());
+                }
+                return ResponseEntity.status(200).body("User Updated");
+            }
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User Not Found");
+    }
+
+    @Override
+    public ResponseEntity<String> addUser(UserEditDto user){
+        if(user.getRole() == 1) this.touristRepository.save(new Tourist(user));
+        else if(user.getRole() == 2 || user.getRole() == 3) this.tourProviderRepository.save(new TourProvider(user));
+        else this.adminRepository.save(new Admin(user));
+        return ResponseEntity.status(200).body("User Added");
+
     }
 
 

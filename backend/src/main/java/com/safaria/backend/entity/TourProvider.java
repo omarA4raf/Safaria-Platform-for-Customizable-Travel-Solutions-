@@ -1,5 +1,6 @@
 package com.safaria.backend.entity;
 
+import com.safaria.backend.DTO.UserEditDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,8 @@ import com.safaria.backend.DTO.TourProviderSignUpDTO;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.OptionalInt;
 
@@ -54,6 +57,9 @@ public class TourProvider {
     private Boolean type;
     @Column(name = "Enabled")
     private boolean enabled = false;
+
+    @Column(name = "Date")
+    private Date date;
     // @Column(name = "aboutme" , nullable = true)
     //  private boolean aboutMe;
 
@@ -65,6 +71,11 @@ public class TourProvider {
         return isApproved;
     }
     public void setIsApproved(Boolean Approvement){this.isApproved=Approvement;}
+    public String getUsername(){return this.username;}
+    public String getEmail(){return this.email;}
+    public String getPhone(){return this.phone;}
+    public String getCountry(){return this.country;}
+    public List<String> getTourismTypes(){return this.tourismTypes;}
 
     @Column(name = "IsApproved")
     private Boolean isApproved;
@@ -79,9 +90,32 @@ public class TourProvider {
             this.phone = dto.getPhone();
 
             this.isApproved=dto.getIsApproved();
-
+            this.date=new Date();
             this.tourismTypes=dto.getTourismTypes();
-
-
+    }
+    public TourProvider(Tourist tourist,Boolean type){
+        this.username = tourist.getUsername();
+        this.email = tourist.getEmail();
+        this.password = tourist.getPassword();
+        this.country = tourist.getCountry();
+        this.type=type;
+        this.phone = tourist.getPhone();
+        this.isApproved=false;
+        this.tourismTypes=new ArrayList<>(tourist.getTourismTypes());
+        this.profilePhoto=tourist.getProfilePhoto();
+    }
+    public TourProvider(Admin admin,Boolean type){
+        this.username = admin.getUsername();
+        this.email = admin.getEmail();
+        this.password = admin.getPassword();
+        this.phone = admin.getPhone();
+        this.isApproved=false;
+        this.profilePhoto=admin.getProfilePhoto();
+        this.type=type;
+    }
+    public TourProvider(UserEditDto user){
+        this.username=user.getName();
+        this.password = user.getName() + "Password@123";
+        this.isApproved=false;
     }
 }

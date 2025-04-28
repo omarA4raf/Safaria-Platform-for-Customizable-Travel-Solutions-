@@ -90,7 +90,7 @@
             <td>{{ getRoleName(user.role) }}</td>
             <td>
               <button class="btn btn-warning btn-sm me-2" (click)="startEdit(user)">Edit</button>
-              <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id)">Delete</button>
+              <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id,user.role)">Delete</button>
             </td>
           </tr>
         </tbody>

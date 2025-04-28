@@ -4,6 +4,10 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
 import { LoginServices } from '../services/login_services';
 import { UserRole } from '../services/login_services';
 
@@ -11,7 +15,9 @@ import { UserRole } from '../services/login_services';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, HttpClientModule, FormsModule],
+  imports: [CommonModule, HttpClientModule, FormsModule],
   templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css'],
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
@@ -31,6 +37,12 @@ export class LoginComponent {
     private http: HttpClient,
     private router: Router
   ) {}
+  constructor(
+    private loginServices: LoginServices,
+    private authService: AuthService,
+    private http: HttpClient,
+    private router: Router
+  ) {}
   // Method to update the selected user kind
   selectUserKind(kind: string) {
     this.selectedUserKind = kind;
@@ -38,6 +50,19 @@ export class LoginComponent {
 
   // Method to handle form submission
   onSubmit(form: any) {
+    console.log('Form submitted:', form);
+    console.log('Form valid:', form.valid);
+    console.log('Form controls:', form.controls);
+
+    // Reset error message
+    this.errorMessage = '';
+
+    // Check if the form is invalid
+    if (form.invalid) {
+      console.log('Form is invalid');
+      this.errorMessage = 'Please fill out all required fields.';
+      return;
+    }
     console.log('Form submitted:', form);
     console.log('Form valid:', form.valid);
     console.log('Form controls:', form.controls);
@@ -71,6 +96,7 @@ export class LoginComponent {
     const payload = {
       userKind: this.selectedUserKind,
       email: this.email,
+      password: this.password,
       password: this.password,
     };
 
@@ -127,6 +153,7 @@ export class LoginComponent {
           }
           console.error('Login failed:', error);
         },
+        },
       });
   }
 
@@ -138,3 +165,4 @@ export class LoginComponent {
 }
 
 // Team@1234
+

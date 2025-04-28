@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import { CompanyCreateTripService } from './company-create-trip.service';
+import { AuthService } from '../services/auth.service';
+import { CompanyCreateTripService } from './company-create-trip.service';
 
 @Component({
   selector: 'app-company-create-trip',
@@ -14,6 +16,12 @@ import { CompanyCreateTripService } from './company-create-trip.service';
   styleUrls: ['./company-create-trip.component.css'],
 })
 export class CompanyCreateTripComponent implements OnInit {
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private authService: AuthService,
+    private tripService: CompanyCreateTripService
+  ) {}
   constructor(
     private router: Router,
     private http: HttpClient,
@@ -163,6 +171,15 @@ export class CompanyCreateTripComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    // Check authentication
+    if (
+      !this.authService.isLoggedIn() ||
+      this.authService.getUserType() !== 'COMPANY'
+    ) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+      return;
+    }
     // Check authentication
     if (
       !this.authService.isLoggedIn() ||
@@ -418,6 +435,21 @@ export class CompanyCreateTripComponent implements OnInit {
     };
   }
 
+  private resetErrorMessages(): void {
+    this.errorMessages = {
+      title: '',
+      destinationCountry: '',
+      tourismTypes: '',
+      duration: '',
+      availableSeats: '',
+      description: '',
+      availableDates: '',
+      images: '',
+      freeCancellationDeadline: '',
+      currency: '',
+    };
+  }
+
   hasData(): boolean {
     return !!(
       this.trip.title ||
@@ -439,7 +471,14 @@ export class CompanyCreateTripComponent implements OnInit {
   }
 
   // Form submission
+  // Form submission
   onSubmit(): void {
+    if (!this.validateForm()) return;
+
+    // Verify authentication
+    if (!this.authService.isLoggedIn() || !this.authService.getUserId()) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
     if (!this.validateForm()) return;
 
     // Verify authentication
@@ -455,9 +494,14 @@ export class CompanyCreateTripComponent implements OnInit {
     formData.append('companyId', this.authService.getUserId()!);
 
     this.tripService.createTrip(formData).subscribe({
+    const formData = this.prepareFormData();
+    formData.append('companyId', this.authService.getUserId()!);
+
+    this.tripService.createTrip(formData).subscribe({
       next: (response) => {
         console.log('Trip created successfully:', response);
         this.createIsLoading = false;
+        this.showSuccessMessage('Trip created successfully!');
         this.showSuccessMessage('Trip created successfully!');
         this.router.navigate(['/companydashboard']);
       },
@@ -465,15 +509,25 @@ export class CompanyCreateTripComponent implements OnInit {
         console.error('Error creating trip:', error);
         this.createIsLoading = false;
         this.showErrorMessage(error);
+        this.showErrorMessage(error);
       },
     });
   }
 
   saveDraft(): void {
     if (!this.hasData()) {
+    if (!this.hasData()) {
       alert('Cannot save an empty draft. Please fill in at least one field.');
       return;
     }
+
+    // Verify authentication
+    if (!this.authService.isLoggedIn() || !this.authService.getUserId()) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+      return;
+    }
+
 
     // Verify authentication
     if (!this.authService.isLoggedIn() || !this.authService.getUserId()) {
@@ -530,6 +584,8 @@ export class CompanyCreateTripComponent implements OnInit {
       if (image.file) {
         const fileExtension = image.file.name.split('.').pop() || 'jpg';
         formData.append('images', image.file, `image_${index}.${fileExtension}`);
+        const fileExtension = image.file.name.split('.').pop() || 'jpg';
+        formData.append('images', image.file, `image_${index}.${fileExtension}`);
       }
     });
   
@@ -549,6 +605,8 @@ export class CompanyCreateTripComponent implements OnInit {
   }
 
   logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
     this.authService.logout();
     this.router.navigate(['/login']);
   }

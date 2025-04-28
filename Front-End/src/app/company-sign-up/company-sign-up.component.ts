@@ -221,7 +221,30 @@ export class CompanySignUpComponent implements OnInit {
     for (const pair of formData.entries()) {
       console.log('before', pair[0], pair[1]);
     }
-
+/*
+    this.signup_services.signup(formData, 'Company').subscribe({
+      next: (response) => {
+        if (response?.token) {
+          this.authService.setSession({
+            token: response.token,
+            userId: response.userId,
+            userType: 'COMPANY'
+          });
+          alert('Registration successful!');
+          this.router.navigate(['/companydashboard']);
+        } else {
+          this.errorMessage = 'Email or company name already exists.';
+        }
+      },
+      error: (error) => {
+        console.error('Registration failed:', error);
+        this.errorMessage = error.error?.message || 'Registration failed. Please try again.';
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
+    */
     this.signup_services.signup(formData, 'Company').subscribe({
       next: (response) => {
           alert('Registration successful!');

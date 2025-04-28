@@ -1,5 +1,6 @@
 package com.safaria.backend.entity;
 import com.safaria.backend.DTO.TouristSignUpDTO;
+import com.safaria.backend.DTO.UserEditDto;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 
 
 //import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,6 +16,8 @@ import java.util.List;
 @Data
 @Table(name = "tourist")
 @AllArgsConstructor
+@Getter
+@Setter
 public class Tourist {
 
     @Id
@@ -77,11 +81,36 @@ public class Tourist {
         this.tourismTypes = dto.getTourismTypes();
         this.phone = dto.getPhone();
     }
+    public Tourist(TourProvider provider){
+        this.username = provider.getUsername();
+        this.email = provider.getEmail();
+        this.password = provider.getPassword();
+        this.country = provider.getCountry();
+        this.tourismTypes = new ArrayList<>(provider.getTourismTypes());
+        this.phone = provider.getPhone();
+        this.profilePhoto=provider.getProfilePhoto();
+
+    }
+    public Tourist(Admin admin){
+        this.username = admin.getUsername();
+        this.email = admin.getEmail();
+        this.password = admin.getPassword();
+        this.phone = admin.getPhone();
+        this.profilePhoto=admin.getProfilePhoto();
+    }
+    public Tourist(UserEditDto user){
+        this.username=user.getName();
+        this.password = user.getName() + "Password@123";
+    }
 
     public String getEmail(){return this.email;}
     public void setEmail(String e){this.email=e;}
     public void setPhone(String contact){this.phone=contact;}
     public String getPhone(){return this.phone;}
     public void setCountry(String country){this.country=country;}
+    public String getCountry(){return this.country;}
+    public List<String> getTourismTypes(){return this.tourismTypes;}
+
+
 
 }

@@ -62,7 +62,12 @@ public CorsConfigurationSource corsConfigurationSource() {
 
     @Bean
 public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.csrf().disable().cors()  // <- Enable CORS here
+    http.headers(headers -> headers
+    .frameOptions(frame -> frame.disable())  // Disable X-Frame-Options header
+    .contentSecurityPolicy(csp ->
+            csp.policyDirectives("frame-ancestors 'self' http://localhost:4200") // Allow iframe from localhost:4200 (your Angular app)
+    ) // ✅ allow iframes from same origin
+).csrf().disable().cors()  // <- Enable CORS here
     .and()
         .authorizeHttpRequests(authz -> authz
             // Public endpoints (no authentication required)

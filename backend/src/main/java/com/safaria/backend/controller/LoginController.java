@@ -7,6 +7,7 @@ import com.safaria.backend.DTO.UserLoginRecieveDTO;
 import com.safaria.backend.entity.*;
 import com.safaria.backend.repository.TourProviderRepository;
 import com.safaria.backend.service.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,8 +15,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -30,7 +34,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.safaria.backend.repository.TouristRepository;
 
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/auth/api")
 public class LoginController {

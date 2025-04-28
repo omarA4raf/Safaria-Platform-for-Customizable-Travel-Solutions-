@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { ApiService } from './tourist-dashboard-home.service';
@@ -9,6 +10,8 @@ import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-tourist-dashboard-home',
+  imports: [CommonModule, HttpClientModule, RouterLink],
+  standalone: true,
   imports: [CommonModule, HttpClientModule, RouterLink],
   standalone: true,
   templateUrl: './tourist-dashboard-home.component.html',

@@ -115,11 +115,19 @@ footer p {
 
 /* Modal Styles */
 .modal-backdrop {
-  opacity: 0.5;
+  display: none !important;
 }
 
 /* Loading Spinner */
 .spinner-border {
   width: 3rem;
   height: 3rem;
+}
+.modal.show {
+  z-index: 1050;
+  display: block !important;
+  pointer-events: none; /* Modal wrapper doesn't catch clicks */
+}
+.modal-content {
+  pointer-events: all; /* Content catches clicks */
 }

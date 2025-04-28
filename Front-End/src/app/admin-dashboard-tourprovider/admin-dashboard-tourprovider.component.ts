@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { SafePipe } from '../services/safe.pipe';
 import { AuthService } from '../services/auth.service';
 import { AdminDashboardTourproviderService } from './admin-dashboard-tourprovider.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 interface TourProviderRequest {
   id: number;
@@ -34,15 +35,17 @@ export class AdminDashboardTourproviderComponent implements OnInit{
   successMessage: string | null = null;
   errorMessage: string | null = null;
   activeTab: 'all' | 'companies' | 'tourguides' = 'all';
-
+  generatedUrl: string=''
+  pdfUrl: SafeResourceUrl | undefined;
   constructor(
     private requestService: AdminDashboardTourproviderService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
-    if (!this.authService.isLoggedIn()) {
+    /*if (!this.authService.isLoggedIn()) {
       // Use window.location.href for full page reload in SSR
       if (typeof window !== 'undefined') {
         window.location.href = '/login';
@@ -50,6 +53,7 @@ export class AdminDashboardTourproviderComponent implements OnInit{
         this.router.navigate(['/login']);
       }
     }
+    */
     this.fetchRequests();
   }
 
@@ -70,6 +74,8 @@ export class AdminDashboardTourproviderComponent implements OnInit{
 
   viewDocument(request: TourProviderRequest): void {
     this.selectedRequest = request;
+    this.generatedUrl="http://localhost:8080/files/"+this.selectedRequest.documentUrl.substring(this.selectedRequest.documentUrl.lastIndexOf('\\') + 1);
+    this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.generatedUrl)
     this.showDocumentModal = true;
   }
 

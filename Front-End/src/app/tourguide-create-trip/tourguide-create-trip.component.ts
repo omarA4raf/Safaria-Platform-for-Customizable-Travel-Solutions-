@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import { TourguideCreateTripService } from './tourguide-create-trip.service';
+import { AuthService } from '../services/auth.service';
+import { TourguideCreateTripService } from './tourguide-create-trip.service';
 
 @Component({
   selector: 'app-tourguide-create-trip',
@@ -13,6 +15,13 @@ import { TourguideCreateTripService } from './tourguide-create-trip.service';
   templateUrl: './tourguide-create-trip.component.html',
   styleUrl: './tourguide-create-trip.component.css',
 })
+export class TourguideCreateTripComponent implements OnInit {
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private authService: AuthService,
+    private tripService: TourguideCreateTripService
+  ) {}
 export class TourguideCreateTripComponent implements OnInit {
   constructor(
     private router: Router,
@@ -164,6 +173,14 @@ export class TourguideCreateTripComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    if (
+      !this.authService.isLoggedIn() ||
+      this.authService.getUserType() !== 'TOUR_GUIDE'
+    ) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+      return;
+    }
     if (
       !this.authService.isLoggedIn() ||
       this.authService.getUserType() !== 'TOUR_GUIDE'
@@ -506,6 +523,7 @@ export class TourguideCreateTripComponent implements OnInit {
       this.trip.currency ||
       this.images.some((image) => image.file !== null);
 
+
     if (!hasData) {
       alert('Cannot save an empty draft. Please fill in at least one field.');
       return;
@@ -518,8 +536,17 @@ export class TourguideCreateTripComponent implements OnInit {
       return;
     }
 
+
+    // Verify authentication
+    if (!this.authService.isLoggedIn() || !this.authService.getUserId()) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+      return;
+    }
+
     // Set loading state to true
     this.SavingisLoading = true;
+
 
     console.log('Form Data to be Sent:', {
       title: this.trip.title,
@@ -532,6 +559,7 @@ export class TourguideCreateTripComponent implements OnInit {
       currency: this.trip.currency,
       images: this.images.filter((img) => img.file),
     });
+
 
     // Prepare form data
     const draftData = new FormData();
@@ -546,6 +574,10 @@ export class TourguideCreateTripComponent implements OnInit {
       'availableDates',
       JSON.stringify(this.trip.availableDates)
     );
+    draftData.append(
+      'availableDates',
+      JSON.stringify(this.trip.availableDates)
+    );
     if (this.trip.freeCancellationDeadline !== null) {
       draftData.append(
         'freeCancellationDeadline',
@@ -553,6 +585,9 @@ export class TourguideCreateTripComponent implements OnInit {
       );
     }
     draftData.append('currency', this.trip.currency);
+    draftData.append('tourGuideId', this.authService.getUserId()!);
+    draftData.append('isDraft', 'true');
+
     draftData.append('tourGuideId', this.authService.getUserId()!);
     draftData.append('isDraft', 'true');
 
@@ -569,6 +604,9 @@ export class TourguideCreateTripComponent implements OnInit {
 
     // Send data to backend using the service
     this.tripService.saveDraft(draftData).subscribe({
+
+    // Send data to backend using the service
+    this.tripService.saveDraft(draftData).subscribe({
       next: (response) => {
         console.log('Trip saved as draft successfully:', response);
         this.SavingisLoading = false;
@@ -578,6 +616,15 @@ export class TourguideCreateTripComponent implements OnInit {
         alert('Draft saved successfully!');
       },
       error: (error) => {
+        console.error('Error saving draft:', error);
+        this.SavingisLoading = false;
+
+        // Show user-friendly error message
+        alert(
+          `Error saving draft: ${
+            error.error?.message || 'Please try again later.'
+          }`
+        );
         console.error('Error saving draft:', error);
         this.SavingisLoading = false;
 
@@ -601,6 +648,8 @@ export class TourguideCreateTripComponent implements OnInit {
   }
   // Method to handle logout
   logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']); // Redirect to login page
     this.authService.logout();
     this.router.navigate(['/login']); // Redirect to login page
   }

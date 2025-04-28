@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 
@@ -15,11 +17,12 @@ public class TourProviderSignUpDTO extends UserSignUpDTO {
     
     private String country;
     private MultipartFile approvalDocument;
-    private Boolean isApproved;
+    private Boolean isApproved=false;
     public String getCountry(){return this.country;}
     public MultipartFile getApprovalDocument(){return this.approvalDocument;}
     public Boolean getIsApproved(){return this.isApproved;}
     public void setIsApproved(){this.isApproved=true;}
+    private Date date =new Date();
 
 
 }

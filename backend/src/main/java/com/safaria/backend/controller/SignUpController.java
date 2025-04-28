@@ -33,4 +33,5 @@ public class SignUpController {
         System.out.println(data.getUsername() + ", " + data.getEmail() + ", " + data.getPassword());
         return serv.saveTourProvider(data, false);
     }
+
 }
