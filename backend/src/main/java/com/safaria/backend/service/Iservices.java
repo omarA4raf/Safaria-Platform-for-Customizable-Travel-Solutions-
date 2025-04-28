@@ -15,8 +15,7 @@ import java.util.Optional;
 
 public interface Iservices {
 
-    public ResponseEntity<UserInfoDTO> touristlogin(String username, String password);
-    public ResponseEntity<UserInfoDTO> tourProviderlogin(String username, String password);
+    
      public ResponseEntity<Admin> adminlogin(String username, String password);
     public ResponseEntity<String> saveTourist(TouristSignUpDTO tourist);
     public ResponseEntity<String> saveTourProvider(TourProviderSignUpDTO tourProvider,Boolean type);

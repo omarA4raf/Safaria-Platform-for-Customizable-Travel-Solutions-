@@ -1,13 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
 import { LoginServices } from '../services/login_services';
 import { UserRole } from '../services/login_services';
 
@@ -15,9 +11,7 @@ import { UserRole } from '../services/login_services';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, HttpClientModule, FormsModule],
-  imports: [CommonModule, HttpClientModule, FormsModule],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
@@ -31,12 +25,6 @@ export class LoginComponent {
   isLoading: boolean = false;
 
   // Inject HttpClient and Router
-  constructor(
-    private loginServices: LoginServices,
-    private authService: AuthService,
-    private http: HttpClient,
-    private router: Router
-  ) {}
   constructor(
     private loginServices: LoginServices,
     private authService: AuthService,
@@ -97,7 +85,6 @@ export class LoginComponent {
       userKind: this.selectedUserKind,
       email: this.email,
       password: this.password,
-      password: this.password,
     };
 
     // Debug: Log the form data
@@ -154,7 +141,7 @@ export class LoginComponent {
           console.error('Login failed:', error);
         },
         },
-      });
+      );
   }
 
   // Method to validate email format

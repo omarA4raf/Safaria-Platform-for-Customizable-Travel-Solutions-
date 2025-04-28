@@ -16,8 +16,6 @@ import java.util.List;
 @Data
 @Table(name = "tourist")
 @AllArgsConstructor
-@Getter
-@Setter
 public class Tourist {
 
     @Id

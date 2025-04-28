@@ -5,8 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import { TourguideCreateTripService } from './tourguide-create-trip.service';
-import { AuthService } from '../services/auth.service';
-import { TourguideCreateTripService } from './tourguide-create-trip.service';
+
 
 @Component({
   selector: 'app-tourguide-create-trip',
@@ -15,13 +14,7 @@ import { TourguideCreateTripService } from './tourguide-create-trip.service';
   templateUrl: './tourguide-create-trip.component.html',
   styleUrl: './tourguide-create-trip.component.css',
 })
-export class TourguideCreateTripComponent implements OnInit {
-  constructor(
-    private router: Router,
-    private http: HttpClient,
-    private authService: AuthService,
-    private tripService: TourguideCreateTripService
-  ) {}
+
 export class TourguideCreateTripComponent implements OnInit {
   constructor(
     private router: Router,
@@ -605,8 +598,7 @@ export class TourguideCreateTripComponent implements OnInit {
     // Send data to backend using the service
     this.tripService.saveDraft(draftData).subscribe({
 
-    // Send data to backend using the service
-    this.tripService.saveDraft(draftData).subscribe({
+   
       next: (response) => {
         console.log('Trip saved as draft successfully:', response);
         this.SavingisLoading = false;
