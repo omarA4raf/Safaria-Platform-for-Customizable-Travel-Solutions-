@@ -67,14 +67,12 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
     .contentSecurityPolicy(csp ->
             csp.policyDirectives("frame-ancestors 'self' http://localhost:4200") // Allow iframe from localhost:4200 (your Angular app)
     ) // ✅ allow iframes from same origin
-).csrf().disable().cors()  // <- Enable CORS here
-    .and()
-        .authorizeHttpRequests(authz -> authz
-            // Public endpoints (no authentication required)
-            .requestMatchers("/auth/**").permitAll()
-            // Any other request needs to be authenticated
-            .anyRequest().authenticated()
-        )
+).csrf(csrf -> csrf.disable())
+            .cors(cors -> {}) // Enables CORS with default settings
+            .authorizeHttpRequests(authz -> authz
+                    .requestMatchers("/auth/**").permitAll()
+                    .anyRequest().authenticated()
+            )
         .sessionManagement(session -> 
             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless session management (for JWT)
         );

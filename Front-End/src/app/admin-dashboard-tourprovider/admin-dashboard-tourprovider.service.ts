@@ -17,7 +17,7 @@ interface TourProviderRequest {
   providedIn: 'root'
 })
 export class AdminDashboardTourproviderService {
-  private apiUrl = 'http://localhost:8080/admin';
+  private apiUrl = 'http://localhost:8080/auth/admin';
   private fakeRequests: TourProviderRequest[] = [
     {
       id: 1,

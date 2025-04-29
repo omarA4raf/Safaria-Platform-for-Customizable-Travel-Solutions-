@@ -103,6 +103,7 @@ public class TourProvider {
         this.isApproved=false;
         this.tourismTypes=new ArrayList<>(tourist.getTourismTypes());
         this.profilePhoto=tourist.getProfilePhoto();
+        this.date=new Date();
     }
     public TourProvider(Admin admin,Boolean type){
         this.username = admin.getUsername();
@@ -112,10 +113,14 @@ public class TourProvider {
         this.isApproved=false;
         this.profilePhoto=admin.getProfilePhoto();
         this.type=type;
+        this.date=new Date();
+
     }
     public TourProvider(UserEditDto user){
         this.username=user.getName();
         this.password = user.getName() + "Password@123";
         this.isApproved=false;
+        this.date=new Date();
+
     }
 }

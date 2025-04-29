@@ -14,7 +14,7 @@ interface User {
   providedIn: 'root'
 })
 export class AdminDashboardService {
-  private apiUrl = 'http://localhost:8080/admin';
+  private apiUrl = 'http://localhost:8080/auth/admin';
   private fakeUsers: User[] = [
     { id: 1, name: 'John Doe', email: 'john@example.com', role: 1 },
     { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 2 },

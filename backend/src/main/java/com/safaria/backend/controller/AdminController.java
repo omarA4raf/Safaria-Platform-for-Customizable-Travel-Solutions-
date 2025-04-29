@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/auth/admin")
 public class AdminController {
     @Autowired
     Iservices serv;

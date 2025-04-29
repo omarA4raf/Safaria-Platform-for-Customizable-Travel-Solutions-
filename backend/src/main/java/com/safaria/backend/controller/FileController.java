@@ -14,9 +14,9 @@ import java.nio.file.Paths;
 import java.io.IOException;
 import java.util.*;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:8080")
 @RestController
-@RequestMapping("/")
+@RequestMapping("/auth")
 public class FileController {
     @Autowired
     private FileSystemService fileSystemService;
@@ -31,7 +31,7 @@ public class FileController {
             return MediaType.APPLICATION_PDF;
         }
     }
-    @GetMapping("files/{filename:.+}")
+    @GetMapping("/files/{filename:.+}")
     public ResponseEntity<Resource> getFile(@PathVariable String filename) {
         try {
             Path filePath = Paths.get("Upload/Documents").resolve("TourProvider").resolve(filename).normalize();

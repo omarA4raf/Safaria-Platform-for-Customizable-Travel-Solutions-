@@ -46,7 +46,8 @@ public class LoginController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private  DelegatingUserDetailsService delegatingUserDetailsService;
-
+    @Autowired
+    private Iservices serv;
     @Autowired
     private JwtService jwtService;
     @GetMapping("/")
@@ -118,9 +119,41 @@ public ResponseEntity<?> tourProviderLogin(@RequestBody UserLoginRecieveDTO user
     //             .contentType(MediaType.IMAGE_JPEG)
     //             .body(image);
     // }
-    // @GetMapping("/adminlogin/")
-    // public ResponseEntity<UserInfoDTO> adminlogin(@RequestBody UserLoginDTO dto) {
-    //     return serv.adminlogin(dto.getEmail(),dto.getPassword());
-    // }
-   
+//     @GetMapping("/login/admin")
+//     public ResponseEntity<UserInfoDTO> adminlogin(@RequestBody UserLoginDTO dto) {
+//         return serv.adminlogin(dto.getEmail(),dto.getPassword());
+//     }
+
+    @PostMapping("/login/admin")
+    public ResponseEntity<?> adminLogin(@RequestBody UserLoginRecieveDTO userLoginRecieveDTO) {
+        try {
+            CustomUserDetails userDetails = (CustomUserDetails)delegatingUserDetailsService.loadUserByUsername("admin:"+userLoginRecieveDTO.getEmail());
+
+            if (!passwordEncoder.matches(userLoginRecieveDTO.getPassword(), userDetails.getPassword())) {
+                return ResponseEntity.status(401).body("Invalid password");
+            }
+
+
+            // Tourist tourist = optionalTourist.get();
+            // UserInfoDTO dto = new UserInfoDTO(tourist);
+
+            // // Generate token with role claim
+            String token = jwtService.generateToken(userDetails.getUsername(), "ADMIN");
+            // dto.setType("Tourist");
+            // dto.setToken(token);
+
+            return ResponseEntity.ok(new UserLoginDTO(token,userDetails.getId(),userDetails.getRole()));
+
+        } catch (UsernameNotFoundException ex) {
+            return ResponseEntity.status(404).body("User not found");
+        } catch (Exception ex) {
+            return ResponseEntity.status(500).body("An error occurred: " + ex.getMessage());
+        }
+      //  return this.serv.adminlogin(userLoginRecieveDTO.getEmail(),userLoginRecieveDTO.getPassword());
+    }
+
+
+
+
+
 }
