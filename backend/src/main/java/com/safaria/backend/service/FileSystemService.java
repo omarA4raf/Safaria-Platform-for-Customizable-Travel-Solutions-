@@ -1,18 +1,20 @@
 package com.safaria.backend.service;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Base64;
 import java.util.UUID;
 
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FileSystemService {
     @Value("${file.upload-dir}")  // Inject directory path from properties
-    private String uploadDir;
+    private  String uploadDir;
    public byte[] convertBase64ToBytes(String[] base64Array)
     {
         String base64String = String.join("", base64Array);
@@ -43,6 +45,10 @@ public class FileSystemService {
         } while (Files.exists(filePath)); // Keep generating until we find a unique name
        System.out.println("_______________________"+fileName);
         return fileName;
+    }
+    public byte[] getFileBytesFromPath(String relativeFilePath) throws IOException {
+        Path filePath = Paths.get(uploadDir).resolve(relativeFilePath);
+        return Files.readAllBytes(filePath);
     }
     
 }

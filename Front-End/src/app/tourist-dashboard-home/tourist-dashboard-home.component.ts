@@ -6,6 +6,7 @@ import { ApiService } from './tourist-dashboard-home.service';
 import { AuthService } from '../services/auth.service';
 import { PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { console } from 'node:inspector';
 
 @Component({
   selector: 'app-tourist-dashboard-home',
@@ -52,6 +53,12 @@ export class TouristDashboardHomeComponent implements OnInit {
   fetchData(): void {
     this.apiService.getTrips().subscribe((data) => {
       this.trips = data;
+      this.trips.forEach((trip) => {
+      this.apiService.getTripImage(trip.tourID).subscribe((image) => {
+        const imageUrl = URL.createObjectURL(image);
+  trip.image = imageUrl;
+      });
+      });
     });
   }
 

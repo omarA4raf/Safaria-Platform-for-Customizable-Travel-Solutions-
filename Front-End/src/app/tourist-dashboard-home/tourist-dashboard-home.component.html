@@ -75,7 +75,7 @@
           <div class="overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
           <div class="list-info position-absolute bottom-0 start-0 p-3 text-white w-100">
             <h6 class="fw-bold mb-1">{{ trip.title }}</h6>
-            <p class="text-white-50 mb-1 company-title">{{ trip.company || 'No company provided' }}</p>
+            <p class="text-white-50 mb-1 company-title">{{ trip.tourProviderName || 'No company provided' }}</p>
             <div class="d-flex align-items-center">
               <span id="rating-value" class="text-white me-2">{{ trip.rating || 0 }}</span>
               <span id="rating-stars" class="text-warning" [innerHTML]="renderStars(trip.rating || 0)"></span>

@@ -1,6 +1,7 @@
 package com.safaria.backend.service;
 
 
+import com.safaria.backend.DTO.TourImportantDTO;
 import com.safaria.backend.DTO.TourRequestDTO;
 import com.safaria.backend.DTO.TourScheduleDTO;
 import com.safaria.backend.entity.Tour;
@@ -9,6 +10,8 @@ import com.safaria.backend.entity.TourProvider;
 import com.safaria.backend.repository.TourRepository;
 import com.safaria.backend.repository.TourScheduleRepository;
 import com.safaria.backend.repository.TourProviderRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +38,8 @@ private String UPLOAD_DIRECTORY;
     private final TourRepository tourRepository;
     private final TourScheduleRepository tourScheduleRepository;
     private final TourProviderRepository tourProviderRepository;
+    @Autowired
+    private  FileSystemService fileSystemService;
 
     public TourService(TourRepository tourRepository, TourScheduleRepository tourScheduleRepository, TourProviderRepository tourProviderRepository) {
         this.tourRepository = tourRepository;
@@ -76,7 +81,7 @@ private String UPLOAD_DIRECTORY;
                 try {
                     // Generate unique filename
                     String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-                    Path path = Paths.get(UPLOAD_DIRECTORY,"TripImages", fileName);
+                    Path path = Paths.get(UPLOAD_DIRECTORY,"tours", fileName);
 
                     // Create directories if they don't exist
                     Files.createDirectories(path.getParent());
@@ -210,5 +215,21 @@ System.out.println("Creating schedule with price: " + scheduleDTO.getPrice());
         } else {
             throw new RuntimeException("Tour Schedule not found");
         }
+    }
+    // ✅ Get 5 Important Tours
+    public List<TourImportantDTO> getFiveImportantTours() {
+        List<Tour> tours = tourRepository.findAll().stream().limit(5).collect(Collectors.toList());
+        List<TourImportantDTO> tourImportantDTOList = new ArrayList<>();
+        
+        for (Tour tour : tours) {
+            TourImportantDTO tourImportantDTO = new TourImportantDTO();
+            tourImportantDTO.setTitle(tour.getTitle());
+            tourImportantDTO.setTourID(tour.getTourId().toString());
+            System.out.println(tour.getTourProvider().getUsername());
+            tourImportantDTO.setTourProviderName(tour.getTourProvider().getUsername());
+            tourImportantDTOList.add(tourImportantDTO);
+        }
+        
+        return tourImportantDTOList;
     }
 }

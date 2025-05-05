@@ -1,8 +1,11 @@
 package com.safaria.backend.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,9 +20,13 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.safaria.backend.DTO.TourImportantDTO;
 import com.safaria.backend.DTO.TourRequestDTO;
 import com.safaria.backend.DTO.TourScheduleDTO;
+import com.safaria.backend.entity.Image;
 import com.safaria.backend.entity.Tour;
+import com.safaria.backend.service.FileSystemService;
+import com.safaria.backend.service.ImageService;
 import com.safaria.backend.service.TourService;
 
 @CrossOrigin(origins = "http://localhost:4200") // Allow requests from Angular frontend
@@ -28,6 +35,10 @@ import com.safaria.backend.service.TourService;
 public class TourController {
 
     private final TourService tourService;
+    @Autowired
+     private  FileSystemService fileService;
+     @Autowired
+     private  ImageService imageService;
 
     public TourController(TourService tourService) {
         this.tourService = tourService;
@@ -75,4 +86,27 @@ public class TourController {
         tourService.deleteSchedule(scheduleId);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/important")
+    public ResponseEntity<List<TourImportantDTO>> getFiveImportantTours() {
+        return ResponseEntity.ok(tourService.getFiveImportantTours());
+    }
+    @GetMapping("/image/{id}")
+public ResponseEntity<byte[]> getImage(@PathVariable Integer id) {
+    List<Image> images = imageService.getImagesByTour(id);
+    
+    if (images == null || images.isEmpty()) {
+        return ResponseEntity.notFound().build(); // Return 404 if no image found
+    }
+
+    String imagePath = images.get(0).getImageUrl(); // Get the first image
+    try {
+        byte[] imageData = fileService.getFileBytesFromPath(imagePath);
+        return ResponseEntity.ok()
+            .contentType(MediaType.IMAGE_JPEG)
+            .body(imageData);
+    } catch (IOException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Return 500
+    }
+}
+
 }
