@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../services/auth.service';
+import { CompanyCreateTripService } from './company-create-trip.service';
 
 @Component({
   selector: 'app-company-create-trip',
@@ -12,8 +14,12 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./company-create-trip.component.css'],
 })
 export class CompanyCreateTripComponent implements OnInit {
-  constructor(private router: Router, private http: HttpClient) {}
-
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private authService: AuthService,
+    private tripService: CompanyCreateTripService
+  ) {}
   // Loading state for the submit button
   createIsLoading: boolean = false;
 
@@ -32,7 +38,7 @@ export class CompanyCreateTripComponent implements OnInit {
     tourismTypes: [] as string[], // New field for tourism types
     duration: null as number | null,
     availableDates: [
-      { startDate: null, endDate: null, availableSeats: null, budget: null },
+      { startDate: null, endDate: null, availableSeats: null, price: null },
     ],
     description: '',
     freeCancellationDeadline: null as number | null, // New field for free cancellation deadline
@@ -157,6 +163,15 @@ export class CompanyCreateTripComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    // Check authentication
+    if (
+      !this.authService.isLoggedIn() ||
+      this.authService.getUserType() !== 'COMPANY'
+    ) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+      return;
+    }
     this.initializeCountries();
   }
 
@@ -279,7 +294,7 @@ export class CompanyCreateTripComponent implements OnInit {
       startDate: null,
       endDate: null,
       availableSeats: null,
-      budget: null,
+      price: null,
     });
   }
 
@@ -346,8 +361,8 @@ export class CompanyCreateTripComponent implements OnInit {
           isValid = false;
           break;
         }
-        if (!dateRange.budget || dateRange.budget <= 0) {
-          this.errorMessages['budget'] = 'Budget must be a positive number.';
+        if (!dateRange.price || dateRange.price <= 0) {
+          this.errorMessages['price'] = 'Price must be a positive number.';
           isValid = false;
           break;
         }
@@ -388,6 +403,21 @@ export class CompanyCreateTripComponent implements OnInit {
     this.trip.availableDates.splice(index, 1);
   }
 
+  private resetErrorMessages(): void {
+    this.errorMessages = {
+      title: '',
+      destinationCountry: '',
+      tourismTypes: '',
+      duration: '',
+      availableSeats: '',
+      description: '',
+      availableDates: '',
+      images: '',
+      freeCancellationDeadline: '',
+      currency: '',
+    };
+  }
+
   hasData(): boolean {
     return !!(
       this.trip.title ||
@@ -399,7 +429,7 @@ export class CompanyCreateTripComponent implements OnInit {
           dateRange.startDate ||
           dateRange.endDate ||
           dateRange.availableSeats !== null ||
-          dateRange.budget !== null
+          dateRange.price !== null
       ) ||
       this.trip.description ||
       this.trip.freeCancellationDeadline !== null ||
@@ -408,159 +438,118 @@ export class CompanyCreateTripComponent implements OnInit {
     );
   }
 
-  // Handle form submission
+  // Form submission
   onSubmit(): void {
+    if (!this.validateForm()) return;
 
-    console.log('Form Data to be Sent:', {
-      title: this.trip.title,
-      destinationCountry: this.trip.destinationCountry,
-      tourismTypes: this.trip.tourismTypes,
-      duration: this.trip.duration,
-      availableDates: this.trip.availableDates,
-      description: this.trip.description,
-      freeCancellationDeadline: this.trip.freeCancellationDeadline,
-      currency: this.trip.currency,
-      images: this.images.filter((img) => img.file),
-    });
-
-    // Validate form inputs
-    if (!this.validateForm()) {
+    // Verify authentication
+    if (!this.authService.isLoggedIn() || !this.authService.getUserId()) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
       return;
     }
 
-    // Set loading state to true
     this.createIsLoading = true;
 
-    // Prepare form data
-    const formData = new FormData();
-    formData.append('title', this.trip.title);
-    formData.append('destinationCountry', this.trip.destinationCountry);
-    formData.append('tourismTypes', JSON.stringify(this.trip.tourismTypes));
-    if (this.trip.duration !== null) {
-      formData.append('duration', this.trip.duration.toString());
-    }
-    formData.append('description', this.trip.description);
-    formData.append('availableDates', JSON.stringify(this.trip.availableDates));
-    if (this.trip.freeCancellationDeadline !== null) {
-      formData.append(
-        'freeCancellationDeadline',
-        this.trip.freeCancellationDeadline.toString()
-      );
-    }
-    formData.append('currency', this.trip.currency);
+    const formData = this.prepareFormData();
+    formData.append('companyId', this.authService.getUserId()!);
 
-    // Append images
-    this.images.forEach((image, index) => {
-      if (image.file) {
-        formData.append(
-          'images',
-          image.file,
-          `image_${index}.${image.file.type.split('/')[1]}`
-        );
-      }
-    });
-
-    // Send data to backend
-    this.http.post('https://your-backend-api.com/trips', formData).subscribe({
+    this.tripService.createTrip(formData).subscribe({
       next: (response) => {
         console.log('Trip created successfully:', response);
         this.createIsLoading = false;
+        this.showSuccessMessage('Trip created successfully!');
         this.router.navigate(['/companydashboard']);
       },
       error: (error) => {
         console.error('Error creating trip:', error);
         this.createIsLoading = false;
+        this.showErrorMessage(error);
       },
     });
   }
 
-  // Save as draft
   saveDraft(): void {
-    // Check if at least one field has data
-    const hasData =
-      this.trip.title ||
-      this.trip.destinationCountry ||
-      this.trip.tourismTypes.length > 0 ||
-      this.trip.duration !== null ||
-      this.trip.availableDates.some(
-        (dateRange) =>
-          dateRange.startDate ||
-          dateRange.endDate ||
-          dateRange.availableSeats !== null ||
-          dateRange.budget !== null
-      ) ||
-      this.trip.description ||
-      this.trip.freeCancellationDeadline !== null ||
-      this.trip.currency ||
-      this.images.some((image) => image.file !== null);
-  
-    if (!hasData) {
+    if (!this.hasData()) {
       alert('Cannot save an empty draft. Please fill in at least one field.');
       return;
     }
-  
-    // Set loading state to true
+
+    // Verify authentication
+    if (!this.authService.isLoggedIn() || !this.authService.getUserId()) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.SavingisLoading = true;
+
+    const draftData = this.prepareFormData();
+    draftData.append('companyId', this.authService.getUserId()!);
+    draftData.append('isDraft', 'true');
+
+    this.tripService.saveDraft(draftData).subscribe({
+      next: (response) => {
+        console.log('Draft saved successfully:', response);
+        this.SavingisLoading = false;
+        this.showSuccessMessage('Draft saved successfully!');
+        this.router.navigate(['/companydashboard']);
+      },
+      error: (error) => {
+        console.error('Error saving draft:', error);
+        this.SavingisLoading = false;
+        this.showErrorMessage(error);
+      },
+    });
+  }
+
+  private prepareFormData(): FormData {
+    const formData = new FormData();
   
-    console.log('Form Data to be Sent:', {
+    // Create the tourData object exactly as per your trip structure
+    const tourData = {
       title: this.trip.title,
       destinationCountry: this.trip.destinationCountry,
       tourismTypes: this.trip.tourismTypes,
       duration: this.trip.duration,
-      availableDates: this.trip.availableDates,
+      availableDates: this.trip.availableDates, // array of { startDate, endDate, availableSeats, price }
       description: this.trip.description,
       freeCancellationDeadline: this.trip.freeCancellationDeadline,
       currency: this.trip.currency,
-      images: this.images.filter((img) => img.file),
-    });
+      tourProviderId:this.authService.getUserId()
+    };
   
-    // Prepare form data
-    const draftData = new FormData();
-    draftData.append('title', this.trip.title);
-    draftData.append('destinationCountry', this.trip.destinationCountry);
-    draftData.append('tourismTypes', JSON.stringify(this.trip.tourismTypes));
-    if (this.trip.duration !== null) {
-      draftData.append('duration', this.trip.duration.toString());
-    }
-    draftData.append('description', this.trip.description);
-    draftData.append('availableDates', JSON.stringify(this.trip.availableDates));
-    if (this.trip.freeCancellationDeadline !== null) {
-      draftData.append(
-        'freeCancellationDeadline',
-        this.trip.freeCancellationDeadline.toString()
-      );
-    }
-    draftData.append('currency', this.trip.currency);
+    // Append tourData as JSON blob (important for Spring's @RequestPart)
+    formData.append(
+      'tourData',
+      new Blob([JSON.stringify(tourData)], { type: 'application/json' })
+    );
   
-    // Append images
+    // Append all image files with the same key "images"
     this.images.forEach((image, index) => {
       if (image.file) {
-        draftData.append(
-          'images',
-          image.file,
-          `image_${index}.${image.file.type.split('/')[1]}`
-        );
+        const fileExtension = image.file.name.split('.').pop() || 'jpg';
+        formData.append('images', image.file, `image_${index}.${fileExtension}`);
       }
     });
   
-    // Send data to backend
-    this.http.post('https://your-backend-api.com/draftTrips', draftData).subscribe({
-      next: (response) => {
-        console.log('Trip is saved in draft successfully:', response);
-        this.SavingisLoading = false; // Reset loading state
-        this.router.navigate(['/companydashboard']);
-      },
-      error: (error) => {
-        console.error('Error saving trip as draft:', error);
-        this.SavingisLoading = false; // Reset loading state
-      },
-    });
+    return formData;
+  }
+  
+  
+
+  private showSuccessMessage(message: string): void {
+    // You can replace this with a toast notification or other UI feedback
+    alert(message);
   }
 
-  // Method to handle logout
+  private showErrorMessage(error: any): void {
+    const errorMessage = error.error?.message || 'An error occurred. Please try again.';
+    alert(errorMessage);
+  }
+
   logout(): void {
-    localStorage.clear(); // Clear localStorage
-    sessionStorage.clear(); // Clear sessionStorage
-    this.router.navigate(['/']); // Navigate to the home page
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

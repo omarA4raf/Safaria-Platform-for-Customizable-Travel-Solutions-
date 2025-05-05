@@ -1,10 +1,17 @@
-import { Component, OnInit, ViewChild, ElementRef, Inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  Inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AdminDashboardService } from './admin-dashboard.service';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from '../services/auth.service';
 
 interface User {
   id: number;
@@ -30,30 +37,59 @@ export class AdminDashboardComponent implements OnInit {
   };
   editUserData: User | null = null;
   searchTerm: string = '';
-
+  currentUserRole: string | null = null;
+  editedUser: User | null = null;
   @ViewChild('addUserModal') addUserModal!: ElementRef;
   @ViewChild('editUserModal') editUserModal!: ElementRef;
 
   constructor(
-    private adminService: AdminDashboardService, 
+    private adminService: AdminDashboardService,
     private router: Router,
-    @Inject(NgbModal) private modalService: NgbModal
+    private modalService: NgbModal,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    // Check authentication and admin role
+   /* if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.currentUserRole = this.authService.getUserType();
+
+    // Verify admin access
+    if (this.currentUserRole !== 'admin') {
+      console.warn('Non-admin user attempted to access admin dashboard');
+      this.router.navigate(['/']);
+      return;
+    }
+    */
+
     this.fetchUsers();
   }
 
   fetchUsers(): void {
-    this.adminService.getUsers().subscribe((users) => {
-      this.users = users;
+    this.adminService.getUsers().subscribe({
+      next: (users) => {
+        this.users = users;
+      },
+      error: (err) => {
+        console.error('Error fetching users:', err);
+        // Handle error (e.g., show toast message)
+      },
     });
   }
 
-  deleteUser(id: number): void {
+  deleteUser(id: number,role:number): void {
     if (confirm('Are you sure you want to delete this user?')) {
-      this.adminService.deleteUser(id).subscribe(() => {
-        this.users = this.users.filter((user) => user.id !== id);
+      this.adminService.deleteUser(id,this.getRoleName(role)).subscribe({
+        next: () => {
+          this.users = this.users.filter((user) => user.id !== id);
+        },
+        error: (err) => {
+          console.error('Error deleting user:', err);
+        },
       });
     }
   }
@@ -77,11 +113,18 @@ export class AdminDashboardComponent implements OnInit {
       error: (err) => {
         console.error('Error adding user:', err);
         // Show error message to user
-      }
+      },
     });
   }
 
   startEdit(user: User): void {
+    this.editedUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    };
+    
     this.editUserData = { ...user };
     this.openEditModal();
   }
@@ -89,10 +132,10 @@ export class AdminDashboardComponent implements OnInit {
   updateUser(): void {
     if (this.editUserData) {
       console.log('Updating user with data:', this.editUserData); // Debug log
-      this.adminService.updateUser(this.editUserData).subscribe({
+      this.adminService.updateUser(this.editedUser,this.editUserData).subscribe({
         next: (updatedUser) => {
           console.log('Updated user received:', updatedUser); // Debug log
-          const index = this.users.findIndex(u => u.id === updatedUser.id);
+          const index = this.users.findIndex((u) => u.id === updatedUser.id);
           if (index !== -1) {
             this.users[index] = updatedUser;
           }
@@ -101,7 +144,7 @@ export class AdminDashboardComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error updating user:', err);
-        }
+        },
       });
     }
   }
@@ -113,16 +156,16 @@ export class AdminDashboardComponent implements OnInit {
 
   get filteredUsers(): User[] {
     if (!this.searchTerm) return this.users;
-    return this.users.filter(user => 
-      user.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(this.searchTerm.toLowerCase())
+    return this.users.filter(
+      (user) =>
+        user.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
   }
 
   getRoleName(role: number | string): string {
-    // Convert to number if it's a string
     const roleNum = typeof role === 'string' ? parseInt(role) : role;
-    
+
     switch (roleNum) {
       case 1:
         return 'Tourist';
@@ -130,6 +173,8 @@ export class AdminDashboardComponent implements OnInit {
         return 'Company';
       case 3:
         return 'Tour Guide';
+      case 4:
+        return 'Admin';
       default:
         console.warn('Unknown role value:', role);
         return 'Unknown';
@@ -137,8 +182,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   logout(): void {
-    localStorage.clear();
-    sessionStorage.clear();
+    this.authService.logout(); // Use centralized logout
     this.router.navigate(['/']);
   }
 }

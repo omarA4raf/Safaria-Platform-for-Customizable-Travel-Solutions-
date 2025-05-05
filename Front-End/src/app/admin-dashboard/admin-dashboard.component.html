@@ -41,11 +41,9 @@
           <a class="nav-link text-white active" style="color: #ffa500 !important;" href="#">Manage Users</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white" href="/admindashboardcompanyrequest">Companies Requests</a>
+          <a class="nav-link text-white" href="/admindashboardtourprovider">Tour Provider Requests</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link text-white" href="/admindashboardtourguiderequest">Tour Guides Requests</a>
-        </li>
+
         <li class="nav-item">
           <a class="nav-link text-white" href="#">Reported users</a>
         </li>
@@ -92,7 +90,7 @@
             <td>{{ getRoleName(user.role) }}</td>
             <td>
               <button class="btn btn-warning btn-sm me-2" (click)="startEdit(user)">Edit</button>
-              <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id)">Delete</button>
+              <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id,user.role)">Delete</button>
             </td>
           </tr>
         </tbody>

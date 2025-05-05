@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 
+
 export class TourguideCreateTripService {
 
   private apiUrl = 'http://localhost:8080/api';
@@ -14,7 +15,7 @@ export class TourguideCreateTripService {
 
   // Method to create a new trip
   createTrip(formData: FormData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/trips`, formData);
+    return this.http.post(`${this.apiUrl}/tours/create`, formData);
   }
 
   // Method to save a trip as a draft
@@ -22,4 +23,5 @@ export class TourguideCreateTripService {
     return this.http.post(`${this.apiUrl}/draftTrips`, formData);
   }
 }
+ 
  

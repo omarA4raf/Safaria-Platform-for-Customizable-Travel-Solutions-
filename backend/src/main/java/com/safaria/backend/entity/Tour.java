@@ -1,10 +1,13 @@
 package com.safaria.backend.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.*;
 
 @Entity
+@Data
 @Table(name = "Tour")
 public class Tour {
 
@@ -19,15 +22,24 @@ public class Tour {
     @Column(name = "Description", columnDefinition = "TEXT") // Assuming description can be long
     private String description;
 
-    @Column(name = "Duration")
-    private Integer duration; // Duration in days
+    @Column(name = "DestinationCountry", nullable = false)
+    private String destinationCountry;
+  
 
-    @Column(name = "Price")
-    private Double price;
+    @Column(name = "Currency", nullable = false)
+    private String currency; // Currency code (e.g., USD, EUR)
+    
 
-    @Enumerated(EnumType.STRING) // Store enum as string in DB
-    @Column(name = "Category")
-    private Category category;
+//     @Enumerated(EnumType.STRING) // Store enum as string in DB
+// //    @Column(name = "Category")
+// //    private Category category;
+
+
+
+    @ElementCollection // To store multiple tourism types
+    @CollectionTable(name = "Tour_TourismTypes", joinColumns = @JoinColumn(name = "TourID"))
+    @Column(name = "TourismType")
+    private List<String> tourismTypes = new ArrayList<>();
 
     @ManyToOne // manytone when using foriegn key which one of it maps to many of this entity
     // but onetomany when annotate a repeated field
@@ -35,16 +47,9 @@ public class Tour {
     private TourProvider tourProvider;
 
 
-    @Column(name = "StartDate")
-    private LocalDate startDate;
-
-    @Column(name = "EndDate")
-    private LocalDate endDate;
-
-    @Column(name = "AvailableSeats") // Add this column
-    private Integer availableSeats; // Assuming available seats is an integer
-
-    public enum Category {
-        PRE_PACKAGED, CUSTOMIZED
-    }
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images = new ArrayList<>();
+//    public enum Category {
+//        PRE_PACKAGED, CUSTOMIZED
+//    }
 }

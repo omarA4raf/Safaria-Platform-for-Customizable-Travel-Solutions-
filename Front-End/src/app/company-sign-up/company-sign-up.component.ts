@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { SignUpServices } from '../services/signup_sevices';
-// import { Company } from '../objects/company';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-company-sign-up',
@@ -42,7 +42,8 @@ export class CompanySignUpComponent implements OnInit {
 
   constructor(
     private signup_services: SignUpServices,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -209,34 +210,54 @@ export class CompanySignUpComponent implements OnInit {
     }
 
     if (this.businesslicenseDocument) {
-      formData.append('approvalDocument', this.businesslicenseDocument,this.businesslicenseDocument.name);
+      formData.append(
+        'approvalDocument',
+        this.businesslicenseDocument,
+        this.businesslicenseDocument.name
+      );
     }
 
     // Log FormData for debugging
     for (const pair of formData.entries()) {
       console.log('before', pair[0], pair[1]);
     }
-
+/*
     this.signup_services.signup(formData, 'Company').subscribe({
-      next: (data) => {
-        if (data == null) {
-          this.errorMessage = 'Email or Username already exists.';
+      next: (response) => {
+        if (response?.token) {
+          this.authService.setSession({
+            token: response.token,
+            userId: response.userId,
+            userType: 'COMPANY'
+          });
+          alert('Registration successful!');
+          this.router.navigate(['/companydashboard']);
         } else {
-          alert('You have successfully signed up. Please verify your email!');
-          this.router.navigate(['/login']);
+          this.errorMessage = 'Email or company name already exists.';
         }
       },
       error: (error) => {
-        console.error('Signup failed:', error);
-        this.errorMessage = 'An error occurred. Please try again later.';
+        console.error('Registration failed:', error);
+        this.errorMessage = error.error?.message || 'Registration failed. Please try again.';
       },
       complete: () => {
         this.isLoading = false;
-      },
+      }
     });
-    // Log FormData contents
-    for (const pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
+    */
+    this.signup_services.signup(formData, 'Company').subscribe({
+      next: (response) => {
+          alert('Registration successful!');
+          this.router.navigate(['/login']);
+        
+      },
+      error: (error) => {
+        console.error('Registration failed:', error);
+        this.errorMessage = error.error?.message || 'Registration failed. Please try again.';
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
   }
 }

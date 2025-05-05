@@ -1,0 +1,233 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a style="color: #ffa500;" class="navbar-brand fw-bold" href="#">Safaria</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">About me</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">Customer Support</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" (click)="logout()" style="cursor: pointer;">
+                        Log out <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2 bg-dark text-white p-4">
+            <h4 class="mb-4">Admin Panel</h4>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/admindashboard">Manage Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" style="color: #ffa500 !important;" href="#">Tour Provider
+                        Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">Reported users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">Blog & Review Moderation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">Points & Rewards System Oversight</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-10 p-4">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Tour Provider Requests</h2>
+                <div class="d-flex align-items-center">
+                    <span class="me-3">Admin User</span>
+                    <img src="/assets/img/client 2.jpeg" alt="Admin" class="rounded-circle" width="40" height="40" />
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ successMessage }}
+                <button type="button" class="btn-close" (click)="clearMessages()" aria-label="Close"></button>
+            </div>
+            <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ errorMessage }}
+                <button type="button" class="btn-close" (click)="clearMessages()" aria-label="Close"></button>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div *ngIf="isLoading" class="text-center my-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="d-flex justify-content-between mb-4">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary" [class.active]="activeTab === 'all'"
+                        (click)="activeTab = 'all'">All Requests</button>
+                    <button type="button" class="btn btn-outline-primary" [class.active]="activeTab === 'companies'"
+                        (click)="activeTab = 'companies'">Companies</button>
+                    <button type="button" class="btn btn-outline-primary" [class.active]="activeTab === 'tourguides'"
+                        (click)="activeTab = 'tourguides'">Tour Guides</button>
+                </div>
+                <input type="text" class="form-control w-50" placeholder="Search Requests" [(ngModel)]="searchTerm" />
+            </div>
+
+            <!-- Requests Table -->
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Type</th>
+                            <th>Document</th>
+                            <th>Status</th>
+                            <th>Submitted</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let request of filteredRequests">
+                            <td>{{ request.name }}</td>
+                            <td>{{ request.email }}</td>
+                            <td>{{ getTypeDisplay(request.type) }}</td>
+                            <td>
+                                <button class="btn btn-info btn-sm" (click)="viewDocument(request)">
+                                    View {{ getDocumentType(request.documentUrl) }}
+                                </button>
+                            </td>
+                            <td>
+                                <span [ngClass]="{
+                    'badge bg-warning': request.status === 'pending',
+                    'badge bg-success': request.status === 'approved',
+                    'badge bg-danger': request.status === 'rejected'
+                  }">
+                                    {{ request.status | titlecase }}
+                                </span>
+                            </td>
+                            <td>{{ request.submittedAt | date:'mediumDate' }}</td>
+                            <td>
+                                <button class="btn btn-success btn-sm me-2" *ngIf="request.status === 'pending'"
+                                    (click)="approveRequest(request.id)">
+                                    Approve
+                                </button>
+                                <button class="btn btn-danger btn-sm me-2" *ngIf="request.status === 'pending'"
+                                    (click)="rejectRequest(request.id)">
+                                    Reject
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm" (click)="rejectRequest(request.id)">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="filteredRequests.length === 0">
+                            <td colspan="7" class="text-center">No requests found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Document Viewer Modal -->
+        <div *ngIf="showDocumentModal" class="modal fade show d-block" tabindex="-1" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            {{ getTypeDisplay(selectedRequest?.type!) }} - {{ selectedRequest?.name }}
+                        </h5>
+                        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <div *ngIf="selectedRequest?.documentUrl?.endsWith('.pdf')">
+                            <iframe *ngIf="selectedRequest?.documentUrl "
+                                [src]="pdfUrl" width="100%" height="500px" ></iframe>
+                        </div>
+                        <div *ngIf="!(selectedRequest?.documentUrl ?? '').endsWith('.pdf')">
+                            <img [src]="pdfUrl" width="350" height="350" loading="lazy" class="img-fluid" alt="Document" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+                        <button type="button" class="btn btn-success" *ngIf="selectedRequest?.status === 'pending'"
+                            (click)="approveRequest(selectedRequest!.id)">
+                            Approve
+                        </button>
+                        <button type="button" class="btn btn-danger" *ngIf="selectedRequest?.status === 'pending'"
+                            (click)="rejectRequest(selectedRequest!.id)">
+                            Reject
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-backdrop fade show"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="text-white py-4" style="background-color: #71a7b8">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h4>Safaria</h4>
+                <div class="social-icons mt-3">
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-youtube fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>Explore</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Destinations</a></li>
+                            <li><a href="#" class="text-white">Tours</a></li>
+                            <li><a href="#" class="text-white">Experiences</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Company</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">About Us</a></li>
+                            <li><a href="#" class="text-white">Careers</a></li>
+                            <li><a href="#" class="text-white">Blog</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Support</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Contact Us</a></li>
+                            <li><a href="#" class="text-white">FAQs</a></li>
+                            <li><a href="#" class="text-white">Help Center</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr class="mt-4 mb-2 border-white" />
+        <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
+    </div>
+</footer>

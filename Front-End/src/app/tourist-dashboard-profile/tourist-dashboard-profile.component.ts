@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { TouristDashboardProfileService } from './tourist-dashboard-profile.service';
-
+import { AuthService } from '../services/auth.service';
+import { PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-tourist-dashboard-profile',
@@ -31,11 +33,35 @@ export class TouristDashboardProfileComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private apiService: TouristDashboardProfileService
+    private apiService: TouristDashboardProfileService,
+    private authService: AuthService,
+    @Inject(PLATFORM_ID) private platformId: Object // Inject the platform ID
+
   ) {}
 
   ngOnInit(): void {
+    // Uncomment and use your authentication logic if needed
+    if (
+      !this.authService.isLoggedIn() ||
+      this.authService.getUserType() !== 'TOURIST'
+    ) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.fetchData();
+
+    if (isPlatformBrowser(this.platformId)) {
+      window.addEventListener('scroll', function () {
+        const navbar = document.querySelector('.custom-navbar');
+        if (window.scrollY > 50) {
+          navbar?.classList.add('navbar-shrink');
+        } else {
+          navbar?.classList.remove('navbar-shrink');
+        }
+      });
+    }
   }
 
   // Fetch all data from the backend

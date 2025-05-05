@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { TourguideDashboardService } from './tourguide-dashboard.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-tourguide-dashboard',
@@ -30,10 +31,25 @@ export class TourguideDashboardComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private apiService: TourguideDashboardService
+    private apiService: TourguideDashboardService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    if (
+      !this.authService.isLoggedIn() ||
+      this.authService.getUserType() !== 'TOUR_GUIDE'
+    ) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const userId = this.authService.getUserId();
+    if (userId) {
+      this.apiService.setUserId(userId);
+    }
+
     this.fetchData();
   }
 
@@ -65,7 +81,8 @@ export class TourguideDashboardComponent implements OnInit {
 
     // Fetch rating, but if the backend returns null/undefined, keep the default value of 5
     this.apiService.getRating().subscribe((data) => {
-      this.rating = data.rating !== null && data.rating !== undefined ? data.rating : 5;
+      this.rating =
+        data.rating !== null && data.rating !== undefined ? data.rating : 5;
     });
 
     this.apiService.getAbout().subscribe((data) => {
@@ -87,9 +104,8 @@ export class TourguideDashboardComponent implements OnInit {
 
   // Method to handle logout
   logout(): void {
-    localStorage.clear(); // Clear localStorage
-    sessionStorage.clear(); // Clear sessionStorage
-    this.router.navigate(['/']); // Navigate to the home page
+    this.authService.logout();
+    this.router.navigate(['/']);
   }
 
   // Method to handle navigation to create a new trip
