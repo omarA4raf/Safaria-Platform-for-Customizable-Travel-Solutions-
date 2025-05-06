@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Trip } from './tourist-prepackage-show.component'; // Add this import
 
 @Injectable({
   providedIn: 'root'
@@ -18,5 +19,9 @@ export class TouristPrepackageShowService {
     return this.http.get(`${this.apiUrl}/tours/image/${tripId}`, { 
       responseType: 'blob' 
     });
+  }
+
+  searchTripsByCountry(country: string): Observable<Trip[]> {
+    return this.http.get<Trip[]>(`${this.apiUrl}/tours/search?country=${encodeURIComponent(country)}`);
   }
 }
