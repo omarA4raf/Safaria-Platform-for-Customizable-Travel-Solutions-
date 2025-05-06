@@ -1,6 +1,6 @@
 /* Navbar Styles */
 .custom-navbar {
-  background-color: #71a7b8; /* Same as footer */
+  background-color: #71a8b8d4;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
   box-shadow: 0 2px 10px rgba(251, 146, 29, 0.2);

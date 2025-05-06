@@ -1,0 +1,327 @@
+/* ===================== Navbar ===================== */
+.custom-navbar {
+  background-color: #71a8b8d4;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  z-index: 999;
+}
+
+.custom-navbar .navbar-brand {
+  color: #fb921d;
+  font-weight: bold;
+  font-size: 1.6rem;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.334);
+}
+
+.custom-navbar .nav-link {
+  color: white !important;
+  font-weight: 500;
+  margin-left: 15px;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.custom-navbar .nav-link:hover {
+  color: #fb921d !important;
+}
+
+.custom-navbar .nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 2px;
+  background-color: #fb921d;
+}
+
+.custom-navbar .logout-link {
+  color: #d9534f !important;
+}
+
+/* ===================== Body ===================== */
+body {
+  background-color: #d0dedf;
+  color: #040a15;
+}
+
+/* ===================== Progress Steps ===================== */
+.progress-steps {
+  position: relative;
+}
+
+.step-circle {
+  width: 50px;
+  height: 50px;
+  background-color: #d0dedf;
+  color: #040a15;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.4s;
+  z-index: 2;
+  position: relative;
+}
+
+.step-circle.active {
+  background-color: #fb921d;
+  color: white;
+}
+
+.step-line {
+  height: 4px;
+  width: 365px;
+  background-color: #d0dedf;
+  transition: 0.4s;
+  z-index: 1;
+}
+
+.step-line.active {
+  background-color: #fb921d;
+}
+
+/* ===================== Timeline ===================== */
+.timeline {
+  position: relative;
+  padding-left: 50px;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 25px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #71a7b8;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.timeline-badge {
+  position: absolute;
+  left: -50px;
+  width: 30px; /* Adjusted width for print */
+  height: 30px; /* Adjusted height for print */
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #fb921d; /* Adjusted border for print */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fb921d;
+}
+
+.timeline-content {
+  border-left: 3px solid #fb921d;
+  transition: all 0.3s ease;
+}
+
+.timeline-content:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ===================== Day Plan ===================== */
+.day-plan {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.day-plan:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.day-plan:nth-child(2) {
+  animation-delay: 0.3s;
+}
+.day-plan:nth-child(3) {
+  animation-delay: 0.5s;
+}
+
+.day-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* ===================== Print Styles ===================== */
+@media print {
+  /* Hide everything by default */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Show only what's inside the print container */
+  .print-area,
+  .print-area * {
+    visibility: visible !important;
+  }
+
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 20px;
+    margin: 0;
+  }
+
+  /* Hide unnecessary elements */
+  .no-print,
+  .navbar,
+  .footer {
+    display: none !important;
+  }
+
+  /* Card styling */
+  .card {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* TIMELINE BADGE FIX */
+  .timeline-badge {
+    width: 30px !important; /* Adjusted width for print */
+    height: 30px !important; /* Adjusted height for print */
+    font-size: 12px !important;
+    left: -30px !important;
+    border-width: 2px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  /* ICON FIX for both i and svg */
+  .timeline-badge i,
+  .timeline-badge svg {
+    width: 20px !important; /* Set a fixed width for icons */
+    height: 20px !important; /* Set a fixed height for icons */
+    font-size: 14px !important;
+    overflow: hidden !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+    transform: scale(1) !important;
+  }
+
+  /* Avoid giant SVGs expanding */
+  svg {
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+
+  /* Prevent page break inside timeline items */
+  .timeline-item {
+    page-break-inside: avoid;
+  }
+}
+
+@media print {
+  /* Remove all icons from print */
+  fa-icon,
+  .fa-icon,
+  .timeline-badge {
+    display: none !important;
+  }
+
+  /* Adjust timeline to compensate for removed icons */
+  .timeline {
+    padding-left: 0 !important;
+  }
+
+  .timeline::before {
+    display: none !important;
+  }
+
+  .timeline-content {
+    border-left: none !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  /* Adjust badge spacing */
+  .badge {
+    padding-left: 0.5em !important;
+  }
+
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+@media print, (prefers-color-scheme: print) {
+  .day-plan, .timeline-content, .card-body {
+    background-color: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .card {
+    background-color: white !important;
+    border: 1px solid #ddd !important;
+  }
+}
+
+.timeline-content.card {
+  border: 1px solid #ddd !important;
+}
+
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.spinner-border {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+/* ===================== Footer ===================== */
+footer,
+.custom-footer {
+  background-color: #71a7b8;
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: 50px;
+}
+
+footer ul li a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* ===================== Animation ===================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===================== Responsive ===================== */
+@media (max-width: 768px) {
+  .step-line {
+    width: 40px;
+  }
+
+  .container {
+    padding: 20px;
+  }
+}

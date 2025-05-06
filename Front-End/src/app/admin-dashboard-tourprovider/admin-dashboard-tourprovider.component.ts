@@ -21,7 +21,7 @@ interface TourProviderRequest {
 @Component({
   selector: 'app-admin-dashboard-tourprovider',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FormsModule, SafePipe ],
+  imports: [CommonModule, HttpClientModule, FormsModule ],
   templateUrl: './admin-dashboard-tourprovider.component.html',
   styleUrls: ['./admin-dashboard-tourprovider.component.css']
 })

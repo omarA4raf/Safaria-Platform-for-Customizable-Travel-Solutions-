@@ -41,14 +41,14 @@ export class TouristDashboardProfileComponent implements OnInit {
 
   ngOnInit(): void {
     // Uncomment and use your authentication logic if needed
-    if (
-      !this.authService.isLoggedIn() ||
-      this.authService.getUserType() !== 'TOURIST'
-    ) {
-      this.authService.logout();
-      this.router.navigate(['/login']);
-      return;
-    }
+    // if (
+    //   !this.authService.isLoggedIn() ||
+    //   this.authService.getUserType() !== 'TOURIST'
+    // ) {
+    //   this.authService.logout();
+    //   this.router.navigate(['/login']);
+    //   return;
+    // }
 
     this.fetchData();
 

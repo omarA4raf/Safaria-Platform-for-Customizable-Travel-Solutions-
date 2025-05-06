@@ -1,0 +1,141 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top shadow-sm custom-navbar p-2">
+  <div class="container">
+    <!-- Brand Name -->
+    <a class="navbar-brand" href="#">Safaria</a>
+
+    <!-- Toggle Button for Mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar Links -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link " href="/touristdashboardhome">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/touristdashboardprofile">Profile</a></li>
+        <li class="nav-item"><a class="nav-link active" href="#">Prepackage Tours</a></li>
+        <li class="nav-item"><a class="nav-link" href="/touristcustomizetourfirstcomponent">Custom Plans</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Tour guide assistant</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Support</a></li>
+        <li class="nav-item">
+          <a class="nav-link logout-link" href="/">Log out <i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container main-container mt-5 pt-5">
+
+  <form (ngSubmit)="onSearch()" class="mb-5">
+    <!-- Search Input -->
+    <div class="input-group mb-4">
+      <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+      <input type="text" [(ngModel)]="searchQuery" name="searchQuery" class="form-control"
+        placeholder="Search by country or city..." (input)="onSearchInputChange()">
+    </div>
+
+    <!-- Search Results -->
+    <div *ngIf="searched">
+      <h5 class="fw-bold mb-3">Search Results</h5>
+
+      <div *ngIf="filteredTrips.length > 0; else noResults" class="trip-results-container">
+        <div class="trip-results-grid">
+          <div class="trip-card" *ngFor="let trip of filteredTrips">
+            <div class="trip-image-container">
+              <img [src]="trip.image || '/assets/img/default-trip.jpg'" alt="{{ trip.title }}" class="trip-image">
+              <div class="trip-overlay"></div>
+            </div>
+            <div class="trip-info">
+              <h6 class="trip-title">{{ trip.title }}</h6>
+              <div class="trip-details">
+                <span class="trip-location">
+                  <i class="fas fa-map-marker-alt"></i> {{ trip.destinationCity }}, {{ trip.destinationCountry }}
+                </span>
+                <span class="trip-duration">
+                  <i class="far fa-clock"></i> {{ trip.duration }}
+                </span>
+              </div>
+              <p class="trip-company">{{ trip.tourProviderName || 'No company provided' }}</p>
+              <div class="trip-footer">
+                <div class="trip-rating">
+                  <span class="rating-value">{{ trip.rating || 0 }}</span>
+                  <span class="rating-stars" [innerHTML]="renderStars(trip.rating || 0)"></span>
+                </div>
+                <div class="trip-price">
+                  From {{ trip.price | currency }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noResults>
+        <div class="no-results-message">
+          <p>No trips found matching "{{ searchQuery }}"</p>
+        </div>
+      </ng-template>
+    </div>
+  </form>
+
+</div>
+
+<!-- Footer -->
+<footer class="text-white py-4 custom-footer" style="background-color: #71a7b8">
+  <div class="container">
+    <div class="row">
+      <!-- Left Side - Brand & Social Icons -->
+      <div class="col-md-4">
+        <h4>Safaria</h4>
+        <div class="social-icons mt-3">
+          <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+          <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+          <a href="#" class="text-white me-3"><i class="fab fa-youtube fa-lg"></i></a>
+          <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+        </div>
+      </div>
+
+      <!-- Center & Right Side - Topics -->
+      <div class="col-md-8">
+        <div class="row">
+          <!-- Column 1 -->
+          <div class="col-md-4">
+            <h5>Explore</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">Destinations</a></li>
+              <li><a href="#" class="text-white">Tours</a></li>
+              <li><a href="#" class="text-white">Experiences</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="col-md-4">
+            <h5>Company</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">About Us</a></li>
+              <li><a href="#" class="text-white">Careers</a></li>
+              <li><a href="#" class="text-white">Blog</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 3 -->
+          <div class="col-md-4">
+            <h5>Support</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">Contact Us</a></li>
+              <li><a href="#" class="text-white">FAQs</a></li>
+              <li><a href="#" class="text-white">Help Center</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Line -->
+    <hr class="mt-4 mb-2 border-white" />
+    <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
+  </div>
+</footer>

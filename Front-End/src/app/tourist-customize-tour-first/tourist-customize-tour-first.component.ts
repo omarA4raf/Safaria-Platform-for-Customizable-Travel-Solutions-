@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
+import { TouristCustomizeTourFirsService } from './tourist-customize-tour-firs.service';
 
 @Component({
   selector: 'app-tourist-customize-tour-first',
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './tourist-customize-tour-first.component.html',
-  styleUrls: ['./tourist-customize-tour-first.component.css']
+  styleUrls: ['./tourist-customize-tour-first.component.css'],
 })
 export class TouristCustomizeTourFirstComponent implements OnInit {
   // Form fields
@@ -18,9 +19,8 @@ export class TouristCustomizeTourFirstComponent implements OnInit {
   selectedTourismTypes: string[] = [];
   currentStep = 0;
 
-  steps = ['Destination', 'Tourism Type', 'Trip Duration', 'Summary'];
+  steps = ['Entering Trip Data', 'Select Places', 'Trip scedule Generation', 'Summary'];
 
-  
   // Available options
   tourismTypes: string[] = [
     'cultural',
@@ -40,13 +40,14 @@ export class TouristCustomizeTourFirstComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private tourService: TouristCustomizeTourFirsService
   ) {}
 
   ngOnInit(): void {
     this.initializeDestinations();
     // Uncomment for production
-    // this.checkAuthentication();
+    this.checkAuthentication();
   }
 
   /**
@@ -54,20 +55,75 @@ export class TouristCustomizeTourFirstComponent implements OnInit {
    */
   initializeDestinations(): void {
     const destinations = [
-      'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Argentina', 
-      'Armenia', 'Australia', 'Austria', 'Azerbaijan', 'Bahrain', 'Bangladesh', 
-      'Belgium', 'Brazil', 'Canada', 'China', 'Colombia', 'Denmark', 'Egypt', 
-      'Finland', 'France', 'Germany', 'Greece', 'India', 'Indonesia', 'Iran', 
-      'Iraq', 'Ireland', 'Italy', 'Japan', 'Jordan', 'Kenya', 'Kuwait', 
-      'Lebanon', 'Malaysia', 'Mexico', 'Morocco', 'Netherlands', 'New Zealand', 
-      'Nigeria', 'Norway', 'Oman', 'Pakistan', 'Palestine', 'Philippines', 
-      'Poland', 'Portugal', 'Qatar', 'Romania', 'Russia', 'Saudi Arabia', 
-      'South Africa', 'Spain', 'Sudan', 'Sweden', 'Switzerland', 'Syria', 
-      'Thailand', 'Tunisia', 'Turkey', 'UAE', 'UK', 'Ukraine', 'USA', 
-      'Vietnam', 'Yemen'
+      'Afghanistan',
+      'Albania',
+      'Algeria',
+      'Andorra',
+      'Angola',
+      'Argentina',
+      'Armenia',
+      'Australia',
+      'Austria',
+      'Azerbaijan',
+      'Bahrain',
+      'Bangladesh',
+      'Belgium',
+      'Brazil',
+      'Canada',
+      'China',
+      'Colombia',
+      'Denmark',
+      'Egypt',
+      'Finland',
+      'France',
+      'Germany',
+      'Greece',
+      'India',
+      'Indonesia',
+      'Iran',
+      'Iraq',
+      'Ireland',
+      'Italy',
+      'Japan',
+      'Jordan',
+      'Kenya',
+      'Kuwait',
+      'Lebanon',
+      'Malaysia',
+      'Mexico',
+      'Morocco',
+      'Netherlands',
+      'New Zealand',
+      'Nigeria',
+      'Norway',
+      'Oman',
+      'Pakistan',
+      'Palestine',
+      'Philippines',
+      'Poland',
+      'Portugal',
+      'Qatar',
+      'Romania',
+      'Russia',
+      'Saudi Arabia',
+      'South Africa',
+      'Spain',
+      'Sudan',
+      'Sweden',
+      'Switzerland',
+      'Syria',
+      'Thailand',
+      'Tunisia',
+      'Turkey',
+      'UAE',
+      'UK',
+      'Ukraine',
+      'USA',
+      'Vietnam',
+      'Yemen',
     ];
 
-    this.destinationSlugs = destinations.map(country => ({
+    this.destinationSlugs = destinations.map((country) => ({
       name: country,
       slug: country.toLowerCase().replace(/\s+/g, '-'),
     }));
@@ -77,9 +133,12 @@ export class TouristCustomizeTourFirstComponent implements OnInit {
    * Check if user is authenticated and is a tourist
    */
   checkAuthentication(): void {
-    if (!this.authService.isLoggedIn() || this.authService.getUserType() !== 'TOURIST') {
+    if (
+      !this.authService.isLoggedIn() ||
+      this.authService.getUserType() !== 'TOURIST'
+    ) {
       this.authService.logout();
-      this.router.navigate(['/login']);
+      // this.router.navigate(['/login']);
     }
   }
 
@@ -93,7 +152,9 @@ export class TouristCustomizeTourFirstComponent implements OnInit {
     if (checkbox.checked) {
       this.selectedTourismTypes.push(type);
     } else {
-      this.selectedTourismTypes = this.selectedTourismTypes.filter(t => t !== type);
+      this.selectedTourismTypes = this.selectedTourismTypes.filter(
+        (t) => t !== type
+      );
     }
   }
 
@@ -111,7 +172,7 @@ export class TouristCustomizeTourFirstComponent implements OnInit {
    */
   validateForm(): boolean {
     this.submitted = true;
-    
+
     if (!this.selectedDestination) {
       this.errorMessage = 'Destination country is required.';
       return false;
@@ -130,31 +191,57 @@ export class TouristCustomizeTourFirstComponent implements OnInit {
    * Handle form submission
    */
   onSubmit(): void {
-
-    if (this.selectedDestination && this.selectedTourismTypes.length && this.selectedDuration) {
-      this.currentStep++;
-      // ننتقل للخطوة الثانية
-      console.log('Next step!');
-    } else {
-      alert('Please complete all selections!');
-    }
-
+    console.log('Form submitted');
     if (!this.validateForm()) return;
-
+  
     this.isLoading = true;
-    
-    // In a real application, you would call a service here
-    console.log('Form submitted with:', {
+  
+    // Prepare the request data
+    const requestData = {
       destination: this.selectedDestination,
       duration: this.selectedDuration,
-      tourismTypes: this.selectedTourismTypes
+      tourismTypes: this.selectedTourismTypes,
+      touristId: 'temp-user-id' // Temporary hardcoded for testing
+    };
+  
+    // For testing - bypass API call
+    console.log('Attempting navigation...');
+    const mockResponse = {
+      destination: this.selectedDestination,
+      duration: this.selectedDuration,
+      tourismTypes: this.selectedTourismTypes,
+      samplePlaces: ['Place 1', 'Place 2', 'Place 3'] // Mock data
+    };
+    
+    this.router.navigate(['/touristcustomizetoursecondcomponent'], {
+      state: { tourOptions: mockResponse }
     });
+    this.isLoading = false;
+    return;
+  
+    // Actual API call (commented out for testing)
+    /*
+    this.tourService.getCustomTourOptions(requestData).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        this.router.navigate(['/tourist-customize-tour-second'], {
+          state: { tourOptions: response }
+        });
+      },
+      error: (error) => {
+        console.error('Error:', error);
+        this.isLoading = false;
+        this.errorMessage = error.error?.message || 'Request failed';
+      }
+    });
+    */
+  }
 
-    // Simulate API call
-    setTimeout(() => {
-      this.isLoading = false;
-      // Navigate to next step or show results
-      this.router.navigate(['/tourist/custom-tour/results']);
-    }, 1500);
+  /**
+   * Logout the user
+   */
+  logout(): void {
+    this.authService.logout();
+    // this.router.navigate(['/login']);
   }
 }

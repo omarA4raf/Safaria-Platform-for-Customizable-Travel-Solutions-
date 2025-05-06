@@ -12,15 +12,15 @@
         <!-- Navbar Links -->
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link active" routerLink="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link" routerLink="/touristdashboardprofile">Profile</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Tours</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Custom Plans</a></li>
+                <li class="nav-item"><a class="nav-link " href="/touristdashboardhome">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/touristdashboardprofile">Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="/touristprepackageshowcomponent">Prepackage Tours</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#">Custom Plans</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Tour guide assistant</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Support</a></li>
                 <li class="nav-item">
-                    <a class="nav-link logout-link" href="#">Log out <i
+                    <a class="nav-link logout-link" href="/">Log out <i
                             class="fa-solid fa-arrow-right-from-bracket"></i></a>
                 </li>
             </ul>
@@ -111,7 +111,7 @@
         <!-- Submit Button -->
         <div class="text-center">
             <button type="submit" class="btn btn-primary" [disabled]="isLoading">
-                <span *ngIf="!isLoading">Generate Itinerary </span><i class="fa-solid fa-arrow-right"></i>
+                <span *ngIf="!isLoading">Go to next step </span><i class="fa-solid fa-arrow-right"></i>
                 <span *ngIf="isLoading">
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     Generating...

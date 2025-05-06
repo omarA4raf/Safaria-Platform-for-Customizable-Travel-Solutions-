@@ -14,6 +14,12 @@ import { TourguideCreateTripComponent } from './tourguide-create-trip/tourguide-
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { AdminDashboardTourproviderComponent } from './admin-dashboard-tourprovider/admin-dashboard-tourprovider.component';
 import { TouristCustomizeTourFirstComponent } from './tourist-customize-tour-first/tourist-customize-tour-first.component';
+import { TouristCustomizeTourSecondComponent } from './tourist-customize-tour-second/tourist-customize-tour-second.component';
+import { TouristCustomizeTourThirdComponent } from './tourist-customize-tour-third/tourist-customize-tour-third.component';
+import { TouristCustomizeTourFourthComponent } from './tourist-customize-tour-fourth/tourist-customize-tour-fourth.component';
+import { TouristPrepackageShowComponent } from './tourist-prepackage-show/tourist-prepackage-show.component';
+import { TouristPrepackageSeeTourComponent } from './tourist-prepackage-see-tour/tourist-prepackage-see-tour.component';
+import { TouristPrepackagePayTourComponent } from './tourist-prepackage-pay-tour/tourist-prepackage-pay-tour.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent }, // Default route
@@ -25,7 +31,10 @@ export const routes: Routes = [
   { path: 'companydashboard', component: CompanyDashboardComponent }, // company dashboard route
   { path: 'tourguidesdashboard', component: TourguideDashboardComponent }, // tourguide dashboard route
   { path: 'touristdashboardhome', component: TouristDashboardHomeComponent }, // tourist dashboard home route
-  { path: 'touristdashboardprofile', component: TouristDashboardProfileComponent }, // tourist dashboard home route
+  {
+    path: 'touristdashboardprofile',
+    component: TouristDashboardProfileComponent,
+  }, // tourist dashboard home route
   { path: 'companycreatetrip', component: CompanyCreateTripComponent }, // company create trip route
   { path: 'tourguidecreatetrip', component: TourguideCreateTripComponent }, // tourguide create trip route
   { path: 'admindashboard', component: AdminDashboardComponent }, // admin dashboard route
@@ -37,4 +46,28 @@ export const routes: Routes = [
     path: 'touristcustomizetourfirstcomponent',
     component: TouristCustomizeTourFirstComponent,
   }, // tourist customize tour first component route
+  {
+    path: 'touristcustomizetoursecondcomponent',
+    component: TouristCustomizeTourSecondComponent,
+  }, // tourist customize tour second component route
+  {
+    path: 'touristcustomizetourthirdcomponent',
+    component: TouristCustomizeTourThirdComponent,
+  }, // tourist customize tour third component route
+  {
+    path: 'touristcustomizetourfourthcomponent',
+    component: TouristCustomizeTourFourthComponent,
+  }, // tourist customize tour fourth component route
+  {
+    path: 'touristprepackageshowcomponent',
+    component: TouristPrepackageShowComponent,
+  }, // tourist prepackage show component route
+  {
+    path: 'touristprepackageseetourcomponent',
+    component: TouristPrepackageSeeTourComponent,
+  }, // tourist prepackage see tour component route
+  {
+    path: 'touristprepackagepaytourcomponent',
+    component: TouristPrepackagePayTourComponent,
+  }, // tourist prepackage pay tour component route
 ];
