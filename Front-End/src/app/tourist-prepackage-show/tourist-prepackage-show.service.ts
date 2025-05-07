@@ -24,4 +24,6 @@ export class TouristPrepackageShowService {
   searchTripsByCountry(country: string): Observable<Trip[]> {
     return this.http.get<Trip[]>(`${this.apiUrl}/tours/search?country=${encodeURIComponent(country)}`);
   }
+
+  
 }
