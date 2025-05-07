@@ -15,7 +15,8 @@
                 <li class="nav-item"><a class="nav-link " href="/touristdashboardhome">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="/touristdashboardprofile">Profile</a></li>
                 <li class="nav-item"><a class="nav-link active" href="#">Prepackage Tours</a></li>
-                <li class="nav-item"><a class="nav-link" href="/touristcustomizetourfirstcomponent">Custom Plans</a></li>
+                <li class="nav-item"><a class="nav-link" href="/touristcustomizetourfirstcomponent">Custom Plans</a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="#">Tour guide assistant</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Support</a></li>
@@ -28,8 +29,171 @@
     </div>
 </nav>
 
-<div class="container main-container mt-5 pt-5">
-    <p>tourist-prepackage-see-tour works!</p>
+<div class="container main-container mt-5 pt-5 mb-4">
+    <!-- Carousel Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="carousel-container">
+                <!-- Main Carousel -->
+                <div class="main-carousel">
+                    <img [src]="trip.images[currentImageIndex] || 'assets/default-trip.jpg'" class="img-fluid"
+                        alt="{{ trip.title }}">
+                </div>
+
+                <!-- Thumbnail Navigation -->
+                <div class="thumbnail-container" *ngIf="trip.images.length > 1">
+                    <div *ngFor="let image of trip.images; let i = index" class="thumbnail-item"
+                        [class.active]="i === currentImageIndex" (click)="setCurrentImage(i)">
+                        <img [src]="image || 'assets/default-trip.jpg'" alt="Thumbnail {{i + 1}}">
+                    </div>
+                </div>
+
+                <!-- Navigation Arrows -->
+                <div class="carousel-controls" *ngIf="trip.images.length > 1">
+                    <button (click)="prevImage()">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button (click)="nextImage()">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trip Info -->
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="mb-3">{{ trip.title }}</h1>
+            <div class="d-flex align-items-center mb-3">
+                <span class="me-2">
+                    <i class="fas fa-map-marker-alt text-primary"></i> {{ trip.destinationCountry }}
+                </span>
+                <span class="me-2">|</span>
+                <div class="trip-rating">
+                    <span [innerHTML]="renderStars(trip.rating)"></span>
+                    <span class="ms-2">{{ trip.rating.toFixed(1) }}</span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4>Description</h4>
+                <p>{{ trip.description }}</p>
+            </div>
+
+            <div class="mb-4">
+                <h4>Tourism Types</h4>
+                <div class="d-flex flex-wrap gap-2">
+                    <span *ngFor="let type of trip.tourismTypes" class="badge bg-primary">
+                        {{ type }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inside the booking card -->
+        <div class="col-md-4">
+            <div class="card booking-card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Booking Details</h4>
+
+                    <!-- Price Display (Dynamic based on selection) -->
+                    <div class="mb-4 p-3 bg-light rounded">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="mb-0 text-success">Current Price:</h5>
+                            <h4 class="mb-0 text-success">{{ getCurrentPrice() | currency:trip.currency }}</h4>
+                        </div>
+                        <small class="text-muted d-block">
+                            <i class="fas fa-info-circle"></i> Price shown is per person
+                        </small>
+                        <div *ngIf="selectedDate" class="mt-2 small">
+                            <i class="fas fa-calendar-alt"></i> Selected dates:
+                            {{ formatDate(selectedDate.startDate) }} - {{ formatDate(selectedDate.endDate) }}
+                        </div>
+                    </div>
+
+                    <!-- Duration -->
+                    <div class="mb-4">
+                        <h5><i class="far fa-clock me-2 text-primary"></i> Duration</h5>
+                        <div class="ps-4">
+                            <p class="mb-0">{{ trip.duration }} days</p>
+                        </div>
+                    </div>
+
+                    <!-- Available Dates with Prices -->
+                    <div class="mb-4">
+                        <h5><i class="far fa-calendar-alt me-2 text-primary"></i> Available Dates</h5>
+                        <div class="list-group mt-2">
+                            <button *ngFor="let date of trip.availableDates; let i = index" type="button"
+                                class="list-group-item list-group-item-action date-option"
+                                [class.active]="selectedDateIndex === i" (click)="selectDate(i)">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-medium">
+                                            {{ formatDate(date.startDate) }} - {{ formatDate(date.endDate) }}
+                                        </div>
+                                        <div class="text-success small mt-1">
+                                            {{ date.budget | currency:trip.currency }} per person
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-light text-dark">
+                                            {{ date.availableSeats }} seats left
+                                        </span>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Travelers Counter -->
+                    <div class="mb-4">
+                        <h5><i class="fas fa-users me-2 text-primary"></i> Number of Travelers</h5>
+                        <div class="d-flex align-items-center mt-3 ps-2">
+                            <button class="btn btn-outline-primary rounded-circle" (click)="decrementMembers()"
+                                [disabled]="memberCount <= 1" style="width: 36px; height: 36px;">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <span class="mx-3 fw-bold fs-5">{{ memberCount }}</span>
+                            <button class="btn btn-outline-primary rounded-circle" (click)="incrementMembers()"
+                                [disabled]="selectedDate && memberCount >= (selectedDate.availableSeats || positiveInfinity)"
+                                style="width: 36px; height: 36px;">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <small *ngIf="selectedDate" class="text-muted ps-2">
+                            Maximum {{ selectedDate.availableSeats }} travelers for these dates
+                        </small>
+                    </div>
+
+                    <!-- Total Price -->
+                    <div class="mb-4 p-3 bg-light rounded">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Total Price:</h5>
+                            <h4 class="mb-0 text-success">{{ totalPrice | currency:trip.currency }}</h4>
+                        </div>
+                    </div>
+
+                    <!-- Cancellation Policy -->
+                    <div *ngIf="trip.freeCancellationDeadline" class="mb-4 alert alert-success">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <div>
+                                <strong>Free cancellation</strong> available before
+                                {{ trip.freeCancellationDeadline }} days of travel
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Book Now Button -->
+                    <button class="btn btn-primary w-100 py-3 fw-bold" (click)="navigateToPayment()"
+                        [disabled]="!selectedDate">
+                        <i class="fas fa-shopping-cart me-2"></i> Book Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Footer -->
