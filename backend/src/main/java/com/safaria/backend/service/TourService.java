@@ -224,6 +224,7 @@ System.out.println("Creating schedule with price: " + scheduleDTO.getPrice());
         for (Tour tour : tours) {
             TourImportantDTO tourImportantDTO = new TourImportantDTO();
             tourImportantDTO.setTitle(tour.getTitle());
+            tourImportantDTO.setRating(tour.getRating());
             tourImportantDTO.setTourID(tour.getTourId().toString());
             System.out.println(tour.getTourProvider().getUsername());
             tourImportantDTO.setTourProviderName(tour.getTourProvider().getUsername());
@@ -231,5 +232,10 @@ System.out.println("Creating schedule with price: " + scheduleDTO.getPrice());
         }
         
         return tourImportantDTOList;
+    }
+  // ✅ Get Tours by Country and Applying Filters(Not yet Done) with Pagination
+    public List<TourImportantDTO> getToursByCountryAndFilters(String country, int offset, int size) {
+        return tourRepository.findToursByCountryAndFiltersWithPagination(country, offset, size);
+        
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -108,5 +109,17 @@ public ResponseEntity<byte[]> getImage(@PathVariable Integer id) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Return 500
     }
 }
+  @GetMapping("/country/{country}")
+    public ResponseEntity<List<TourImportantDTO>> getToursByCountryAndFilters(
+            @PathVariable String country,
+            @RequestParam int offset,
+            @RequestParam int size) {
+
+        List<TourImportantDTO> tours = tourService.getToursByCountryAndFilters(country, offset, size);
+        if (tours.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return 404 if no tours found
+        }
+        return ResponseEntity.ok(tours);
+    }
 
 }
