@@ -4,18 +4,16 @@ package com.safaria.backend.service;
 import com.safaria.backend.DTO.*;
 import com.safaria.backend.entity.*;
 import com.safaria.backend.repository.AdminRepository;
+import com.safaria.backend.repository.ChatRepository;
 import com.safaria.backend.repository.TourProviderRepository;
 import com.safaria.backend.repository.TouristRepository;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.*;
 import javax.crypto.Cipher;
@@ -81,6 +79,8 @@ public class services implements Iservices {
     private CheckEmailService checkEmailService;
     @Autowired
      private  FileSystemService fileSystemService;
+    @Autowired
+    private ChatRepository chatRepository;
 
 
     // @Override
@@ -350,7 +350,22 @@ public class services implements Iservices {
         return ResponseEntity.status(200).body("User Added");
 
     }
-
+@Override
+public ResponseEntity<Optional<List<Chat>> > getMessages(MessageRequestDTO requestDTO){
+    Optional<List<Chat>> messages = Optional.ofNullable(this.chatRepository.findMessagesBetweenUsers(requestDTO.getTourist_id(), requestDTO.getTour_provider_id()));
+    return messages.isPresent() ? ResponseEntity.status(200).body(messages) : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+}
+@Override
+public ResponseEntity<String> setMessage(MessageDTO messageDTO){
+         Chat chat=new Chat(messageDTO);
+         this.chatRepository.save(chat);
+         return ResponseEntity.status(200).body("message saved");
+}
+@Override
+    public ResponseEntity<String> deleteMessage(Integer message_id){
+         this.chatRepository.deleteById(message_id);
+         return ResponseEntity.status(200).body("message deleted");
+}
 
 }
 

@@ -2,6 +2,7 @@ package com.safaria.backend.service;
 
 import com.safaria.backend.DTO.*;
 import com.safaria.backend.entity.Admin;
+import com.safaria.backend.entity.Chat;
 import com.safaria.backend.entity.TourProvider;
 import com.safaria.backend.entity.Tourist;
 
@@ -26,4 +27,7 @@ public interface Iservices {
     public List<UserEditDto> getUsers();
     public ResponseEntity<String> updateUser(UserEditDto user,Integer id,Integer role);
     public ResponseEntity<String> addUser(UserEditDto user);
+    public ResponseEntity<Optional<List<Chat>>> getMessages(MessageRequestDTO requestDTO);
+    public ResponseEntity<String> setMessage(MessageDTO messageDTO);
+    public ResponseEntity<String> deleteMessage(Integer message_id);
 }
