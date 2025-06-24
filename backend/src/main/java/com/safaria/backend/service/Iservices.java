@@ -30,4 +30,10 @@ public interface Iservices {
     public ResponseEntity<Optional<List<Chat>>> getMessages(MessageRequestDTO requestDTO);
     public ResponseEntity<String> setMessage(MessageDTO messageDTO);
     public ResponseEntity<String> deleteMessage(Integer message_id);
+
+    public ResponseEntity<String> addReport(ReportDTO reportDTO);
+
+    public ResponseEntity<List<ReportDTO>> getReports();
+    public ResponseEntity<String> deleteReport(Integer reportId);
+
 }

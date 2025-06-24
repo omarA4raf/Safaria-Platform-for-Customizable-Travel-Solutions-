@@ -3,10 +3,7 @@ package com.safaria.backend.service;
 
 import com.safaria.backend.DTO.*;
 import com.safaria.backend.entity.*;
-import com.safaria.backend.repository.AdminRepository;
-import com.safaria.backend.repository.ChatRepository;
-import com.safaria.backend.repository.TourProviderRepository;
-import com.safaria.backend.repository.TouristRepository;
+import com.safaria.backend.repository.*;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -81,6 +79,9 @@ public class services implements Iservices {
      private  FileSystemService fileSystemService;
     @Autowired
     private ChatRepository chatRepository;
+
+    @Autowired
+    private ReportRepository reportRepository;
 
 
     // @Override
@@ -350,22 +351,47 @@ public class services implements Iservices {
         return ResponseEntity.status(200).body("User Added");
 
     }
-@Override
-public ResponseEntity<Optional<List<Chat>> > getMessages(MessageRequestDTO requestDTO){
-    Optional<List<Chat>> messages = Optional.ofNullable(this.chatRepository.findMessagesBetweenUsers(requestDTO.getTourist_id(), requestDTO.getTour_provider_id()));
-    return messages.isPresent() ? ResponseEntity.status(200).body(messages) : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-}
-@Override
-public ResponseEntity<String> setMessage(MessageDTO messageDTO){
-         Chat chat=new Chat(messageDTO);
-         this.chatRepository.save(chat);
-         return ResponseEntity.status(200).body("message saved");
-}
-@Override
-    public ResponseEntity<String> deleteMessage(Integer message_id){
-         this.chatRepository.deleteById(message_id);
-         return ResponseEntity.status(200).body("message deleted");
-}
+    @Override
+    public ResponseEntity<Optional<List<Chat>> > getMessages(MessageRequestDTO requestDTO){
+        Optional<List<Chat>> messages = Optional.ofNullable(this.chatRepository.findMessagesBetweenUsers(requestDTO.getTourist_id(), requestDTO.getTour_provider_id()));
+        return messages.isPresent() ? ResponseEntity.status(200).body(messages) : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
+    @Override
+    public ResponseEntity<String> setMessage(MessageDTO messageDTO){
+             Chat chat=new Chat(messageDTO);
+             this.chatRepository.save(chat);
+             return ResponseEntity.status(200).body("message saved");
+    }
+    @Override
+        public ResponseEntity<String> deleteMessage(Integer message_id){
+             this.chatRepository.deleteById(message_id);
+             return ResponseEntity.status(200).body("message deleted");
+    }
+    @Override
+    public ResponseEntity<String> addReport(ReportDTO reportDTO){
+         Report report = new Report(reportDTO);
+         this.reportRepository.save(report);
+        return ResponseEntity.status(200).body("report saved");
+    }
+
+    @Override
+    public ResponseEntity<List<ReportDTO>> getReports(){
+         Optional<List<Report>> reports = Optional.ofNullable(this.reportRepository.findAll());
+         if (reports.isPresent()){
+
+             List<ReportDTO> reportsDTO = reports.get().stream()
+                     .map(report -> new ReportDTO((Report) report))
+                     .collect(Collectors.toList());
+             return ResponseEntity.status(200).body(reportsDTO);
+         }
+         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
+    @Override
+    public ResponseEntity<String> deleteReport(Integer reportId){
+         this.reportRepository.deleteById(reportId);
+         return ResponseEntity.status(200).body("report deleted");
+    }
+
 
 }
 

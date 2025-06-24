@@ -1,5 +1,6 @@
 package com.safaria.backend.controller;
 
+import com.safaria.backend.DTO.ReportDTO;
 import com.safaria.backend.DTO.TourProviderRequestDTO;
 import com.safaria.backend.DTO.UserEditDto;
 import com.safaria.backend.entity.*;
@@ -55,4 +56,14 @@ public class AdminController {
     public ResponseEntity<String> addUser(@Valid @RequestBody UserEditDto user){
         return this.serv.addUser(user);
     }
+
+    @PostMapping("/addReport/")
+    public ResponseEntity<String> addReport(@Valid @RequestBody ReportDTO reportDTO){ return this.serv.addReport(reportDTO);}
+
+    @GetMapping("/getReports")
+    public ResponseEntity<List<ReportDTO>> getReports(){return this.serv.getReports();}
+
+    @DeleteMapping("/deleteReport/{report_id}")
+    public ResponseEntity<String> deleteReport(@PathVariable Integer report_id){return this.serv.deleteReport(report_id);}
+
 }
