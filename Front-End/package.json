@@ -31,7 +31,9 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@ng-bootstrap/ng-bootstrap": "^18.0.0",
     "@react-pdf/renderer": "^4.3.0",
+    "@stripe/stripe-js": "^7.4.0",
     "@types/axios": "^0.9.36",
+    "@types/stripe": "^8.0.416",
     "axios": "^1.8.2",
     "bootstrap": "^5.3.3",
     "crypto-js": "^4.2.0",
@@ -43,6 +45,7 @@
     "ngx-extended-pdf-viewer": "^23.1.1",
     "rxjs": "~7.8.0",
     "safaria-front": "file:",
+    "stripe": "^18.2.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },

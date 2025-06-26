@@ -1,0 +1,98 @@
+/* Add to your component's CSS or global styles */
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* This makes the component take at least the full viewport height */
+}
+
+/* Body */
+body {
+  background-color: #d0dedf;
+  color: #040a15;
+}
+
+/* Navbar */
+.custom-navbar {
+  background-color: #71a8b8d4;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  z-index: 999;
+}
+
+/* Brand Name */
+.custom-navbar .navbar-brand {
+  color: #fb921d;
+  font-weight: bold;
+  font-size: 1.6rem;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.334);
+}
+
+/* Navbar Links */
+.custom-navbar .nav-link {
+  color: white !important;
+  font-weight: 500;
+  margin-left: 15px;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+/* Hover and Active */
+.custom-navbar .nav-link:hover {
+  color: #fb921d !important;
+}
+.custom-navbar .nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 2px;
+  background-color: #fb921d;
+}
+
+/* Special logout */
+.custom-navbar .logout-link {
+  color: #d9534f !important;
+}
+
+/* Main Content */
+.main-content {
+  margin-top: 100px; /* Add space under fixed navbar */
+  flex: 1; /* This makes the content expand to push footer down */
+  padding-bottom: 2rem; /* Add some space above footer */
+}
+
+.card {
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer */
+footer {
+  background-color: #71a7b8;
+}
+
+/* Footer */
+.custom-footer {
+  background-color: #71a7b8;
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: 50px;
+  margin-top: auto; /* This pushes the footer to the bottom */
+}
+
+footer ul li a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+}
