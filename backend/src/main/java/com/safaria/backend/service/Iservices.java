@@ -1,10 +1,7 @@
 package com.safaria.backend.service;
 
 import com.safaria.backend.DTO.*;
-import com.safaria.backend.entity.Admin;
-import com.safaria.backend.entity.Chat;
-import com.safaria.backend.entity.TourProvider;
-import com.safaria.backend.entity.Tourist;
+import com.safaria.backend.entity.*;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -35,5 +32,11 @@ public interface Iservices {
 
     public ResponseEntity<List<ReportDTO>> getReports();
     public ResponseEntity<String> deleteReport(Integer reportId);
+
+    public ResponseEntity<String> addBlog(BlogDTO blogDTO);
+    public ResponseEntity<List<BlogDTO>>  getBlogs();
+
+    public ResponseEntity<String> addReview(BlogReviewDTO blogReviewDTO);
+    public ResponseEntity<List<BlogReviewDTO>> getReviews(Integer blog_id);
 
 }

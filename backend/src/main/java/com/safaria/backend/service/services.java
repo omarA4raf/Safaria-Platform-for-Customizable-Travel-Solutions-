@@ -83,6 +83,15 @@ public class services implements Iservices {
     @Autowired
     private ReportRepository reportRepository;
 
+    @Autowired
+    private BlogRepository blogRepository;
+
+    @Autowired
+    private BlogReviewRepository blogReviewRepository;
+
+    @Autowired
+    private RewardRepository rewardRepository;
+
 
     // @Override
     // public ResponseEntity<UserInfoDTO> touristlogin(String email, String password) {
@@ -392,6 +401,76 @@ public class services implements Iservices {
          return ResponseEntity.status(200).body("report deleted");
     }
 
+    @Override
+    public ResponseEntity<String> addBlog(BlogDTO blogDTO){
+        if(blogDTO.getPhoto()==null) {
+            this.blogRepository.save(new Blog(blogDTO,null));
+            return ResponseEntity.status(200).body("blog saved");
+        }
+        String directory = "Documents/Blogs";
+        String uniqueFileName = this.fileSystemService.generateUniqueFileName(directory, "jpg");
+        String relativeFilePath = Paths.get(directory, uniqueFileName).toString();
+
+        try {
+
+            this.fileSystemService.storeFile(blogDTO.getPhoto().getBytes() ,relativeFilePath);
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        this.blogRepository.save(new Blog(blogDTO,relativeFilePath));
+
+        return ResponseEntity.status(200).body("blog saved");
+
+    }
+    @Override
+    public ResponseEntity<List<BlogDTO>>  getBlogs(){
+         Optional<List<Blog>> blogs = Optional.ofNullable(this.blogRepository.findAll());
+
+        if (blogs.isPresent()){
+
+            List<BlogDTO> dtos = blogs.get().stream()
+                    .map(blog -> new BlogDTO(blog))
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(200).body(dtos);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+     }
+
+    @Override
+    public ResponseEntity<String> addReview(BlogReviewDTO blogReviewDTO){
+         this.blogReviewRepository.save(new BlogReview(blogReviewDTO));
+         if(blogReviewDTO.getRole().toString()=="Tourist"){
+             System.out.println("1");
+             Optional<Reward> reward = Optional.ofNullable(this.rewardRepository.findByTouristId(blogReviewDTO.getUser_id()));
+             if(reward.isPresent()){
+                 System.out.println("2");
+                 reward.get().setPoints(reward.get().getPoints()+1);
+                 reward.get().setActivityType(Reward.ActivityType.valueOf("Review"));
+                 this.rewardRepository.save(reward.get());
+             }
+             else{
+                 System.out.println("3");
+                 Reward new_reward = new Reward(blogReviewDTO.getUser_id(),Reward.ActivityType.valueOf("Review"),1);
+                 this.rewardRepository.save(new_reward);
+             }
+         }
+         return ResponseEntity.status(200).body("review saved");
+    }
+    @Override
+    public ResponseEntity<List<BlogReviewDTO>> getReviews(Integer blog_id){
+        Optional<List<BlogReview>> reviews = Optional.ofNullable(this.blogReviewRepository.findByBlogId(blog_id));
+        if(reviews.isPresent()){
+            List<BlogReviewDTO> dtos=reviews.get().stream()
+                    .map(review -> new BlogReviewDTO(review))
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(200).body(dtos);
+        }
+        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+     }
 
 }
 

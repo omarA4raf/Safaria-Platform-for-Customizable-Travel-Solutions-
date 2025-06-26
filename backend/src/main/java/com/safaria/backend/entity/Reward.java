@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Reward")
@@ -18,9 +19,8 @@ public class Reward {
     @Column(name = "RewardId")
     private Integer rewardId;
 
-    @ManyToOne
-    @JoinColumn(name = "TouristId")
-    private Tourist tourist; // Changed from User to Tourist
+    @Column(name = "TouristId")
+    private Integer touristId; // Changed from User to Tourist
 
     @Column(name = "Points")
     private Integer points;
@@ -30,9 +30,21 @@ public class Reward {
     private ActivityType activityType;
 
     @Column(name = "Timestamp")
-    private Timestamp timestamp;
+    private LocalDateTime timestamp;
 
     public enum ActivityType {
         Review, Booking, Referral
+    }
+
+    public void setPoints(Integer points) {this.points=points;}
+
+    public void setActivityType(ActivityType activityType){this.activityType=activityType;}
+
+
+    public Reward(Integer touristId,ActivityType activityType,Integer points){
+        this.touristId=touristId;
+        this.activityType=activityType;
+        this.points=points;
+        this.timestamp=LocalDateTime.now();
     }
 }
