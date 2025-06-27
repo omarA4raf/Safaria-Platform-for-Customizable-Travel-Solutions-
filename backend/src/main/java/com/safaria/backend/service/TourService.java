@@ -233,9 +233,19 @@ System.out.println("Creating schedule with price: " + scheduleDTO.getPrice());
         
         return tourImportantDTOList;
     }
-  // ✅ Get Tours by Country and Applying Filters(Not yet Done) with Pagination
-    public List<TourImportantDTO> getToursByCountryAndFilters(String country, int offset, int size) {
-        return tourRepository.findToursByCountryAndFiltersWithPagination(country, offset, size);
-        
+  // ✅ Get Tours by Country and  with Pagination
+    public List<TourImportantDTO> getToursByCountry(String country, int offset, int size) {
+        if (country == null || country.trim().isEmpty()) {
+            throw new IllegalArgumentException("Country must not be null or empty");
+        }
+        System.out.println(country);
+        System.out.println(offset);
+        System.out.println(size);
+
+        if (offset < 0) offset = 0;
+        if (size <= 0) size = 10; // default page size
+
+        List<TourImportantDTO> result = tourRepository.findToursByCountryWithPagination(country.trim(), offset, size);
+        return result != null ? result : new ArrayList<>();
     }
 }

@@ -18,13 +18,14 @@ public interface TourRepository extends JpaRepository<Tour, Integer> {
             tp.username AS tourProviderName
         FROM tour t
         JOIN tour_provider tp ON t.tour_providerid = tp.userid
-        WHERE t.destination_country = :country
+        WHERE LOWER(t.destination_country) = LOWER(:country)
         ORDER BY t.rating DESC
         LIMIT :size OFFSET :offset
         """, nativeQuery = true)
-     List<TourImportantDTO> findToursByCountryAndFiltersWithPagination(
+     List<TourImportantDTO> findToursByCountryWithPagination(
         @Param("country") String country,
         @Param("offset") int offset,
         @Param("size") int size
     );
 }
+
