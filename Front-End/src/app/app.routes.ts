@@ -20,7 +20,7 @@ import { TouristCustomizeTourFourthComponent } from './tourist-customize-tour-fo
 import { TouristPrepackageShowComponent } from './tourist-prepackage-show/tourist-prepackage-show.component';
 import { TouristPrepackageSeeTourComponent } from './tourist-prepackage-see-tour/tourist-prepackage-see-tour.component';
 import { TouristPrepackagePayTourComponent } from './tourist-prepackage-pay-tour/tourist-prepackage-pay-tour.component';
-
+import { PaymentComponent } from './payment/payment.component';
 export const routes: Routes = [
   { path: '', component: HomeComponent }, // Default route
   { path: 'login', component: LoginComponent }, // Login route
@@ -70,4 +70,6 @@ export const routes: Routes = [
     path: 'touristprepackagepaytourcomponent',
     component: TouristPrepackagePayTourComponent,
   }, // tourist prepackage pay tour component route
+  { path: 'payment', component: PaymentComponent },
+
 ];
