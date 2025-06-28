@@ -13,7 +13,15 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '../services/auth.service';
 import { TouristCustomizeTourFourthService } from './tourist-customize-tour-fourth.service';
+import { ChatComponent } from '../shared/chat/chat.component';
 
+// shared/models/user-type.enum.ts
+export enum UserType {
+  TOURIST = 'tourist',
+  GUIDE = 'guide',
+  COMPANY = 'company',
+  ADMIN = 'admin',
+} 
 
 interface TripItem {
   id: number;
@@ -31,11 +39,15 @@ interface DayPlan {
 @Component({
   selector: 'app-tourist-customize-tour-fourth',
   standalone: true,
-  imports: [CommonModule, FontAwesomeModule],
+  imports: [CommonModule, FontAwesomeModule, ChatComponent],
   templateUrl: './tourist-customize-tour-fourth.component.html',
   styleUrls: ['./tourist-customize-tour-fourth.component.css'],
 })
 export class TouristCustomizeTourFourthComponent implements OnInit {
+  // Step 2: Add these required properties
+  userId = '123'; // Replace with actual user ID from your auth service
+  userType: 'tourist' | 'guide' | 'company' | 'admin' = 'tourist'; // Replace with actual user type from your auth service
+  
   // Font Awesome icons
   faHotel = faHotel;
   faUtensils = faUtensils;
@@ -52,21 +64,37 @@ export class TouristCustomizeTourFourthComponent implements OnInit {
   isLoading = false;
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private router: Router,
     private tourService: TouristCustomizeTourFourthService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
+    // Step 3: Initialize user data (replace with your actual auth logic)
+    const currentUser = this.getCurrentUser();
+    this.userId = currentUser.id;
+    this.userType = currentUser.type as
+      | 'tourist'
+      | 'guide'
+      | 'company'
+      | 'admin';
+
     // this.checkAuthentication();
     this.generateFakeTripData(3);
+  }
+  // Step 4: Add this method (replace with your actual auth logic)
+  getCurrentUser() {
+    return {
+      id: '123', // Get from JWT token or session storage
+      type: 'tourist', // Get from your authentication service
+    };
   }
 
   checkAuthentication(): void {
     if (
       !this.authService.isLoggedIn() ||
-      this.authService.getUserType() !== 'TOURIST'
+      this.authService.getUserType() !== UserType.TOURIST
     ) {
       this.authService.logout();
       this.router.navigate(['/login']);

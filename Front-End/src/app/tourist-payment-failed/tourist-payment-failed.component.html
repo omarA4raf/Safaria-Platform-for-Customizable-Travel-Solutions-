@@ -1,10 +1,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg fixed-top shadow-sm custom-navbar p-2">
     <div class="container">
-        <!-- Brand Name -->
-        <a class="navbar-brand" href="#">Safaria</a>
-
-        <!-- Toggle Button for Mobile -->
+        <a style="color: #ffa500;" class="navbar-brand fw-bold" href="#">Safaria</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -31,7 +28,7 @@
 </nav>
 
 <!-- Main Container -->
-<div class="container mt-5 pt-5 text-center">
+<div class="container my-5 pt-5 text-center">
     <div class="card border-danger">
         <div class="card-header bg-danger text-white">
             <h3>Payment Failed</h3>
@@ -46,6 +43,8 @@
     </div>
 </div>
 
+<app-chat [userId]="userId" [userType]="userType">
+</app-chat>
 
 <!-- Footer -->
 <footer class="text-white py-4 custom-footer" style="background-color: #71a7b8">
@@ -103,3 +102,4 @@
         <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
     </div>
 </footer>
+

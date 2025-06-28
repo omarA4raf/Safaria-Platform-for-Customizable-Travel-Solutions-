@@ -155,3 +155,6 @@ footer ul li a:hover {
     padding: 20px;
   }
 }
+:host {
+  display: contents; /* Prevents layout issues */
+}

@@ -1,13 +1,21 @@
 import { PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Component, OnInit, Inject } from '@angular/core';  // <-- Add 'Inject' here
+import { Component, OnInit, Inject } from '@angular/core'; // <-- Add 'Inject' here
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TouristPrepackageShowService } from './tourist-prepackage-show.service';
 import { AuthService } from '../services/auth.service'; // Add this import
 import { CurrencyFormatPipe } from '../currency.pipe'; // Import the CurrencyFormatPipe
+import { ChatComponent } from '../shared/chat/chat.component';
 
+// shared/models/user-type.enum.ts
+export enum UserType {
+  TOURIST = 'tourist',
+  GUIDE = 'guide',
+  COMPANY = 'company',
+  ADMIN = 'admin',
+}
 export interface Trip {
   id: number;
   title: string;
@@ -26,11 +34,22 @@ export interface Trip {
 @Component({
   selector: 'app-tourist-prepackage-show',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule, CurrencyFormatPipe],
+  imports: [
+    FormsModule,
+    CommonModule,
+    RouterModule,
+    CurrencyFormatPipe,
+    ChatComponent,
+  ],
   templateUrl: './tourist-prepackage-show.component.html',
   styleUrls: ['./tourist-prepackage-show.component.css'],
 })
 export class TouristPrepackageShowComponent implements OnInit {
+  // Step 2: Add these required properties
+  userId = '123'; // Replace with actual user ID from your auth service
+  userType: 'tourist' | 'guide' | 'company' | 'admin' = 'tourist'; // Replace with actual user type from your auth service
+  errorMessage: string | null = null;
+
   searchQuery: string = '';
   searched: boolean = false;
   filteredTrips: Trip[] = [];
@@ -346,9 +365,9 @@ export class TouristPrepackageShowComponent implements OnInit {
   ];
 
   constructor(
-    @Inject(PLATFORM_ID) private platformId: Object, 
+    @Inject(PLATFORM_ID) private platformId: Object,
     private apiService: TouristPrepackageShowService,
-    private authService: AuthService, 
+    public authService: AuthService,
     private router: Router
   ) {}
 
@@ -375,9 +394,22 @@ export class TouristPrepackageShowComponent implements OnInit {
     this.filteredTrips = this.fakeTrips;
     this.updateDisplayedTrips(); // Add this line
 
-    
+    // Step 3: Initialize user data (replace with your actual auth logic)
+    const currentUser = this.getCurrentUser();
+    this.userId = currentUser.id;
+    this.userType = currentUser.type as
+      | 'tourist'
+      | 'guide'
+      | 'company'
+      | 'admin';
   }
-
+  // Step 4: Add this method (replace with your actual auth logic)
+  getCurrentUser() {
+    return {
+      id: '123', // Get from JWT token or session storage
+      type: 'tourist', // Get from your authentication service
+    };
+  }
   // Add logout method
   logout(): void {
     this.authService.logout();

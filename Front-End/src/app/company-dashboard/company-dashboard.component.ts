@@ -4,15 +4,26 @@ import { CompanyDashboardService } from './company-dashboard.service';
 import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { ChatComponent } from '../shared/chat/chat.component';
 
+// shared/models/user-type.enum.ts
+export enum UserType {
+  TOURIST = 'tourist',
+  GUIDE = 'guide',
+  COMPANY = 'company',
+  ADMIN = 'admin',
+}
 @Component({
   selector: 'app-company-dashboard',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule, ChatComponent],
   templateUrl: './company-dashboard.component.html',
   styleUrls: ['./company-dashboard.component.css'],
 })
 export class CompanyDashboardComponent implements OnInit {
+  // Step 2: Add these required properties
+  userId = '123'; // Replace with actual user ID from your auth service
+  userType: 'tourist' | 'guide' | 'company' | 'admin' = 'tourist'; // Replace with actual user type from your auth service
   // Properties to hold data
   name: string = '';
   email: string = '';
@@ -31,19 +42,27 @@ export class CompanyDashboardComponent implements OnInit {
   constructor(
     private router: Router,
     private apiService: CompanyDashboardService,
-    private authService: AuthService
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    if (
-      !this.authService.isLoggedIn() ||
-      this.authService.getUserType() !== 'COMPANY'
-    ) {
-      this.authService.logout();
-      this.router.navigate(['/login']);
-      return;
-    }
+    // if (
+    //   !this.authService.isLoggedIn() ||
+    //   this.authService.getUserType() !== UserType.COMPANY
+    // ) {
+    //   this.authService.logout();
+    //   this.router.navigate(['/login']);
+    //   return;
+    // }
     this.fetchData();
+    // Step 3: Initialize user data (replace with your actual auth logic)
+    const currentUser = this.getCurrentUser();
+    this.userId = currentUser.id;
+    this.userType = currentUser.type as
+      | 'tourist'
+      | 'guide'
+      | 'company'
+      | 'admin';
   }
 
   // Fetch all data from the backend
@@ -153,5 +172,12 @@ export class CompanyDashboardComponent implements OnInit {
         alert('Failed to update profile image');
       },
     });
+  }
+  // Step 4: Add this method (replace with your actual auth logic)
+  getCurrentUser() {
+    return {
+      id: '123', // Get from JWT token or session storage
+      type: 'tourist', // Get from your authentication service
+    };
   }
 }

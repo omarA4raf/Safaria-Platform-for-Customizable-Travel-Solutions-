@@ -6,23 +6,45 @@ import { ApiService } from './tourist-dashboard-home.service';
 import { AuthService } from '../services/auth.service';
 import { PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { console } from 'node:inspector';
+// Remove this problematic import:
+// import { console } from 'node:inspector';
+import { FormsModule } from '@angular/forms';
+import { ChatComponent } from '../shared/chat/chat.component';
+
+// shared/models/user-type.enum.ts
+export enum UserType {
+  TOURIST = 'tourist',
+  GUIDE = 'guide',
+  COMPANY = 'company',
+  ADMIN = 'admin',
+}
 
 @Component({
   selector: 'app-tourist-dashboard-home',
-  imports: [CommonModule, HttpClientModule, RouterLink],
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    RouterLink,
+    FormsModule,
+    ChatComponent, // Make sure this is included
+  ],
   standalone: true,
   templateUrl: './tourist-dashboard-home.component.html',
   styleUrls: ['./tourist-dashboard-home.component.css'],
 })
 export class TouristDashboardHomeComponent implements OnInit {
+  UserType = UserType; // Makes the enum available in template
+
   trips: any[] = []; // Initialize as empty array
+
+  userId = '123'; // Add this property
+  userType: 'tourist' | 'guide' | 'company' | 'admin' = 'tourist'; // Add this property
 
   constructor(
     private apiService: ApiService,
-    private authService: AuthService,
+    public authService: AuthService,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object // Inject the platform ID
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
@@ -35,6 +57,13 @@ export class TouristDashboardHomeComponent implements OnInit {
     //   this.router.navigate(['/login']);
     //   return;
     // }
+
+    // Initialize user data - replace with your actual auth logic
+    const currentUser = this.getCurrentUser();
+    this.userId = currentUser.id;
+    this.userType = currentUser.type as 'tourist';
+
+    console.log('Home component initialized with userId:', this.userId);
 
     this.fetchData();
 
@@ -54,10 +83,10 @@ export class TouristDashboardHomeComponent implements OnInit {
     this.apiService.getTrips().subscribe((data) => {
       this.trips = data;
       this.trips.forEach((trip) => {
-      this.apiService.getTripImage(trip.tourID).subscribe((image) => {
-        const imageUrl = URL.createObjectURL(image);
-  trip.image = imageUrl;
-      });
+        this.apiService.getTripImage(trip.tourID).subscribe((image) => {
+          const imageUrl = URL.createObjectURL(image);
+          trip.image = imageUrl;
+        });
       });
     });
   }
@@ -78,5 +107,24 @@ export class TouristDashboardHomeComponent implements OnInit {
       starsHtml += '<i class="bi bi-star text-secondary"></i> ';
     }
     return starsHtml;
+  }
+
+  getCurrentUser() {
+    return {
+      id: '123', // Get from JWT or session
+      type: 'tourist', // or 'guide', 'company', 'admin'
+    };
+  }
+
+  // Add this method to check if user is logged in
+  isLoggedIn(): boolean {
+    // For now, return true. Replace with actual auth logic
+    return true;
+    // return this.authService.isLoggedIn();
+  }
+
+  // Add this method to get user ID
+  getUserId(): string {
+    return this.userId;
   }
 }

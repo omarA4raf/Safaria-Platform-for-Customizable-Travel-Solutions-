@@ -193,3 +193,6 @@
         <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
     </div>
 </footer>
+<!-- At the bottom of your template -->
+<app-chat *ngIf="authService.isLoggedIn()" [userId]="authService.getUserId() || ''" [userType]="UserType.TOURIST">
+</app-chat>

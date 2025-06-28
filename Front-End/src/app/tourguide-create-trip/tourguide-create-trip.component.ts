@@ -5,21 +5,33 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import { TourguideCreateTripService } from './tourguide-create-trip.service';
+import { ChatComponent } from '../shared/chat/chat.component';
 
+// shared/models/user-type.enum.ts
+export enum UserType {
+  TOURIST = 'tourist',
+  GUIDE = 'guide',
+  COMPANY = 'company',
+  ADMIN = 'admin',
+}
 
 @Component({
   selector: 'app-tourguide-create-trip',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ChatComponent],
   templateUrl: './tourguide-create-trip.component.html',
   styleUrl: './tourguide-create-trip.component.css',
 })
-
 export class TourguideCreateTripComponent implements OnInit {
+  // Step 2: Add these required properties
+  userId = '123'; // Replace with actual user ID from your auth service
+  userType: 'tourist' | 'guide' | 'company' | 'admin' = 'guide'; // Replace with actual user type from your auth service
+  errorMessage: string | null = null;
+
   constructor(
     private router: Router,
     private http: HttpClient,
-    private authService: AuthService,
+    public authService: AuthService,
     private tripService: TourguideCreateTripService
   ) {}
 
@@ -166,23 +178,32 @@ export class TourguideCreateTripComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    if (
-      !this.authService.isLoggedIn() ||
-      this.authService.getUserType() !== 'TOUR_GUIDE'
-    ) {
-      this.authService.logout();
-      this.router.navigate(['/login']);
-      return;
-    }
-    if (
-      !this.authService.isLoggedIn() ||
-      this.authService.getUserType() !== 'TOUR_GUIDE'
-    ) {
-      this.authService.logout();
-      this.router.navigate(['/login']);
-      return;
-    }
+    // if (
+    //   !this.authService.isLoggedIn() ||
+    //   this.authService.getUserType() !== UserType.GUIDE
+    // ) {
+    //   this.authService.logout();
+    //   this.router.navigate(['/login']);
+    //   return;
+    // }
+    // if (
+    //   !this.authService.isLoggedIn() ||
+    //   this.authService.getUserType() !== UserType.GUIDE
+    // ) {
+    //   this.authService.logout();
+    //   this.router.navigate(['/login']);
+    //   return;
+    // }
     this.initializeCountries();
+
+    // Step 3: Initialize user data (replace with your actual auth logic)
+    const currentUser = this.getCurrentUser();
+    this.userId = currentUser.id;
+    this.userType = currentUser.type as
+      | 'tourist'
+      | 'guide'
+      | 'company'
+      | 'admin';
   }
 
   // Initialize the list of countries
@@ -434,7 +455,7 @@ export class TourguideCreateTripComponent implements OnInit {
   }
   private prepareFormData(): FormData {
     const formData = new FormData();
-  
+
     // Create the tourData object exactly as per your trip structure
     const tourData = {
       title: this.trip.title,
@@ -445,23 +466,27 @@ export class TourguideCreateTripComponent implements OnInit {
       description: this.trip.description,
       freeCancellationDeadline: this.trip.freeCancellationDeadline,
       currency: this.trip.currency,
-      tourProviderId:this.authService.getUserId()
+      tourProviderId: this.authService.getUserId(),
     };
-  
+
     // Append tourData as JSON blob (important for Spring's @RequestPart)
     formData.append(
       'tourData',
       new Blob([JSON.stringify(tourData)], { type: 'application/json' })
     );
-  
+
     // Append all image files with the same key "images"
     this.images.forEach((image, index) => {
       if (image.file) {
         const fileExtension = image.file.name.split('.').pop() || 'jpg';
-        formData.append('images', image.file, `image_${index}.${fileExtension}`);
+        formData.append(
+          'images',
+          image.file,
+          `image_${index}.${fileExtension}`
+        );
       }
     });
-  
+
     return formData;
   }
 
@@ -516,7 +541,6 @@ export class TourguideCreateTripComponent implements OnInit {
       this.trip.currency ||
       this.images.some((image) => image.file !== null);
 
-
     if (!hasData) {
       alert('Cannot save an empty draft. Please fill in at least one field.');
       return;
@@ -529,7 +553,6 @@ export class TourguideCreateTripComponent implements OnInit {
       return;
     }
 
-
     // Verify authentication
     if (!this.authService.isLoggedIn() || !this.authService.getUserId()) {
       this.authService.logout();
@@ -539,7 +562,6 @@ export class TourguideCreateTripComponent implements OnInit {
 
     // Set loading state to true
     this.SavingisLoading = true;
-
 
     console.log('Form Data to be Sent:', {
       title: this.trip.title,
@@ -552,7 +574,6 @@ export class TourguideCreateTripComponent implements OnInit {
       currency: this.trip.currency,
       images: this.images.filter((img) => img.file),
     });
-
 
     // Prepare form data
     const draftData = new FormData();
@@ -597,8 +618,6 @@ export class TourguideCreateTripComponent implements OnInit {
 
     // Send data to backend using the service
     this.tripService.saveDraft(draftData).subscribe({
-
-   
       next: (response) => {
         console.log('Trip saved as draft successfully:', response);
         this.SavingisLoading = false;
@@ -635,7 +654,8 @@ export class TourguideCreateTripComponent implements OnInit {
   }
 
   private showErrorMessage(error: any): void {
-    const errorMessage = error.error?.message || 'An error occurred. Please try again.';
+    const errorMessage =
+      error.error?.message || 'An error occurred. Please try again.';
     alert(errorMessage);
   }
   // Method to handle logout
@@ -644,5 +664,12 @@ export class TourguideCreateTripComponent implements OnInit {
     this.router.navigate(['/login']); // Redirect to login page
     this.authService.logout();
     this.router.navigate(['/login']); // Redirect to login page
+  }
+// Step 4: Add this method (replace with your actual auth logic)
+  getCurrentUser() {
+    return {
+      id: '123', // Get from JWT token or session storage
+      type: 'tourist', // Get from your authentication service
+    };
   }
 }

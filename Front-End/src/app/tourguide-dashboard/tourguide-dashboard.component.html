@@ -1,13 +1,14 @@
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container">
-    <!-- Brand Name -->
-    <a style="color: #ffa500;" class="navbar-brand fw-bold" href="#">Safaria</a>
+<nav class="navbar navbar-expand-lg fixed-top shadow-sm custom-navbar">
+    <div class="container">
+        <!-- Brand Name -->
+        <a class="navbar-brand" href="#">Safaria</a>
 
-    <!-- Toggle Button for Mobile -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+        <!-- Toggle Button for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
 
     <!-- Navbar Links -->
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -192,6 +193,8 @@
   </div>
 </div>
 
+<app-chat [userId]="userId" [userType]="userType"></app-chat>
+
 <!-- Footer -->
 <footer class="text-white py-4" style="background-color: #71a7b8">
   <div class="container">
@@ -248,3 +251,4 @@
     <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
   </div>
 </footer>
+

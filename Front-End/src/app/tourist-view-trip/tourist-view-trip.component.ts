@@ -6,6 +6,15 @@ import { TouristViewTripService } from './tourist-view-trip.service';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../services/auth.service'; // Add this import
 import { PLATFORM_ID } from '@angular/core';
+import { ChatComponent } from '../shared/chat/chat.component';
+
+// shared/models/user-type.enum.ts
+export enum UserType {
+  TOURIST = 'tourist',
+  GUIDE = 'guide',
+  COMPANY = 'company',
+  ADMIN = 'admin',
+}
 
 export interface AvailableDate {
   startDate: Date | null;
@@ -34,11 +43,14 @@ export interface Trip {
 @Component({
   selector: 'app-tourist-view-trip',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule],
+  imports: [FormsModule, CommonModule, RouterModule, ChatComponent],
   templateUrl: './tourist-view-trip.component.html',
   styleUrls: ['./tourist-view-trip.component.css'],
 })
 export class TouristViewTripComponent implements OnInit {
+  // Step 2: Add these required properties
+  userId = '123'; // Replace with actual user ID from your auth service
+  userType: 'tourist' | 'guide' | 'company' | 'admin' = 'tourist'; // Replace with actual user type from your auth service
   trip: Trip = {
     id: 0,
     title: '',
@@ -93,7 +105,7 @@ export class TouristViewTripComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private tripService: TouristViewTripService,
-    private authService: AuthService,
+    public authService: AuthService,
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -109,6 +121,14 @@ export class TouristViewTripComponent implements OnInit {
       const tripId = +params['id']; // Get ID from route
       this.loadTrip(tripId);
     });
+    // Step 3: Initialize user data (replace with your actual auth logic)
+    const currentUser = this.getCurrentUser();
+    this.userId = currentUser.id;
+    this.userType = currentUser.type as
+      | 'tourist'
+      | 'guide'
+      | 'company'
+      | 'admin';
   }
 
   // Add to your component
@@ -218,5 +238,13 @@ export class TouristViewTripComponent implements OnInit {
       return this.selectedDate.budget;
     }
     return this.trip.price; // Fallback to base price
+  }
+
+  // Step 4: Add this method (replace with your actual auth logic)
+  getCurrentUser() {
+    return {
+      id: '123', // Get from JWT token or session storage
+      type: 'tourist', // Get from your authentication service
+    };
   }
 }

@@ -4,15 +4,27 @@ import { TouristViewTripService } from '../tourist-view-trip/tourist-view-trip.s
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { loadStripe } from '@stripe/stripe-js';
+import { AuthService } from '../services/auth.service';
+import { ChatComponent } from '../shared/chat/chat.component';
+
+// shared/models/user-type.enum.ts
+export enum UserType {
+  TOURIST = 'tourist',
+  GUIDE = 'guide',
+  COMPANY = 'company',
+  ADMIN = 'admin',
+}
 
 @Component({
   selector: 'app-tourist-pay-trip',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, ChatComponent],
   templateUrl: './tourist-pay-trip.component.html',
   styleUrls: ['./tourist-pay-trip.component.css'],
 })
 export class TouristPayTripComponent implements OnInit {
+  UserType = UserType; // Makes the enum available in template
+
   tripDetails: any = {};
   selectedDate: any = {};
   memberCount: number = 1;
@@ -33,7 +45,8 @@ export class TouristPayTripComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private tripService: TouristViewTripService
+    private tripService: TouristViewTripService,
+    public authService: AuthService
   ) {}
 
   async ngOnInit() {
