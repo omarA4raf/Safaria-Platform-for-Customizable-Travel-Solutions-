@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.safaria.backend.DTO.TourImportantDTO;
 import com.safaria.backend.DTO.TourRequestDTO;
 import com.safaria.backend.DTO.TourScheduleDTO;
+import com.safaria.backend.DTO.TourSearchDTO;
 import com.safaria.backend.entity.Image;
 import com.safaria.backend.entity.Tour;
 import com.safaria.backend.service.FileSystemService;
@@ -108,12 +109,12 @@ public ResponseEntity<byte[]> getImage(@PathVariable Integer id) {
     }
 }
   @GetMapping("/country/{country}")
-    public ResponseEntity<List<TourImportantDTO>> getToursByCountry(
+    public ResponseEntity<List<TourSearchDTO>> getToursByCountry(
             @PathVariable String country,
             @RequestParam int offset,
             @RequestParam int size) {
         String sanitizedCountry = country.trim();
-        List<TourImportantDTO> tours = tourService.getToursByCountry(sanitizedCountry, offset, size);
+        List<TourSearchDTO> tours = tourService.getToursByCountry(sanitizedCountry, offset, size);
         // Always return 200 with the list (possibly empty)
         return ResponseEntity.ok(tours);
     }

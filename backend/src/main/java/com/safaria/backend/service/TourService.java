@@ -4,6 +4,7 @@ package com.safaria.backend.service;
 import com.safaria.backend.DTO.TourImportantDTO;
 import com.safaria.backend.DTO.TourRequestDTO;
 import com.safaria.backend.DTO.TourScheduleDTO;
+import com.safaria.backend.DTO.TourSearchDTO;
 import com.safaria.backend.entity.Tour;
 import com.safaria.backend.entity.TourSchedule;
 import com.safaria.backend.entity.TourProvider;
@@ -234,7 +235,7 @@ System.out.println("Creating schedule with price: " + scheduleDTO.getPrice());
         return tourImportantDTOList;
     }
   // ✅ Get Tours by Country and  with Pagination
-    public List<TourImportantDTO> getToursByCountry(String country, int offset, int size) {
+    public List<TourSearchDTO> getToursByCountry(String country, int offset, int size) {
         if (country == null || country.trim().isEmpty()) {
             throw new IllegalArgumentException("Country must not be null or empty");
         }
@@ -245,7 +246,7 @@ System.out.println("Creating schedule with price: " + scheduleDTO.getPrice());
         if (offset < 0) offset = 0;
         if (size <= 0) size = 10; // default page size
 
-        List<TourImportantDTO> result = tourRepository.findToursByCountryWithPagination(country.trim(), offset, size);
+        List<TourSearchDTO> result = tourRepository.findToursByCountryWithPagination(country.trim(), offset, size);
         return result != null ? result : new ArrayList<>();
     }
 }
