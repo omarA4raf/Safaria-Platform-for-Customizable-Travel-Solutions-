@@ -23,7 +23,6 @@ export interface Trip {
   tourProviderName: string;
   rating: number;
   destinationCountry: string;
-  destinationCity: string;
   price: {
     amount: number;
     currency: string; // 'USD', 'EUR', 'GBP', etc.
@@ -70,7 +69,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Euro Travel Adventures',
       rating: 4.5,
       destinationCountry: 'France',
-      destinationCity: 'Paris',
       price: {
         amount: 1200,
         currency: 'EUR',
@@ -85,7 +83,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Ancient World Tours',
       rating: 4.8,
       destinationCountry: 'Italy',
-      destinationCity: 'Rome',
       price: {
         amount: 950,
         currency: 'EUR',
@@ -100,7 +97,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Mediterranean Experiences',
       rating: 4.2,
       destinationCountry: 'Spain',
-      destinationCity: 'Barcelona',
       price: {
         amount: 1500,
         currency: 'USD',
@@ -115,7 +111,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Asian Discovery Tours',
       rating: 4.9,
       destinationCountry: 'Japan',
-      destinationCity: 'Tokyo',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -130,7 +125,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'American Travel Co',
       rating: 4.3,
       destinationCountry: 'USA',
-      destinationCity: 'New York',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -145,7 +139,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Ancient Wonders Tours',
       rating: 4.7,
       destinationCountry: 'Egypt',
-      destinationCity: 'Cairo',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -160,7 +153,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Greek Island Tours',
       rating: 4.9,
       destinationCountry: 'Greece',
-      destinationCity: 'Santorini',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -175,7 +167,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'British Heritage Travel',
       rating: 4.4,
       destinationCountry: 'UK',
-      destinationCity: 'London',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -190,7 +181,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Arabian Adventures',
       rating: 4.6,
       destinationCountry: 'UAE',
-      destinationCity: 'Dubai',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -205,7 +195,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Pacific Voyages',
       rating: 4.7,
       destinationCountry: 'Australia',
-      destinationCity: 'Sydney',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -220,7 +209,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Island Paradise Tours',
       rating: 4.8,
       destinationCountry: 'Indonesia',
-      destinationCity: 'Bali',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -235,7 +223,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Eastern Europe Expeditions',
       rating: 4.5,
       destinationCountry: 'Czech Republic',
-      destinationCity: 'Prague',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -250,7 +237,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Latin American Journeys',
       rating: 4.9,
       destinationCountry: 'Brazil',
-      destinationCity: 'Rio de Janeiro',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -265,7 +251,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Alpine Explorers',
       rating: 4.7,
       destinationCountry: 'Switzerland',
-      destinationCity: 'Zermatt',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -280,7 +265,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'African Horizons',
       rating: 4.4,
       destinationCountry: 'Morocco',
-      destinationCity: 'Marrakech',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -295,7 +279,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Wilderness Treks',
       rating: 4.6,
       destinationCountry: 'Canada',
-      destinationCity: 'Vancouver',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -310,7 +293,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Asian Flavors',
       rating: 4.8,
       destinationCountry: 'Thailand',
-      destinationCity: 'Bangkok',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -325,7 +307,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'African Safaris',
       rating: 4.7,
       destinationCountry: 'South Africa',
-      destinationCity: 'Cape Town',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -340,7 +321,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Eurasian Voyages',
       rating: 4.5,
       destinationCountry: 'Turkey',
-      destinationCity: 'Istanbul',
       price: {
         amount: 1400,
         currency: 'GBP',
@@ -355,7 +335,6 @@ export class TouristPrepackageShowComponent implements OnInit {
       tourProviderName: 'Extreme New Zealand',
       rating: 4.9,
       destinationCountry: 'New Zealand',
-      destinationCity: 'Queenstown',
       price: {
         amount: 1400,
         currency: 'GBP',
