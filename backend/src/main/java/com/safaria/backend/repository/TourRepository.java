@@ -2,6 +2,7 @@ package com.safaria.backend.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,13 +25,13 @@ public interface TourRepository extends JpaRepository<Tour, Integer> {
             JOIN tour_schedule ts ON ts.tourid = t.tourid
             WHERE LOWER(t.destination_country) = LOWER(:country)
             GROUP BY t.tourid
-            ORDER BY t.rating DESC
-            LIMIT :size OFFSET :offset
-        """, nativeQuery = true)
+            ORDER BY t.rating DESC , t.tourid ASC
+            LIMIT :limit OFFSET :offset
+            """, nativeQuery = true)
     List<TourSearchDTO> findToursByCountryWithPagination(
         @Param("country") String country,
         @Param("offset") int offset,
-        @Param("size") int size
+        @Param("limit") int limit
     );
 }
 
