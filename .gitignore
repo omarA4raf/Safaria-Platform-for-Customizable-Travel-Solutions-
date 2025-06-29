@@ -2,3 +2,5 @@
 .idea
 *.pdf
 *.png
+.vscode
+/backend/src/main/resources/Upload/

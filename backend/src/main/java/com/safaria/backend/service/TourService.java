@@ -14,6 +14,8 @@ import com.safaria.backend.repository.TourProviderRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.safaria.backend.entity.Image;
@@ -246,6 +248,7 @@ System.out.println("Creating schedule with price: " + scheduleDTO.getPrice());
         if (offset < 0) offset = 0;
         if (size <= 0) size = 10; // default page size
 
+        
         List<TourSearchDTO> result = tourRepository.findToursByCountryWithPagination(country.trim(), offset, size);
         return result != null ? result : new ArrayList<>();
     }
