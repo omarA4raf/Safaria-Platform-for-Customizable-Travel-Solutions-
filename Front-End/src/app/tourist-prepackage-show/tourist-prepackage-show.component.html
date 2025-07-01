@@ -43,7 +43,7 @@
 
       <div *ngIf="filteredTrips.length > 0; else noResults" class="trip-results-container">
         <div class="trip-results-grid">
-          <div class="trip-card" *ngFor="let trip of displayedTrips" (click)="onTripClick(trip)">
+          <div class="trip-card" *ngFor="let trip of displayedTrips">
             <div class="trip-image-container">
               <img [src]="trip.image || '/assets/img/default-trip.jpg'" alt="{{ trip.title }}" class="trip-image">
               <div class="trip-overlay"></div>
@@ -63,14 +63,14 @@
                   <span class="rating-stars" [innerHTML]="renderStars(trip.rating || 0)"></span>
                 </div>
                 <div class="trip-price">
-                  From {{ trip.price.amount | currencyFormat:trip.price.currency }}
+                  From {{ trip.priceAmount | currencyFormat:trip.priceCurrency }}
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div class="text-center mt-4" *ngIf="hasMoreTrips">
-          <button class="btn btn-primary" (click)="loadMore()">
+          <button type="button" class="btn btn-primary" (click)="loadMore()">
             Show More <i class="fas fa-chevron-down"></i>
           </button>
         </div>
