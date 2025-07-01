@@ -1,14 +1,165 @@
-<div class="payment-container">
-  <h2>Make a Payment</h2>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top shadow-sm custom-navbar p-2">
+  <div class="container">
+    <!-- Brand Name -->
+    <a class="navbar-brand" href="#">Safaria</a>
 
-  <form (ngSubmit)="makePayment()" #paymentForm="ngForm">
-    
-    <!-- Stripe card element -->
-    <div class="form-group">
-      <label>Card Info</label>
-      <div id="card-element"></div>
+    <!-- Toggle Button for Mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar Links -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link " href="/touristdashboardhome">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/touristdashboardprofile">Profile</a></li>
+        <li class="nav-item"><a class="nav-link active" href="#">Prepackage Tours</a></li>
+        <li class="nav-item"><a class="nav-link" href="/touristcustomizetourfirstcomponent">Custom Plans</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Tour guide assistant</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Support</a></li>
+        <li class="nav-item">
+          <a class="nav-link logout-link" href="/">Log out <i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- payment.component.html -->
+<div class="container main-container mt-5 pt-5">
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Payment Information</h4>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="makePayment()" #paymentForm="ngForm">
+            <!-- Stripe card element -->
+            <div class="mb-3">
+              <label class="form-label">Card Details *</label>
+              <div id="card-element"></div>
+              <div *ngIf="cardError" class="text-danger mt-2">
+                <small>{{ cardError }}</small>
+              </div>
+              <small class="form-text text-muted">
+                Enter your card number, expiry date, and CVC
+              </small>
+            </div>
+
+            <!-- Payment Button -->
+            <button type="submit" class="btn btn-primary w-100 py-3" [disabled]="paymentProcessing || !stripeLoaded">
+              <span *ngIf="!paymentProcessing && stripeLoaded">
+                <i class="fas fa-credit-card me-2"></i>
+                Pay {{ paymentData.amount / 100 | currency:paymentData.currency }}
+              </span>
+              <span *ngIf="paymentProcessing">
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Processing Payment...
+              </span>
+              <span *ngIf="!stripeLoaded && !paymentProcessing">
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Loading Payment System...
+              </span>
+            </button>
+
+            <!-- Security Notice -->
+            <div class="mt-3 text-center">
+              <small class="text-muted">
+                <i class="fas fa-lock me-1"></i>
+                Your payment information is secure and encrypted
+              </small>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
 
-    <button type="submit">Submit Payment</button>
-  </form>
+    <div class="col-lg-4">
+      <div class="card booking-summary">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Order Summary</h4>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Payment</h5>
+          
+          <hr>
+          
+          <div class="d-flex justify-content-between mb-2">
+            <span>Amount:</span>
+            <span>{{ paymentData.amount / 100 | currency:paymentData.currency }}</span>
+          </div>
+          
+          <hr>
+          
+          <div class="d-flex justify-content-between fw-bold fs-5">
+            <span>Total:</span>
+            <span class="text-success">{{ paymentData.amount / 100 | currency:paymentData.currency }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<app-chat [userId]="userId" [userType]="userType">
+</app-chat>
+
+<!-- Footer -->
+<footer class="text-white py-4 custom-footer" style="background-color: #71a7b8">
+  <div class="container">
+    <div class="row">
+      <!-- Left Side - Brand & Social Icons -->
+      <div class="col-md-4">
+        <h4>Safaria</h4>
+        <div class="social-icons mt-3">
+          <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+          <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+          <a href="#" class="text-white me-3"><i class="fab fa-youtube fa-lg"></i></a>
+          <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+        </div>
+      </div>
+
+      <!-- Center & Right Side - Topics -->
+      <div class="col-md-8">
+        <div class="row">
+          <!-- Column 1 -->
+          <div class="col-md-4">
+            <h5>Explore</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">Destinations</a></li>
+              <li><a href="#" class="text-white">Tours</a></li>
+              <li><a href="#" class="text-white">Experiences</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="col-md-4">
+            <h5>Company</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">About Us</a></li>
+              <li><a href="#" class="text-white">Careers</a></li>
+              <li><a href="#" class="text-white">Blog</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 3 -->
+          <div class="col-md-4">
+            <h5>Support</h5>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-white">Contact Us</a></li>
+              <li><a href="#" class="text-white">FAQs</a></li>
+              <li><a href="#" class="text-white">Help Center</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Line -->
+    <hr class="mt-4 mb-2 border-white" />
+    <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
+  </div>
+</footer>

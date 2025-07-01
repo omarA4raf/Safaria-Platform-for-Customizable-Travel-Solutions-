@@ -17,15 +17,16 @@ export enum UserType {
   ADMIN = 'admin',
 }
 export interface Trip {
-  tourID: number;
+  id: number;
   title: string;
   image: string;
   tourProviderName: string;
   rating: number;
   destinationCountry: string;
-  priceAmount: number;
-  priceCurrency: string; // 'USD', 'EUR', 'GBP', etc.
-  
+  price: {
+    amount: number;
+    currency: string; // 'USD', 'EUR', 'GBP', etc.
+  };
   duration?: string;
 }
 
@@ -51,12 +52,296 @@ export class TouristPrepackageShowComponent implements OnInit {
   searchQuery: string = '';
   searched: boolean = false;
   filteredTrips: Trip[] = [];
-  useFakeData: boolean = false; // Always use API now
+  useFakeData: boolean = true;
   // Add these new properties at the top of the component class
   displayedTrips: Trip[] = [];
   currentPage: number = 1;
-  tripsPerPage: number = 9;
+  tripsPerPage: number = 8;
   hasMoreTrips: boolean = false;
+
+  // Fake data
+  private fakeTrips: Trip[] = [
+    {
+      id: 1,
+      title: 'Paris City Tour',
+      image:
+        'https://images.unsplash.com/photo-1431274172761-fca41d930114?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Euro Travel Adventures',
+      rating: 4.5,
+      destinationCountry: 'France',
+      price: {
+        amount: 1200,
+        currency: 'EUR',
+      },
+      duration: '7 days',
+    },
+    {
+      id: 2,
+      title: 'Rome Historical Walk',
+      image:
+        'https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Ancient World Tours',
+      rating: 4.8,
+      destinationCountry: 'Italy',
+      price: {
+        amount: 950,
+        currency: 'EUR',
+      },
+      duration: '5 days',
+    },
+    {
+      id: 3,
+      title: 'Barcelona Highlights',
+      image:
+        'https://images.unsplash.com/photo-1523531294919-4bcd7c65e216?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Mediterranean Experiences',
+      rating: 4.2,
+      destinationCountry: 'Spain',
+      price: {
+        amount: 1500,
+        currency: 'USD',
+      },
+      duration: '6 days',
+    },
+    {
+      id: 4,
+      title: 'Tokyo Nightlife Tour',
+      image:
+        'https://images.unsplash.com/photo-1492571350019-22de08371fd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Asian Discovery Tours',
+      rating: 4.9,
+      destinationCountry: 'Japan',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '8 days',
+    },
+    {
+      id: 5,
+      title: 'New York City Pass',
+      image:
+        'https://images.unsplash.com/photo-1499092346589-b9b6be3e94b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'American Travel Co',
+      rating: 4.3,
+      destinationCountry: 'USA',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '7 days',
+    },
+    {
+      id: 6,
+      title: 'Cairo Pyramids Adventure',
+      image:
+        'https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Ancient Wonders Tours',
+      rating: 4.7,
+      destinationCountry: 'Egypt',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '5 days',
+    },
+    {
+      id: 7,
+      title: 'Santorini Sunset Experience',
+      image:
+        'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Greek Island Tours',
+      rating: 4.9,
+      destinationCountry: 'Greece',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '6 days',
+    },
+    {
+      id: 8,
+      title: 'London Royal Tour',
+      image:
+        'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'British Heritage Travel',
+      rating: 4.4,
+      destinationCountry: 'UK',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '5 days',
+    },
+    {
+      id: 9,
+      title: 'Dubai Desert Safari',
+      image:
+        'https://images.unsplash.com/photo-1518684079-3c830dcef090?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Arabian Adventures',
+      rating: 4.6,
+      destinationCountry: 'UAE',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '4 days',
+    },
+    {
+      id: 10,
+      title: 'Sydney Coastal Explorer',
+      image:
+        'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Pacific Voyages',
+      rating: 4.7,
+      destinationCountry: 'Australia',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '9 days',
+    },
+    {
+      id: 11,
+      title: 'Bali Tropical Getaway',
+      image:
+        'https://images.unsplash.com/photo-1518544866330-95b331ed7cd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Island Paradise Tours',
+      rating: 4.8,
+      destinationCountry: 'Indonesia',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '7 days',
+    },
+    {
+      id: 12,
+      title: 'Prague Castle Tour',
+      image:
+        'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Eastern Europe Expeditions',
+      rating: 4.5,
+      destinationCountry: 'Czech Republic',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '5 days',
+    },
+    {
+      id: 13,
+      title: 'Rio Carnival Experience',
+      image:
+        'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Latin American Journeys',
+      rating: 4.9,
+      destinationCountry: 'Brazil',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '6 days',
+    },
+    {
+      id: 14,
+      title: 'Swiss Alps Adventure',
+      image:
+        'https://images.unsplash.com/photo-1476231682828-37e571bc172f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Alpine Explorers',
+      rating: 4.7,
+      destinationCountry: 'Switzerland',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '8 days',
+    },
+    {
+      id: 15,
+      title: 'Marrakech Souk Discovery',
+      image:
+        'https://images.unsplash.com/photo-1517825738774-7de9363ef735?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'African Horizons',
+      rating: 4.4,
+      destinationCountry: 'Morocco',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '5 days',
+    },
+    {
+      id: 16,
+      title: 'Vancouver Nature Escape',
+      image:
+        'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Wilderness Treks',
+      rating: 4.6,
+      destinationCountry: 'Canada',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '7 days',
+    },
+    {
+      id: 17,
+      title: 'Bangkok Street Food Tour',
+      image:
+        'https://images.unsplash.com/photo-1528181304800-259b08848526?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Asian Flavors',
+      rating: 4.8,
+      destinationCountry: 'Thailand',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '4 days',
+    },
+    {
+      id: 18,
+      title: 'Cape Town Panorama',
+      image:
+        'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'African Safaris',
+      rating: 4.7,
+      destinationCountry: 'South Africa',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '6 days',
+    },
+    {
+      id: 19,
+      title: 'Istanbul Crossroads Tour',
+      image:
+        'https://images.unsplash.com/photo-1527838832700-5059252407fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Eurasian Voyages',
+      rating: 4.5,
+      destinationCountry: 'Turkey',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '5 days',
+    },
+    {
+      id: 20,
+      title: 'Queenstown Adventure Package',
+      image:
+        'https://images.unsplash.com/photo-1507699622108-4be3abd695ad?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+      tourProviderName: 'Extreme New Zealand',
+      rating: 4.9,
+      destinationCountry: 'New Zealand',
+      price: {
+        amount: 1400,
+        currency: 'GBP',
+      },
+      duration: '8 days',
+    },
+  ];
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -85,7 +370,8 @@ export class TouristPrepackageShowComponent implements OnInit {
       });
     }
 
-    this.fetchTripsFromApi();
+    this.filteredTrips = this.fakeTrips;
+    this.updateDisplayedTrips(); // Add this line
 
     // Step 3: Initialize user data (replace with your actual auth logic)
     const currentUser = this.getCurrentUser();
@@ -110,17 +396,15 @@ export class TouristPrepackageShowComponent implements OnInit {
   }
 
   onSearch(): void {
-    console.log('sssssssssssssssssss');
     this.searched = true;
-    this.currentPage = 1;
+    this.currentPage = 1; // Reset to first page
     this.filterTrips();
   }
 
   onSearchInputChange(): void {
     if (this.searchQuery.length === 0) {
+      this.filteredTrips = this.fakeTrips;
       this.searched = false;
-      this.currentPage = 1;
-      this.fetchTripsFromApi();
     } else {
       this.filterTrips();
     }
@@ -128,82 +412,52 @@ export class TouristPrepackageShowComponent implements OnInit {
 
   private filterTrips(): void {
     if (!this.searchQuery) {
-      this.currentPage = 1;
-      this.fetchTripsFromApi();
+      this.filteredTrips = this.fakeTrips;
+      this.updateDisplayedTrips();
       return;
     }
 
     const query = this.searchQuery.toLowerCase();
 
-    // Always use API
-    const offset = (this.currentPage - 1) * this.tripsPerPage;
-    const size = this.tripsPerPage;
-    console.log('Filtering trips with query:', query, 'offset:', offset, 'size:', size);
-    this.apiService.searchTripsByCountry(query, offset, size).subscribe({
-      next: (data: Trip[]) => {
-        this.filteredTrips = data;
-        this.updateDisplayedTrips();
-      },
-      error: (error) => {
-        console.error('Error fetching trips:', error);
-        if (offset === 0) {
-          this.filteredTrips = [];
-        }
-        this.updateDisplayedTrips();
-      },
-    });
-  }
-
-  private fetchTripsFromApi(): void {
-    const country = this.searchQuery ? this.searchQuery.toLowerCase() : '';
-    const offset = (this.currentPage - 1) * this.tripsPerPage;
-    const size = this.tripsPerPage;
-    console.log(offset, this.currentPage, this.tripsPerPage);
-    this.apiService.searchTripsByCountry(country, offset, size).subscribe({
-      next: (data: Trip[]) => {
-        console.log('Fetched trips:', data);
-        this.filteredTrips = data;
-        // Fetch images for each trip
-        data.forEach((trip, idx) => {
-          this.apiService.getTripImage(trip.tourID).subscribe({
-            next: (blob: Blob) => {
-              const reader = new FileReader();
-              reader.onload = () => {
-                trip.image = reader.result as string;
-                // Optionally trigger change detection or update UI
-              };
-              reader.readAsDataURL(blob);
-            },
-            error: () => {
-              trip.image = ''; // fallback or placeholder
-            }
-          });
-        });
-        this.updateDisplayedTrips();
-      },
-      error: (error) => {
-        console.error('Error fetching trips:', error);
-        if (offset === 0) {
-          this.filteredTrips = [];
-        }
-        this.updateDisplayedTrips();
-      },
-    });
+    if (this.useFakeData) {
+      // Filter by country only
+      this.filteredTrips = this.fakeTrips.filter((trip) =>
+        trip.destinationCountry.toLowerCase().includes(query)
+      );
+      this.updateDisplayedTrips();
+    } else {
+      this.apiService.searchTripsByCountry(query).subscribe({
+        next: (data: Trip[]) => {
+          this.filteredTrips = data;
+          this.updateDisplayedTrips();
+        },
+        error: (error) => {
+          console.error('Error fetching trips:', error);
+          this.filteredTrips = this.fakeTrips.filter((trip) =>
+            trip.destinationCountry.toLowerCase().includes(query)
+          );
+          this.updateDisplayedTrips();
+        },
+      });
+    }
   }
 
   private updateDisplayedTrips(): void {
-    // For API, displayedTrips is the same as filteredTrips
-    this.displayedTrips = this.filteredTrips;
-    this.hasMoreTrips = this.filteredTrips.length === this.tripsPerPage;
+    const endIndex = this.currentPage * this.tripsPerPage;
+    this.displayedTrips = this.filteredTrips.slice(0, endIndex);
+    this.hasMoreTrips = endIndex < this.filteredTrips.length;
   }
 
   loadMore(): void {
     this.currentPage++;
-    this.fetchTripsFromApi();
+    this.updateDisplayedTrips();
   }
 
   toggleDataSource(): void {
-    // No-op: always use API now
+    this.useFakeData = !this.useFakeData;
+    if (this.searchQuery) {
+      this.filterTrips();
+    }
   }
 
   renderStars(rating: number): string {
@@ -225,5 +479,15 @@ export class TouristPrepackageShowComponent implements OnInit {
     }
 
     return starsHtml;
+  }
+  // In tourist-prepackage-show.component.ts
+  onTripClick(trip: Trip): void {
+    // For now, just log the trip data
+    console.log('Selected trip:', trip);
+
+    // When connected to backend, you might do:
+    // this.router.navigate(['/tour-details', trip.id]);
+    // or send data to backend:
+    // this.apiService.selectTrip(trip.id).subscribe(...);
   }
 }

@@ -1,25 +1,49 @@
-/* Add to your component's CSS or global styles */
+/* ===== Base Styles ===== */
 :host {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* This makes the component take at least the full viewport height */
+  min-height: 100vh;
 }
 
-/* Body */
 body {
   background-color: #d0dedf;
   color: #040a15;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-/* Navbar */
+/* ===== Layout Structure ===== */
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 70px; /* Space for fixed navbar */
+}
+
+.main-container {
+  flex: 1;
+  padding: 20px 0;
+  margin-bottom: 20px;
+}
+
 .custom-navbar {
   background-color: #71a8b8d4;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 100%;
-  z-index: 999;
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
-/* Brand Name */
+.custom-navbar.navbar-shrink {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
 .custom-navbar .navbar-brand {
   color: #fb921d;
   font-weight: bold;
@@ -28,7 +52,6 @@ body {
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.334);
 }
 
-/* Navbar Links */
 .custom-navbar .nav-link {
   color: white !important;
   font-weight: 500;
@@ -37,10 +60,10 @@ body {
   transition: color 0.2s ease;
 }
 
-/* Hover and Active */
 .custom-navbar .nav-link:hover {
   color: #fb921d !important;
 }
+
 .custom-navbar .nav-link.active::after {
   content: "";
   position: absolute;
@@ -52,19 +75,11 @@ body {
   background-color: #fb921d;
 }
 
-/* Special logout */
 .custom-navbar .logout-link {
   color: #d9534f !important;
 }
 
-/* Main Content */
-.main-content {
-  margin-top: 100px; /* Add space under fixed navbar */
-  flex: 1; /* This makes the content expand to push footer down */
-  padding-bottom: 2rem; /* Add some space above footer */
-}
-
-/* Search Form Styling */
+/* ===== Search Form Styles ===== */
 .input-group {
   max-width: 600px;
   margin: 0 auto;
@@ -81,7 +96,13 @@ body {
   height: 45px;
 }
 
-/* Trip Results Container */
+/* ===== Main Content Styles ===== */
+.main-container {
+  padding: 20px 0;
+  margin-bottom: 20px; /* Space above footer */
+}
+
+/* ===== Trip Cards Styles ===== */
 .trip-results-container {
   width: 100%;
 }
@@ -91,17 +112,19 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 25px;
   padding: 10px 0;
+  padding-bottom: 80px; /* Space for footer */
 }
 
-/* Trip Card Styling */
 .trip-card {
   background: white;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
+  cursor: pointer; /* Add pointer cursor to indicate clickable */
+  margin-bottom: 70px; /* Prevent content from being hidden behind fixed footer */
 }
 
 .trip-card:hover {
@@ -184,7 +207,7 @@ body {
   color: #fb921d;
 }
 
-/* No Results Message */
+/* ===== No Results Message ===== */
 .no-results-message {
   text-align: center;
   padding: 30px;
@@ -195,30 +218,21 @@ body {
   margin: 0 auto;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .trip-results-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .trip-image-container {
-    height: 200px;
-  }
-}
-
-/* Button */
-.btn-primary {
+/* ===== Button Styles ===== */
+.btn-primary,
+.btn-show-more {
   background-color: #fb921d;
   border-color: #fb921d;
+  color: white;
 }
-.btn-primary:hover {
+
+.btn-primary:hover,
+.btn-show-more:hover {
   background-color: #e07d0d;
   border-color: #e07d0d;
 }
-/* Add this new style */
+
 .btn-show-more {
-  background-color: #fb921d;
-  color: white;
   padding: 10px 25px;
   border-radius: 25px;
   font-weight: 500;
@@ -226,23 +240,19 @@ body {
 }
 
 .btn-show-more:hover {
-  background-color: #e07d0d;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-/* Footer */
-footer {
-  background-color: #71a7b8;
-}
 
-/* Footer */
+/* ===========================================
+   FOOTER STYLES
+   =========================================== */
 .custom-footer {
   background-color: #71a7b8;
   width: 100%;
   padding-top: 20px;
   padding-bottom: 20px;
-  margin-top: 50px;
-  margin-top: auto; /* This pushes the footer to the bottom */
+  margin-top: auto;
 }
 
 footer ul li a:hover {
@@ -250,71 +260,53 @@ footer ul li a:hover {
   text-decoration: underline;
 }
 
-/* Responsive */
+/* ===========================================
+   CHAT COMPONENT
+   =========================================== */
+app-chat {
+  z-index: 1000;
+}
+
+/* ===========================================
+   RESPONSIVE DESIGN
+   =========================================== */
 @media (max-width: 768px) {
   .container {
     padding: 20px;
   }
-}
-.custom-navbar {
-  transition: all 0.3s ease;
-}
-
-.custom-navbar.navbar-shrink {
-  /* Add styles for when navbar should be smaller */
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-/* Footer Styles */
-footer {
-  background-color: #71a7b8; /* Light blue background */
-  color: white;
+  
+  .booking-summary {
+    position: static;
+    margin-top: 2rem;
+  }
+  
+  .main-content {
+    margin-top: 80px;
+  }
+  
+  .custom-navbar .navbar-brand {
+    font-size: 1.4rem;
+  }
 }
 
-.social-icons a {
-  color: white;
-  margin-right: 15px;
-}
 
-.social-icons a:hover {
-  opacity: 0.8;
-}
 
-footer h5 {
-  margin-bottom: 15px;
-}
-
-footer ul {
-  list-style: none;
-  padding: 0;
-}
-
-footer ul li {
-  margin-bottom: 10px;
-}
-
-footer ul li a {
-  color: white;
-  text-decoration: none;
-}
-
-footer ul li a:hover {
-  text-decoration: underline;
-}
-
-footer hr {
-  border-color: white;
-}
-
-footer p {
-  margin: 0;
-  text-align: center;
-}
-:host {
-  display: contents; /* Prevents layout issues */
-}
-/* Ensure chat appears above other content */
+/* ===== Chat Component ===== */
 app-chat {
   z-index: 1000;
+}
+
+/* ===== Responsive Adjustments ===== */
+@media (max-width: 768px) {
+  .main-wrapper {
+    padding-top: 60px;
+  }
+
+  .trip-results-grid {
+    padding-bottom: 70px;
+  }
+
+  .custom-footer {
+    padding: 10px 0;
+  }
 }

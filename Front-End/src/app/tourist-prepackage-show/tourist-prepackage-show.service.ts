@@ -11,16 +11,19 @@ export class TouristPrepackageShowService {
 
   constructor(private http: HttpClient) {}
 
+  searchTrips(query: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/tours/search?q=${encodeURIComponent(query)}`);
+  }
+
   getTripImage(tripId: number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/tours/image/${tripId}`, { 
       responseType: 'blob' 
     });
   }
 
-  // Use the controller's /country/{country}?offset=0&size=8 endpoint
-  searchTripsByCountry(country: string, offset: number, size: number): Observable<Trip[]> {
-    return this.http.get<Trip[]>(
-      `${this.apiUrl}/tours/country/${encodeURIComponent(country)}?offset=${offset}&size=${size}`
-    );
+  searchTripsByCountry(country: string): Observable<Trip[]> {
+    return this.http.get<Trip[]>(`${this.apiUrl}/tours/search?country=${encodeURIComponent(country)}`);
   }
+
+  
 }
