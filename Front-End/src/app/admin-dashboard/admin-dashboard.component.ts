@@ -12,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../services/auth.service';
+import { ChatComponent } from '../shared/chat/chat.component';
 
 interface User {
   id: number;
@@ -19,15 +20,26 @@ interface User {
   email: string;
   role: number;
 }
-
+export enum UserType {
+  TOURIST = 'tourist',
+  GUIDE = 'guide',
+  COMPANY = 'company',
+  ADMIN = 'admin',
+}
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FormsModule],
+  imports: [CommonModule, HttpClientModule, FormsModule, ChatComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css'],
 })
 export class AdminDashboardComponent implements OnInit {
+
+  // Step 2: Add these required properties
+  userId = '123'; // Replace with actual user ID from your auth service
+  userType: 'tourist' | 'guide' | 'company' | 'admin' = 'tourist'; // Replace with actual user type from your auth service
+  errorMessage: string | null = null;
+
   users: User[] = [];
   newUser: User = {
     id: 0,
@@ -46,12 +58,12 @@ export class AdminDashboardComponent implements OnInit {
     private adminService: AdminDashboardService,
     private router: Router,
     private modalService: NgbModal,
-    private authService: AuthService
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
     // Check authentication and admin role
-   /* if (!this.authService.isLoggedIn()) {
+    /* if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
       return;
     }
@@ -67,6 +79,15 @@ export class AdminDashboardComponent implements OnInit {
     */
 
     this.fetchUsers();
+
+    // Step 3: Initialize user data (replace with your actual auth logic)
+    const currentUser = this.getCurrentUser();
+    this.userId = currentUser.id;
+    this.userType = currentUser.type as
+      | 'tourist'
+      | 'guide'
+      | 'company'
+      | 'admin';
   }
 
   fetchUsers(): void {
@@ -81,9 +102,9 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  deleteUser(id: number,role:number): void {
+  deleteUser(id: number, role: number): void {
     if (confirm('Are you sure you want to delete this user?')) {
-      this.adminService.deleteUser(id,this.getRoleName(role)).subscribe({
+      this.adminService.deleteUser(id, this.getRoleName(role)).subscribe({
         next: () => {
           this.users = this.users.filter((user) => user.id !== id);
         },
@@ -122,9 +143,9 @@ export class AdminDashboardComponent implements OnInit {
       id: user.id,
       name: user.name,
       email: user.email,
-      role: user.role
+      role: user.role,
     };
-    
+
     this.editUserData = { ...user };
     this.openEditModal();
   }
@@ -132,20 +153,22 @@ export class AdminDashboardComponent implements OnInit {
   updateUser(): void {
     if (this.editUserData) {
       console.log('Updating user with data:', this.editUserData); // Debug log
-      this.adminService.updateUser(this.editedUser,this.editUserData).subscribe({
-        next: (updatedUser) => {
-          console.log('Updated user received:', updatedUser); // Debug log
-          const index = this.users.findIndex((u) => u.id === updatedUser.id);
-          if (index !== -1) {
-            this.users[index] = updatedUser;
-          }
-          this.editUserData = null;
-          this.modalService.dismissAll();
-        },
-        error: (err) => {
-          console.error('Error updating user:', err);
-        },
-      });
+      this.adminService
+        .updateUser(this.editedUser, this.editUserData)
+        .subscribe({
+          next: (updatedUser) => {
+            console.log('Updated user received:', updatedUser); // Debug log
+            const index = this.users.findIndex((u) => u.id === updatedUser.id);
+            if (index !== -1) {
+              this.users[index] = updatedUser;
+            }
+            this.editUserData = null;
+            this.modalService.dismissAll();
+          },
+          error: (err) => {
+            console.error('Error updating user:', err);
+          },
+        });
     }
   }
 
@@ -184,5 +207,12 @@ export class AdminDashboardComponent implements OnInit {
   logout(): void {
     this.authService.logout(); // Use centralized logout
     this.router.navigate(['/']);
+  }
+  // Step 4: Add this method (replace with your actual auth logic)
+  getCurrentUser() {
+    return {
+      id: '123', // Get from JWT token or session storage
+      type: 'tourist', // Get from your authentication service
+    };
   }
 }

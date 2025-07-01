@@ -171,3 +171,10 @@ footer ul li a:hover {
     padding: 20px;
   }
 }
+:host {
+  display: contents; /* Prevents layout issues */
+}
+/* Ensure chat appears above other content */
+app-chat {
+  z-index: 1000;
+}

@@ -131,3 +131,10 @@ footer p {
 .modal-content {
   pointer-events: all; /* Content catches clicks */
 }
+:host {
+  display: contents; /* Prevents layout issues */
+}
+/* Ensure chat appears above other content */
+app-chat {
+  z-index: 1000;
+}

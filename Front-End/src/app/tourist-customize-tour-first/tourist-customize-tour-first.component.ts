@@ -4,22 +4,39 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { TouristCustomizeTourFirsService } from './tourist-customize-tour-firs.service';
+import { ChatComponent } from '../shared/chat/chat.component';
+
+// shared/models/user-type.enum.ts
+export enum UserType {
+  TOURIST = 'tourist',
+  GUIDE = 'guide',
+  COMPANY = 'company',
+  ADMIN = 'admin',
+}
 
 @Component({
   selector: 'app-tourist-customize-tour-first',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, ChatComponent],
   templateUrl: './tourist-customize-tour-first.component.html',
   styleUrls: ['./tourist-customize-tour-first.component.css'],
 })
 export class TouristCustomizeTourFirstComponent implements OnInit {
-  // Form fields
+  // Step 2: Add these required properties
+  userId = '123'; // Replace with actual user ID from your auth service
+  userType: 'tourist' | 'guide' | 'company' | 'admin' = 'tourist'; // Replace with actu
+
   selectedDestination: string = '';
   selectedDuration: number = 1;
   selectedTourismTypes: string[] = [];
   currentStep = 0;
 
-  steps = ['Entering Trip Data', 'Select Places', 'Trip scedule Generation', 'Summary'];
+  steps = [
+    'Entering Trip Data',
+    'Select Places',
+    'Trip scedule Generation',
+    'Summary',
+  ];
 
   // Available options
   tourismTypes: string[] = [
@@ -39,15 +56,28 @@ export class TouristCustomizeTourFirstComponent implements OnInit {
   errorMessage: string | null = null;
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private router: Router,
     private tourService: TouristCustomizeTourFirsService
   ) {}
 
   ngOnInit(): void {
+    // Step 3: Initialize user data (replace with your actual auth logic)
+    const currentUser = this.getCurrentUser();
+    this.userId = currentUser.id;
+    this.userType = currentUser.type as 'tourist' | 'guide' | 'company' | 'admin';
+
     this.initializeDestinations();
     // Uncomment for production
     this.checkAuthentication();
+  }
+
+  // Step 4: Add this method (replace with your actual auth logic)
+  getCurrentUser() {
+    return {
+      id: '123', // Get from JWT token or session storage
+      type: 'tourist', // Get from your authentication service
+    };
   }
 
   /**
@@ -135,7 +165,7 @@ export class TouristCustomizeTourFirstComponent implements OnInit {
   checkAuthentication(): void {
     if (
       !this.authService.isLoggedIn() ||
-      this.authService.getUserType() !== 'TOURIST'
+      this.authService.getUserType() !== UserType.TOURIST
     ) {
       this.authService.logout();
       // this.router.navigate(['/login']);
@@ -193,32 +223,32 @@ export class TouristCustomizeTourFirstComponent implements OnInit {
   onSubmit(): void {
     console.log('Form submitted');
     if (!this.validateForm()) return;
-  
+
     this.isLoading = true;
-  
+
     // Prepare the request data
     const requestData = {
       destination: this.selectedDestination,
       duration: this.selectedDuration,
       tourismTypes: this.selectedTourismTypes,
-      touristId: 'temp-user-id' // Temporary hardcoded for testing
+      touristId: 'temp-user-id', // Temporary hardcoded for testing
     };
-  
+
     // For testing - bypass API call
     console.log('Attempting navigation...');
     const mockResponse = {
       destination: this.selectedDestination,
       duration: this.selectedDuration,
       tourismTypes: this.selectedTourismTypes,
-      samplePlaces: ['Place 1', 'Place 2', 'Place 3'] // Mock data
+      samplePlaces: ['Place 1', 'Place 2', 'Place 3'], // Mock data
     };
-    
+
     this.router.navigate(['/touristcustomizetoursecondcomponent'], {
-      state: { tourOptions: mockResponse }
+      state: { tourOptions: mockResponse },
     });
     this.isLoading = false;
     return;
-  
+
     // Actual API call (commented out for testing)
     /*
     this.tourService.getCustomTourOptions(requestData).subscribe({

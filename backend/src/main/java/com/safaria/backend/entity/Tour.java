@@ -35,8 +35,8 @@ public class Tour {
 
     @Column(name = "DestinationCountry", nullable = false)
     private String destinationCountry;
-    @Column(name = "rating", nullable = false , columnDefinition = "FLOAT DEFAULT -1")
-    private Float rating;
+    @Column(name = "rating", nullable = false )
+    private Float rating=-1f;
   
 
     @Column(name = "Currency", nullable = false)

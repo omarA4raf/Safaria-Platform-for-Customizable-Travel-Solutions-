@@ -325,3 +325,9 @@ footer ul li a:hover {
     padding: 20px;
   }
 }
+:host {
+  display: contents; /* Prevents layout issues */
+}
+app-chat {
+  z-index: 1000;
+}

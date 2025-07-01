@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 import { Tourist } from './objects/Tourist';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BotService {
-  private botUrl = 'http://localhost:3000/bot/query'; // Backend URL
-  private signupUrl = 'http://localhost:3000/signup'; // Signup URL
+  private botUrl = environment.botUrl;
+  private signupUrl = `${environment.apiUrl}/signup`;
 
   constructor(private http: HttpClient) {}
 

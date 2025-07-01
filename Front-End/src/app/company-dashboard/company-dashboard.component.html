@@ -1,8 +1,8 @@
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg fixed-top shadow-sm custom-navbar">
     <div class="container">
         <!-- Brand Name -->
-        <a style="color: #ffa500;" class="navbar-brand fw-bold" href="#">Safaria</a>
+        <a class="navbar-brand" href="#">Safaria</a>
 
         <!-- Toggle Button for Mobile -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -94,7 +94,8 @@
             <div class="list-card position-relative overflow-hidden rounded-3" *ngFor="let trip of trips"
                 style="flex: 0 0 auto; width: 18rem;">
                 <!-- Background Image -->
-                <img [src]="trip.image || '/assets/img/default-trip.jpg'" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ trip.title }}" />
+                <img [src]="trip.image || '/assets/img/default-trip.jpg'"
+                    class="card-img-top w-100 h-100 object-fit-cover" alt="{{ trip.title }}" />
 
                 <!-- Dark Transparent Overlay -->
                 <div class="overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
@@ -127,8 +128,8 @@
             <div class="list-card position-relative overflow-hidden rounded-3" *ngFor="let client of clients"
                 style="flex: 0 0 auto; width: 18rem;">
                 <!-- Background Image -->
-                <img [src]="client.image || '/assets/img/default-client.jpg'" class="card-img-top w-100 h-100 object-fit-cover"
-                    alt="{{ client.clientName }}" />
+                <img [src]="client.image || '/assets/img/default-client.jpg'"
+                    class="card-img-top w-100 h-100 object-fit-cover" alt="{{ client.clientName }}" />
 
                 <!-- Dark Transparent Overlay -->
                 <div class="overlay position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
@@ -172,7 +173,8 @@
                 <div class="card-body">
                     <!-- Client Image and Name -->
                     <div class="d-flex align-items-center mb-3">
-                        <img [src]="review.image || '/assets/img/default-reviewer.jpg'" class="client-image rounded-circle" alt="{{ review.name }}" />
+                        <img [src]="review.image || '/assets/img/default-reviewer.jpg'"
+                            class="client-image rounded-circle" alt="{{ review.name }}" />
                         <h6 class="client-name ms-3">{{ review.name || 'Anonymous' }}</h6>
                     </div>
 
@@ -192,7 +194,8 @@
         </ng-template>
     </div>
 </div>
-
+<app-chat [userId]="userId" [userType]="userType">
+</app-chat>
 <!-- Footer -->
 <footer class="text-white py-4" style="background-color: #71a7b8">
     <div class="container">

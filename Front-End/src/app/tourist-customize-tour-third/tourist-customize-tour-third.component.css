@@ -203,3 +203,10 @@ footer ul li a:hover {
     align-self: flex-start;
   }
 }
+:host {
+  display: contents; /* Prevents layout issues */
+}
+/* Ensure chat appears above other content */
+app-chat {
+  z-index: 1000;
+}

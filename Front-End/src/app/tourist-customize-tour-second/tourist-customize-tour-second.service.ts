@@ -69,7 +69,7 @@ export class TouristCustomizeTourSecondService {
 
     if (
       !this.authService.isLoggedIn() ||
-      this.authService.getUserType() !== 'TOURIST'
+      this.authService.getUserType() !== null && String(this.authService.getUserType()) !== 'TOURIST'
     ) {
       // Instead of throwing error, return empty data
       return of({

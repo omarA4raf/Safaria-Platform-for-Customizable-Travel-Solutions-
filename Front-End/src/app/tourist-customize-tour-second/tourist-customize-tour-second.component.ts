@@ -4,6 +4,15 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { TouristCustomizeTourSecondService } from './tourist-customize-tour-second.service';
+import { ChatComponent } from '../shared/chat/chat.component';
+
+// shared/models/user-type.enum.ts
+export enum UserType {
+  TOURIST = 'tourist',
+  GUIDE = 'guide',
+  COMPANY = 'company',
+  ADMIN = 'admin',
+}
 
 interface Place {
   id: number;
@@ -23,11 +32,15 @@ interface ItineraryDay {
 @Component({
   selector: 'app-tourist-customize-tour-second',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule],
+  imports: [FormsModule, CommonModule, RouterModule, ChatComponent],
   templateUrl: './tourist-customize-tour-second.component.html',
   styleUrls: ['./tourist-customize-tour-second.component.css'],
 })
 export class TouristCustomizeTourSecondComponent implements OnInit {
+  // Step 2: Add these required properties
+  userId = '123'; // Replace with actual user ID from your auth service
+  userType: 'tourist' | 'guide' | 'company' | 'admin' = 'tourist'; // Replace with actu
+
   currentStep = 1;
   steps = [
     'Entering Trip Data',
@@ -54,15 +67,28 @@ export class TouristCustomizeTourSecondComponent implements OnInit {
   };
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private router: Router,
     private changeDetectorRef: ChangeDetectorRef,
     private tourService: TouristCustomizeTourSecondService
   ) {}
 
   ngOnInit(): void {
+    // Step 3: Initialize user data (replace with your actual auth logic)
+    const currentUser = this.getCurrentUser();
+    this.userId = currentUser.id;
+    this.userType = currentUser.type as 'tourist' | 'guide' | 'company' | 'admin';
+    
     this.checkAuthentication();
     this.loadTourOptions();
+  }
+
+  // Step 4: Add this method (replace with your actual auth logic)
+  getCurrentUser() {
+    return {
+      id: '123', // Get from JWT token or session storage
+      type: 'tourist', // Get from your authentication service
+    };
   }
 
   /**
@@ -71,7 +97,7 @@ export class TouristCustomizeTourSecondComponent implements OnInit {
   checkAuthentication(): void {
     if (
       !this.authService.isLoggedIn() ||
-      this.authService.getUserType() !== 'TOURIST'
+      this.authService.getUserType() !== UserType.TOURIST
     ) {
       this.authService.logout();
       // this.router.navigate(['/login']);
@@ -113,33 +139,93 @@ export class TouristCustomizeTourSecondComponent implements OnInit {
 
   private loadFakeHotels(): Place[] {
     return [
-      { id: 1, name: 'Hotel Paradise', imageUrl: '../assets/img/pexels-pixabay-262047.jpg' },
-      { id: 2, name: 'Luxury Stay', imageUrl: '../assets/img/pexels-thorsten-technoman-109353-338504.jpg' },
-      { id: 3, name: 'Ocean View', imageUrl: '../assets/img/pexels-pixabay-271624.jpg' },
-      { id: 4, name: 'Hotel Paradise 2', imageUrl: '../assets/img/pexels-pixabay-164595.jpg' },
-      { id: 5, name: 'Luxury Stay 2', imageUrl: '../assets/img/pexels-pixabay-271639.jpg' },
-      { id: 6, name: 'Ocean View 2', imageUrl: '../assets/img/pexels-pixabay-262047.jpg' },
+      {
+        id: 1,
+        name: 'Hotel Paradise',
+        imageUrl: '../assets/img/pexels-pixabay-262047.jpg',
+      },
+      {
+        id: 2,
+        name: 'Luxury Stay',
+        imageUrl: '../assets/img/pexels-thorsten-technoman-109353-338504.jpg',
+      },
+      {
+        id: 3,
+        name: 'Ocean View',
+        imageUrl: '../assets/img/pexels-pixabay-271624.jpg',
+      },
+      {
+        id: 4,
+        name: 'Hotel Paradise 2',
+        imageUrl: '../assets/img/pexels-pixabay-164595.jpg',
+      },
+      {
+        id: 5,
+        name: 'Luxury Stay 2',
+        imageUrl: '../assets/img/pexels-pixabay-271639.jpg',
+      },
+      {
+        id: 6,
+        name: 'Ocean View 2',
+        imageUrl: '../assets/img/pexels-pixabay-262047.jpg',
+      },
     ];
   }
 
   private loadFakeRestaurants(): Place[] {
     return [
-      { id: 1, name: 'The Fancy Fork', imageUrl: '../assets/img/pexels-mali-64208.jpg' },
-      { id: 2, name: 'Gourmet Delight', imageUrl: '../assets/img/pexels-chanwalrus-958545.jpg' },
-      { id: 3, name: 'Tasty Bites', imageUrl: '../assets/img/pexels-elevate-1267320.jpg' },
-      { id: 4, name: 'Hotel Paradise 2', imageUrl: '../assets/img/pexels-pixabay-262978.jpg' },
-      { id: 5, name: 'Luxury Stay 2', imageUrl: '../assets/img/pexels-robinstickel-70497.jpg' },
-      { id: 6, name: 'Ocean View 2', imageUrl: '../assets/img/pexels-valeriya-1484516.jpg' },
+      {
+        id: 1,
+        name: 'The Fancy Fork',
+        imageUrl: '../assets/img/pexels-mali-64208.jpg',
+      },
+      {
+        id: 2,
+        name: 'Gourmet Delight',
+        imageUrl: '../assets/img/pexels-chanwalrus-958545.jpg',
+      },
+      {
+        id: 3,
+        name: 'Tasty Bites',
+        imageUrl: '../assets/img/pexels-elevate-1267320.jpg',
+      },
+      {
+        id: 4,
+        name: 'Hotel Paradise 2',
+        imageUrl: '../assets/img/pexels-pixabay-262978.jpg',
+      },
+      {
+        id: 5,
+        name: 'Luxury Stay 2',
+        imageUrl: '../assets/img/pexels-robinstickel-70497.jpg',
+      },
+      {
+        id: 6,
+        name: 'Ocean View 2',
+        imageUrl: '../assets/img/pexels-valeriya-1484516.jpg',
+      },
     ];
   }
 
   private loadFakeTourismPlaces(): Place[] {
     return [
       { id: 1, name: 'Historic Castle', imageUrl: '../assets/img/paris.jpeg' },
-      { id: 2, name: 'City Park', imageUrl: '../assets/img/pexels-qibili-18291196.jpg' },
-      { id: 3, name: 'Art Museum', imageUrl: '../assets/img/boats-3932034_1280.jpg' },
+      {
+        id: 2,
+        name: 'City Park',
+        imageUrl: '../assets/img/pexels-qibili-18291196.jpg',
+      },
+      {
+        id: 3,
+        name: 'Art Museum',
+        imageUrl: '../assets/img/boats-3932034_1280.jpg',
+      },
       { id: 4, name: 'Hotel Paradise 2', imageUrl: '../assets/img/cairo.jpeg' },
-      { id: 5, name: 'Luxury Stay 2', imageUrl: '../assets/img/e73db164bbe81f22b68ae3536f624c24.jpg' },
+      {
+        id: 5,
+        name: 'Luxury Stay 2',
+        imageUrl: '../assets/img/e73db164bbe81f22b68ae3536f624c24.jpg',
+      },
       { id: 6, name: 'Ocean View 2', imageUrl: '../assets/img/paris.jpeg' },
     ];
   }
@@ -288,27 +374,31 @@ export class TouristCustomizeTourSecondComponent implements OnInit {
   private generateDemoItinerary(data: any): any[] {
     const itinerary = [];
     const days = data.duration || 3;
-    
+
     for (let i = 1; i <= days; i++) {
       itinerary.push({
         day: i,
         activities: [
           {
             time: '09:00',
-            activity: `Visit ${data.places[i % data.places.length]?.name || 'local attraction'}`,
-            location: 'City Center'
+            activity: `Visit ${
+              data.places[i % data.places.length]?.name || 'local attraction'
+            }`,
+            location: 'City Center',
           },
           {
             time: '12:00',
-            activity: `Lunch at ${data.restaurants[i % data.restaurants.length]?.name || 'local restaurant'}`,
-            location: 'Downtown'
-          }
-        ]
+            activity: `Lunch at ${
+              data.restaurants[i % data.restaurants.length]?.name ||
+              'local restaurant'
+            }`,
+            location: 'Downtown',
+          },
+        ],
       });
     }
     return itinerary;
   }
-
 
   logout(): void {
     this.authService.logout();

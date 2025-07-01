@@ -266,3 +266,55 @@ footer ul li a:hover {
   padding-bottom: 0.5rem;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
+/* Footer Styles */
+footer {
+  background-color: #71a7b8; /* Light blue background */
+  color: white;
+}
+
+.social-icons a {
+  color: white;
+  margin-right: 15px;
+}
+
+.social-icons a:hover {
+  opacity: 0.8;
+}
+
+footer h5 {
+  margin-bottom: 15px;
+}
+
+footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+footer ul li {
+  margin-bottom: 10px;
+}
+
+footer ul li a {
+  color: white;
+  text-decoration: none;
+}
+
+footer ul li a:hover {
+  text-decoration: underline;
+}
+
+footer hr {
+  border-color: white;
+}
+
+footer p {
+  margin: 0;
+  text-align: center;
+}
+:host {
+  display: contents; /* Prevents layout issues */
+}
+/* Ensure chat appears above other content */
+app-chat {
+  z-index: 1000;
+}

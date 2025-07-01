@@ -5,19 +5,32 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import { CompanyCreateTripService } from './company-create-trip.service';
+import { ChatComponent } from '../shared/chat/chat.component';
+
+// shared/models/user-type.enum.ts
+export enum UserType {
+  TOURIST = 'tourist',
+  GUIDE = 'guide',
+  COMPANY = 'company',
+  ADMIN = 'admin',
+}
 
 @Component({
   selector: 'app-company-create-trip',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ChatComponent],
   templateUrl: './company-create-trip.component.html',
   styleUrls: ['./company-create-trip.component.css'],
 })
 export class CompanyCreateTripComponent implements OnInit {
+ // Step 2: Add these required properties
+  userId = '123'; // Replace with actual user ID from your auth service
+  userType: 'tourist' | 'guide' | 'company' | 'admin' = 'tourist'; // Replace with actual user type from your auth service
+
   constructor(
     private router: Router,
     private http: HttpClient,
-    private authService: AuthService,
+    public authService: AuthService,
     private tripService: CompanyCreateTripService
   ) {}
   // Loading state for the submit button
@@ -164,15 +177,24 @@ export class CompanyCreateTripComponent implements OnInit {
 
   ngOnInit(): void {
     // Check authentication
-    if (
-      !this.authService.isLoggedIn() ||
-      this.authService.getUserType() !== 'COMPANY'
-    ) {
-      this.authService.logout();
-      this.router.navigate(['/login']);
-      return;
-    }
+    // if (
+    //   !this.authService.isLoggedIn() ||
+    //   this.authService.getUserType() !== UserType.COMPANY
+    // ) {
+    //   this.authService.logout();
+    //   this.router.navigate(['/login']);
+    //   return;
+    // }
     this.initializeCountries();
+
+    // Step 3: Initialize user data (replace with your actual auth logic)
+    const currentUser = this.getCurrentUser();
+    this.userId = currentUser.id;
+    this.userType = currentUser.type as
+      | 'tourist'
+      | 'guide'
+      | 'company'
+      | 'admin';
   }
 
   // Initialize the list of countries
@@ -551,5 +573,12 @@ export class CompanyCreateTripComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+// Step 4: Add this method (replace with your actual auth logic)
+  getCurrentUser() {
+    return {
+      id: '123', // Get from JWT token or session storage
+      type: 'tourist', // Get from your authentication service
+    };
   }
 }

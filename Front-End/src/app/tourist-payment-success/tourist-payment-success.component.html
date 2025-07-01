@@ -1,0 +1,139 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top shadow-sm custom-navbar p-2">
+    <div class="container">
+        <!-- Brand Name -->
+        <a class="navbar-brand" href="#">Safaria</a>
+
+        <!-- Toggle Button for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link " href="/touristdashboardhome">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/touristdashboardprofile">Profile</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/touristprepackageshowcomponent">Prepackage
+                        Tours</a></li>
+                <li class="nav-item"><a class="nav-link" href="/touristcustomizetourfirstcomponent">Custom Plans</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="#">Tour guide assistant</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Support</a></li>
+                <li class="nav-item">
+                    <a class="nav-link logout-link" href="/">Log out <i
+                            class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Container -->
+<div class="container main-container my-5 pt-5">
+    <div class="card text-center">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0">Payment Successful!</h3>
+        </div>
+        <div class="card-body">
+            <div class="mb-4">
+                <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
+            </div>
+            <h4 class="card-title mb-4">Thank you for your booking!</h4>
+            <p class="card-text mb-4">
+                Your booking reference is: <strong>{{ bookingDetails?.bookingReference }}</strong>
+            </p>
+
+            <div class="booking-details mb-4 text-start">
+                <h5 class="mb-3">Booking Details</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Provider:</strong> {{ tripDetails?.providerName }}</p>
+                        <p><strong>Trip:</strong> {{ tripDetails?.title }}</p>
+                        <p><strong>Destination:</strong> {{ tripDetails?.destinationCountry }}</p>
+                        <p><strong>Duration:</strong> {{ tripDetails?.duration }} days</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Travel Dates:</strong>
+                            {{ bookingDetails?.date?.startDate | date }} - {{ bookingDetails?.date?.endDate | date }}
+                        </p>
+                        <p><strong>Travelers:</strong> {{ bookingDetails?.memberCount }}</p>
+                        <p><strong>Total Paid:</strong> {{ bookingDetails?.totalPrice | currency:tripDetails?.currency
+                            }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-muted mb-4">
+                A confirmation email has been sent to your registered email address.
+                If you have any questions, please contact our support team.
+            </p>
+
+            <button class="btn btn-primary" (click)="navigateToDashboard()">
+                Back to Home
+            </button>
+        </div>
+    </div>
+</div>
+
+<app-chat [userId]="userId" [userType]="userType">
+</app-chat>
+
+<!-- Footer -->
+<footer class="text-white py-4 custom-footer" style="background-color: #71a7b8">
+    <div class="container">
+        <div class="row">
+            <!-- Left Side - Brand & Social Icons -->
+            <div class="col-md-4">
+                <h4>Safaria</h4>
+                <div class="social-icons mt-3">
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-youtube fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+                </div>
+            </div>
+
+            <!-- Center & Right Side - Topics -->
+            <div class="col-md-8">
+                <div class="row">
+                    <!-- Column 1 -->
+                    <div class="col-md-4">
+                        <h5>Explore</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Destinations</a></li>
+                            <li><a href="#" class="text-white">Tours</a></li>
+                            <li><a href="#" class="text-white">Experiences</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 2 -->
+                    <div class="col-md-4">
+                        <h5>Company</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">About Us</a></li>
+                            <li><a href="#" class="text-white">Careers</a></li>
+                            <li><a href="#" class="text-white">Blog</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 3 -->
+                    <div class="col-md-4">
+                        <h5>Support</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Contact Us</a></li>
+                            <li><a href="#" class="text-white">FAQs</a></li>
+                            <li><a href="#" class="text-white">Help Center</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Line -->
+        <hr class="mt-4 mb-2 border-white" />
+        <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
+    </div>
+</footer>
+<!-- At the bottom of your template -->

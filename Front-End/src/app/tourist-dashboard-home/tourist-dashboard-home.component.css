@@ -69,8 +69,6 @@ body {
   border-color: #e07d0d;
 }
 
-
-
 /* First Section Styles */
 .section {
   position: relative;
@@ -121,7 +119,7 @@ body {
   bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #FB921D;
+  background-color: #fb921d;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -174,19 +172,21 @@ body {
   z-index: 1; /* Ensures overlay is between image and text */
 }
 
-  /* Footer */
-  footer {
-    background-color: #71a7b8;
+/* Footer */
+footer {
+  background-color: #71a7b8;
+}
+footer ul li a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
   }
-  footer ul li a:hover {
-    opacity: 0.8;
-    text-decoration: underline;
-  }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .container {
-      padding: 20px;
-    }
-  }
-  
+}
+:host {
+  display: contents; /* Prevents layout issues */
+}

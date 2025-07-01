@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.safaria.backend.DTO.TourImportantDTO;
 import com.safaria.backend.DTO.TourRequestDTO;
 import com.safaria.backend.DTO.TourScheduleDTO;
+import com.safaria.backend.DTO.TourSearchDTO;
 import com.safaria.backend.entity.Image;
 import com.safaria.backend.entity.Tour;
 import com.safaria.backend.service.FileSystemService;
@@ -34,16 +35,14 @@ import com.safaria.backend.service.TourService;
 @RestController
 @RequestMapping("/api/tours")
 public class TourController {
-
-    private final TourService tourService;
+    @Autowired
+    private  TourService tourService;
     @Autowired
      private  FileSystemService fileService;
      @Autowired
      private  ImageService imageService;
 
-    public TourController(TourService tourService) {
-        this.tourService = tourService;
-    }
+   
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> createTour( @RequestPart("tourData")  TourRequestDTO tourdto, @RequestPart("images") List<MultipartFile> images) {
@@ -110,15 +109,13 @@ public ResponseEntity<byte[]> getImage(@PathVariable Integer id) {
     }
 }
   @GetMapping("/country/{country}")
-    public ResponseEntity<List<TourImportantDTO>> getToursByCountryAndFilters(
+    public ResponseEntity<List<TourSearchDTO>> getToursByCountry(
             @PathVariable String country,
             @RequestParam int offset,
             @RequestParam int size) {
-
-        List<TourImportantDTO> tours = tourService.getToursByCountryAndFilters(country, offset, size);
-        if (tours.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return 404 if no tours found
-        }
+        String sanitizedCountry = country.trim();
+        List<TourSearchDTO> tours = tourService.getToursByCountry(sanitizedCountry, offset, size);
+        // Always return 200 with the list (possibly empty)
         return ResponseEntity.ok(tours);
     }
 

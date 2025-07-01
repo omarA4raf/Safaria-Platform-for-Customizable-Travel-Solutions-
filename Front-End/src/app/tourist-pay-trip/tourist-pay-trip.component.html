@@ -1,0 +1,198 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top shadow-sm custom-navbar p-2">
+    <div class="container">
+        <!-- Brand Name -->
+        <a class="navbar-brand" href="#">Safaria</a>
+
+        <!-- Toggle Button for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link " href="/touristdashboardhome">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/touristdashboardprofile">Profile</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/touristprepackageshowcomponent">Prepackage
+                        Tours</a></li>
+                <li class="nav-item"><a class="nav-link" href="/touristcustomizetourfirstcomponent">Custom Plans</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="#">Tour guide assistant</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Support</a></li>
+                <li class="nav-item">
+                    <a class="nav-link logout-link" href="/">Log out <i
+                            class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container main-container mt-5 pt-5">
+    <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <div *ngIf="!isLoading" class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Payment Information</h4>
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="handlePayment()">
+                        <div class="mb-3">
+                            <label for="nameOnCard" class="form-label">Name on Card</label>
+                            <input type="text" class="form-control" id="nameOnCard" [(ngModel)]="nameOnCard"
+                                name="nameOnCard" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Card Details</label>
+                            <div id="card-element" class="form-control p-2" style="height: 40px;"></div>
+                            <div *ngIf="cardError" class="text-danger mt-2">{{ cardError }}</div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" [(ngModel)]="email" name="email"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="tel" class="form-control" id="phone" [(ngModel)]="phone" name="phone"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="billingAddress" class="form-label">Billing Address</label>
+                            <textarea class="form-control" id="billingAddress" rows="2" [(ngModel)]="billingAddress"
+                                name="billingAddress" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-3" [disabled]="paymentProcessing">
+                            <span *ngIf="!paymentProcessing">
+                                Pay {{ totalPrice | currency:tripDetails.currency }}
+                            </span>
+                            <span *ngIf="paymentProcessing">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Processing Payment...
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card booking-summary">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Booking Summary</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ tripDetails.title }}</h5>
+                    <p class="text-muted mb-3">
+                        <i class="fas fa-map-marker-alt"></i> {{ tripDetails.destinationCountry }}
+                    </p>
+
+                    <div class="mb-3">
+                        <h6>Travel Dates</h6>
+                        <p class="mb-1">
+                            {{ formatDate(selectedDate.startDate) }} - {{ formatDate(selectedDate.endDate) }}
+                        </p>
+                        <small class="text-muted">{{ tripDetails.duration }} days</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Travelers</h6>
+                        <p>{{ memberCount }} person(s)</p>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Price per person:</span>
+                        <span>{{ selectedDate.budget | currency:tripDetails.currency }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Number of travelers:</span>
+                        <span>x{{ memberCount }}</span>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Total:</span>
+                        <span class="text-success">{{ totalPrice | currency:tripDetails.currency }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="text-white py-4 custom-footer" style="background-color: #71a7b8">
+    <div class="container">
+        <div class="row">
+            <!-- Left Side - Brand & Social Icons -->
+            <div class="col-md-4">
+                <h4>Safaria</h4>
+                <div class="social-icons mt-3">
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-youtube fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+                </div>
+            </div>
+
+            <!-- Center & Right Side - Topics -->
+            <div class="col-md-8">
+                <div class="row">
+                    <!-- Column 1 -->
+                    <div class="col-md-4">
+                        <h5>Explore</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Destinations</a></li>
+                            <li><a href="#" class="text-white">Tours</a></li>
+                            <li><a href="#" class="text-white">Experiences</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 2 -->
+                    <div class="col-md-4">
+                        <h5>Company</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">About Us</a></li>
+                            <li><a href="#" class="text-white">Careers</a></li>
+                            <li><a href="#" class="text-white">Blog</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 3 -->
+                    <div class="col-md-4">
+                        <h5>Support</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Contact Us</a></li>
+                            <li><a href="#" class="text-white">FAQs</a></li>
+                            <li><a href="#" class="text-white">Help Center</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Line -->
+        <hr class="mt-4 mb-2 border-white" />
+        <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
+    </div>
+</footer>
+<!-- At the bottom of your template -->
+<app-chat *ngIf="authService.isLoggedIn()" [userId]="authService.getUserId() || ''" [userType]="UserType.TOURIST">
+</app-chat>

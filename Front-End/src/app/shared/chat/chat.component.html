@@ -1,0 +1,60 @@
+<div class="chat-container">
+  <!-- Chat button -->
+  <button class="chat-button" (click)="toggleChat()">
+    <i class="fas fa-comment-dots"></i>
+  </button>
+
+  <!-- Chat panel -->
+  <div class="chat-panel" [class.active]="chatService.isChatOpen">
+    <div class="chat-header">
+      <h5>Chats</h5>
+      <button class="close-btn" (click)="toggleChat()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="chat-list">
+      <div class="chat-item" *ngFor="let chat of chatService.getChats(userId, userType)" 
+           (click)="selectChat(chat)"
+           [class.active]="chatService.selectedChat?.id === chat.id">
+        <div class="chat-avatar">
+          <img [src]="chat.avatar" alt="Profile">
+        </div>
+        <div class="chat-info">
+          <h6>{{chat.name}}</h6>
+          <p class="last-message">{{chat.lastMessage}}</p>
+        </div>
+        <span class="chat-time">{{chat.time}}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat conversation -->
+  <div class="chat-conversation" [class.active]="chatService.selectedChat">
+    <div class="conversation-header ">
+      <button class="back-btn" (click)="chatService.selectedChat = null">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <h5>{{chatService.selectedChat?.name}}</h5>
+    </div>
+
+    <div class="messages">
+      <div *ngFor="let message of chatService.selectedChat?.messages" 
+           class="message" 
+           [class.sent]="message.senderId === userId">
+        <p>{{message.text}}</p>
+        <span class="time">{{message.time}}</span>
+      </div>
+    </div>
+
+    <div class="message-input">
+      <input type="text" 
+             placeholder="Type a message..." 
+             [(ngModel)]="newMessage" 
+             (keyup.enter)="sendMessage()">
+      <button (click)="sendMessage()">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>

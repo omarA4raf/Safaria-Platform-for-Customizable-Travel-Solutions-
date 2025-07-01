@@ -51,9 +51,7 @@
             <div class="trip-info">
               <h6 class="trip-title">{{ trip.title }}</h6>
               <div class="trip-details">
-                <span class="trip-location">
-                  <i class="fas fa-map-marker-alt"></i> {{ trip.destinationCity }}, {{ trip.destinationCountry }}
-                </span>
+                <i class="fas fa-map-marker-alt"></i> {{ trip.destinationCountry }}
                 <span class="trip-duration">
                   <i class="far fa-clock"></i> {{ trip.duration }}
                 </span>
@@ -65,14 +63,14 @@
                   <span class="rating-stars" [innerHTML]="renderStars(trip.rating || 0)"></span>
                 </div>
                 <div class="trip-price">
-                  From {{ trip.price.amount | currencyFormat:trip.price.currency }}
+                  From {{ trip.priceAmount | currencyFormat:trip.priceCurrency }}
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div class="text-center mt-4" *ngIf="hasMoreTrips">
-          <button class="btn btn-primary" (click)="loadMore()">
+          <button type="button" class="btn btn-primary" (click)="loadMore()">
             Show More <i class="fas fa-chevron-down"></i>
           </button>
         </div>
@@ -87,6 +85,9 @@
   </form>
 
 </div>
+
+<app-chat [userId]="userId" [userType]="userType">
+</app-chat>
 
 <!-- Footer -->
 <footer class="text-white py-4 custom-footer" style="background-color: #71a7b8">

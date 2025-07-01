@@ -1,8 +1,9 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { UserType } from '../shared/chat/user-types'; // Import the UserType type from your chat module
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private readonly TOKEN_KEY = 'safaria_auth_token';
@@ -15,7 +16,11 @@ export class AuthService {
     return isPlatformBrowser(this.platformId);
   }
 
-  setSession(authResult: { token: string, userId: string, userType: string }): void {
+  setSession(authResult: {
+    token: string;
+    userId: string;
+    userType: UserType;
+  }): void {
     if (this.isBrowser()) {
       localStorage.setItem(this.TOKEN_KEY, authResult.token);
       localStorage.setItem(this.USER_ID_KEY, authResult.userId);
@@ -31,8 +36,15 @@ export class AuthService {
     return this.isBrowser() ? localStorage.getItem(this.USER_ID_KEY) : null;
   }
 
-  getUserType(): string | null {
-    return this.isBrowser() ? localStorage.getItem(this.USER_TYPE_KEY) : null;
+  
+
+  getCurrentUser(): { userId: string; userType: UserType } | null {
+    if (!this.isBrowser()) return null;
+
+    const userId = this.getUserId();
+    const userType = this.getUserType();
+
+    return userId && userType ? { userId, userType } : null;
   }
 
   isLoggedIn(): boolean {
@@ -45,5 +57,22 @@ export class AuthService {
       localStorage.removeItem(this.USER_ID_KEY);
       localStorage.removeItem(this.USER_TYPE_KEY);
     }
+  }
+  // In auth.service.ts
+  isValidUserType(
+    type: string | null
+  ): type is 'tourist' | 'guide' | 'company' | 'admin' {
+    return ['tourist', 'guide', 'company', 'admin'].includes(type || '');
+  }
+
+  getUserType(): UserType | null {
+    const type = this.isBrowser()
+      ? localStorage.getItem(this.USER_TYPE_KEY)
+      : null;
+    return (type?.toLowerCase() as UserType) || null;
+  }
+
+  getSafeUserType(): UserType {
+    return this.getUserType() || ('tourist' as UserType);
   }
 }

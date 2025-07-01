@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
+import { UserType } from '../shared/chat/user-types'; // Make sure UserType is exported as an enum or const from this file
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +34,13 @@ export class TouristCustomizeTourThirdService {
       }).pipe(delay(500));
     }
 
-    if (!this.authService.isLoggedIn() || this.authService.getUserType() !== 'TOURIST') {
+    const userType = this.authService.getUserType();
+    // Make sure UserType is an enum or constant, not just a type
+    if (
+      !this.authService.isLoggedIn() ||
+      userType === null ||
+      userType !== UserType.TOURIST
+    ) {
       throw new Error('Unauthorized access');
     }
 

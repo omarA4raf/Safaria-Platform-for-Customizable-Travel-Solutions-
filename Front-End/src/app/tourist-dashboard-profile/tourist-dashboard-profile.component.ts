@@ -7,15 +7,28 @@ import { TouristDashboardProfileService } from './tourist-dashboard-profile.serv
 import { AuthService } from '../services/auth.service';
 import { PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { ChatComponent } from '../shared/chat/chat.component';
+
+// shared/models/user-type.enum.ts
+export enum UserType {
+  TOURIST = 'tourist',
+  GUIDE = 'guide',
+  COMPANY = 'company',
+  ADMIN = 'admin',
+}
 
 @Component({
   selector: 'app-tourist-dashboard-profile',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FormsModule],  
+  imports: [CommonModule, HttpClientModule, FormsModule, ChatComponent],
   templateUrl: './tourist-dashboard-profile.component.html',
-  styleUrl: './tourist-dashboard-profile.component.css'
+  styleUrl: './tourist-dashboard-profile.component.css',
 })
 export class TouristDashboardProfileComponent implements OnInit {
+  // Step 2: Add these required properties
+  userId = '123'; // Replace with actual user ID from your auth service
+  userType: 'tourist' | 'guide' | 'company' | 'admin' = 'tourist'; // Replace with actual user type from your auth service
+
   // Properties to hold data
   name: string = '';
   email: string = '';
@@ -34,9 +47,8 @@ export class TouristDashboardProfileComponent implements OnInit {
   constructor(
     private router: Router,
     private apiService: TouristDashboardProfileService,
-    private authService: AuthService,
+    public authService: AuthService,
     @Inject(PLATFORM_ID) private platformId: Object // Inject the platform ID
-
   ) {}
 
   ngOnInit(): void {
@@ -49,6 +61,15 @@ export class TouristDashboardProfileComponent implements OnInit {
     //   this.router.navigate(['/login']);
     //   return;
     // }
+
+    // Step 3: Initialize user data (replace with your actual auth logic)
+    const currentUser = this.getCurrentUser();
+    this.userId = currentUser.id;
+    this.userType = currentUser.type as
+      | 'tourist'
+      | 'guide'
+      | 'company'
+      | 'admin';
 
     this.fetchData();
 
@@ -64,6 +85,13 @@ export class TouristDashboardProfileComponent implements OnInit {
     }
   }
 
+  // Step 4: Add this method (replace with your actual auth logic)
+  getCurrentUser() {
+    return {
+      id: '123', // Get from JWT token or session storage
+      type: 'tourist', // Get from your authentication service
+    };
+  }
   // Fetch all data from the backend
   fetchData(): void {
     this.apiService.getName().subscribe((data) => {
@@ -92,7 +120,8 @@ export class TouristDashboardProfileComponent implements OnInit {
 
     // Fetch rating, but if the backend returns null/undefined, keep the default value of 5
     this.apiService.getRating().subscribe((data) => {
-      this.rating = data.rating !== null && data.rating !== undefined ? data.rating : 5;
+      this.rating =
+        data.rating !== null && data.rating !== undefined ? data.rating : 5;
     });
 
     this.apiService.getAbout().subscribe((data) => {

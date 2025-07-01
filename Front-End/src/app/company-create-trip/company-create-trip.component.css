@@ -237,3 +237,6 @@ footer p {
   margin: 0;
   text-align: center;
 }
+:host {
+  display: contents; /* Prevents layout issues */
+}
