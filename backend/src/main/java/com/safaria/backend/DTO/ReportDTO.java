@@ -1,0 +1,41 @@
+package com.safaria.backend.DTO;
+
+import com.safaria.backend.entity.Report;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@Setter
+@Getter
+@AllArgsConstructor
+@Data
+public class ReportDTO {
+    private Integer report_id;
+
+    private Integer reporting_user_id;
+
+    private Integer reported_user_id;
+
+    private String comment;
+
+    private LocalDateTime createdAt;
+    // type :0 --> tourist, :1--> tourProvider
+
+    private Boolean reporting_user_type;
+
+    private Boolean reported_user_type;
+
+    public ReportDTO(Report report){
+        this.report_id=report.getReport_id();
+        this.reporting_user_id=report.getReporting_user_id();
+        this.reported_user_id= report.getReported_user_id();
+        this.reporting_user_type=report.getReporting_user_type();
+        this.reported_user_type=report.getReported_user_type();
+        this.comment=report.getComment();
+        this.createdAt=report.getCreatedAt();
+    }
+    public ReportDTO() {}
+}

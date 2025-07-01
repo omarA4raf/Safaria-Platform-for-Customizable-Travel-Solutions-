@@ -31,11 +31,12 @@ public class FileController {
             return MediaType.APPLICATION_PDF;
         }
     }
-    @GetMapping("/files/{filename:.+}")
-    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
+    @GetMapping("/files/{foldername}/{filename:.+}")
+    public ResponseEntity<Resource> getFile(@PathVariable String foldername,@PathVariable String filename) {
         try {
-            Path filePath = Paths.get("Upload/Documents").resolve("TourProvider").resolve(filename).normalize();
+            Path filePath = Paths.get("backend/src/main/resources/Upload/Documents").resolve(foldername).resolve(filename).normalize();
             UrlResource urlResource = new UrlResource(filePath.toUri());
+            System.out.println(urlResource);
             if (urlResource.exists() && urlResource.isReadable()) {
                 MediaType mediaType = getMediaTypeForFileName(filename);
 

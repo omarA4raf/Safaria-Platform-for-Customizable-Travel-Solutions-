@@ -3,21 +3,17 @@ package com.safaria.backend.service;
 
 import com.safaria.backend.DTO.*;
 import com.safaria.backend.entity.*;
-import com.safaria.backend.repository.AdminRepository;
-import com.safaria.backend.repository.TourProviderRepository;
-import com.safaria.backend.repository.TouristRepository;
+import com.safaria.backend.repository.*;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -81,6 +77,20 @@ public class services implements Iservices {
     private CheckEmailService checkEmailService;
     @Autowired
      private  FileSystemService fileSystemService;
+    @Autowired
+    private ChatRepository chatRepository;
+
+    @Autowired
+    private ReportRepository reportRepository;
+
+    @Autowired
+    private BlogRepository blogRepository;
+
+    @Autowired
+    private BlogReviewRepository blogReviewRepository;
+
+    @Autowired
+    private RewardRepository rewardRepository;
 
 
     // @Override
@@ -350,7 +360,117 @@ public class services implements Iservices {
         return ResponseEntity.status(200).body("User Added");
 
     }
+    @Override
+    public ResponseEntity<Optional<List<Chat>> > getMessages(MessageRequestDTO requestDTO){
+        Optional<List<Chat>> messages = Optional.ofNullable(this.chatRepository.findMessagesBetweenUsers(requestDTO.getTourist_id(), requestDTO.getTour_provider_id()));
+        return messages.isPresent() ? ResponseEntity.status(200).body(messages) : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
+    @Override
+    public ResponseEntity<String> setMessage(MessageDTO messageDTO){
+             Chat chat=new Chat(messageDTO);
+             this.chatRepository.save(chat);
+             return ResponseEntity.status(200).body("message saved");
+    }
+    @Override
+        public ResponseEntity<String> deleteMessage(Integer message_id){
+             this.chatRepository.deleteById(message_id);
+             return ResponseEntity.status(200).body("message deleted");
+    }
+    @Override
+    public ResponseEntity<String> addReport(ReportDTO reportDTO){
+         Report report = new Report(reportDTO);
+         this.reportRepository.save(report);
+        return ResponseEntity.status(200).body("report saved");
+    }
 
+    @Override
+    public ResponseEntity<List<ReportDTO>> getReports(){
+         Optional<List<Report>> reports = Optional.ofNullable(this.reportRepository.findAll());
+         if (reports.isPresent()){
+
+             List<ReportDTO> reportsDTO = reports.get().stream()
+                     .map(report -> new ReportDTO((Report) report))
+                     .collect(Collectors.toList());
+             return ResponseEntity.status(200).body(reportsDTO);
+         }
+         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
+    @Override
+    public ResponseEntity<String> deleteReport(Integer reportId){
+         this.reportRepository.deleteById(reportId);
+         return ResponseEntity.status(200).body("report deleted");
+    }
+
+    @Override
+    public ResponseEntity<String> addBlog(BlogDTO blogDTO){
+        if(blogDTO.getPhoto()==null) {
+            this.blogRepository.save(new Blog(blogDTO,null));
+            return ResponseEntity.status(200).body("blog saved");
+        }
+        String directory = "Documents/Blogs";
+        String uniqueFileName = this.fileSystemService.generateUniqueFileName(directory, "jpg");
+        String relativeFilePath = Paths.get(directory, uniqueFileName).toString();
+
+        try {
+
+            this.fileSystemService.storeFile(blogDTO.getPhoto().getBytes() ,relativeFilePath);
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        this.blogRepository.save(new Blog(blogDTO,relativeFilePath));
+
+        return ResponseEntity.status(200).body("blog saved");
+
+    }
+    @Override
+    public ResponseEntity<List<BlogDTO>>  getBlogs(){
+         Optional<List<Blog>> blogs = Optional.ofNullable(this.blogRepository.findAll());
+
+        if (blogs.isPresent()){
+
+            List<BlogDTO> dtos = blogs.get().stream()
+                    .map(blog -> new BlogDTO(blog))
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(200).body(dtos);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+     }
+
+    @Override
+    public ResponseEntity<String> addReview(BlogReviewDTO blogReviewDTO){
+         this.blogReviewRepository.save(new BlogReview(blogReviewDTO));
+         if(blogReviewDTO.getRole().toString()=="Tourist"){
+             System.out.println("1");
+             Optional<Reward> reward = Optional.ofNullable(this.rewardRepository.findByTouristId(blogReviewDTO.getUser_id()));
+             if(reward.isPresent()){
+                 System.out.println("2");
+                 reward.get().setPoints(reward.get().getPoints()+1);
+                 reward.get().setActivityType(Reward.ActivityType.valueOf("Review"));
+                 this.rewardRepository.save(reward.get());
+             }
+             else{
+                 System.out.println("3");
+                 Reward new_reward = new Reward(blogReviewDTO.getUser_id(),Reward.ActivityType.valueOf("Review"),1);
+                 this.rewardRepository.save(new_reward);
+             }
+         }
+         return ResponseEntity.status(200).body("review saved");
+    }
+    @Override
+    public ResponseEntity<List<BlogReviewDTO>> getReviews(Integer blog_id){
+        Optional<List<BlogReview>> reviews = Optional.ofNullable(this.blogReviewRepository.findByBlogId(blog_id));
+        if(reviews.isPresent()){
+            List<BlogReviewDTO> dtos=reviews.get().stream()
+                    .map(review -> new BlogReviewDTO(review))
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(200).body(dtos);
+        }
+        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+     }
 
 }
 
