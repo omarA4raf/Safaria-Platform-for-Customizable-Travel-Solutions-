@@ -18,14 +18,17 @@ import { TouristCustomizeTourSecondComponent } from './tourist-customize-tour-se
 import { TouristCustomizeTourThirdComponent } from './tourist-customize-tour-third/tourist-customize-tour-third.component';
 import { TouristCustomizeTourFourthComponent } from './tourist-customize-tour-fourth/tourist-customize-tour-fourth.component';
 import { TouristPrepackageShowComponent } from './tourist-prepackage-show/tourist-prepackage-show.component';
+
+import { TouristPrepackageSeeTourComponent } from './tourist-prepackage-see-tour/tourist-prepackage-see-tour.component';
+import { TouristPrepackagePayTourComponent } from './tourist-prepackage-pay-tour/tourist-prepackage-pay-tour.component';
+import { PaymentComponent } from './payment/payment.component';
+
 import { TouristViewTripComponent } from './tourist-view-trip/tourist-view-trip.component';
 import { TouristPayTripComponent } from './tourist-pay-trip/tourist-pay-trip.component';
 import { TouristPaymentSuccessComponent} from './tourist-payment-success/tourist-payment-success.component';
 import { TouristPaymentFailedComponent} from './tourist-payment-failed/tourist-payment-failed.component';
 import { TouristBlogigngPageComponent } from './tourist-blogigng-page/tourist-blogigng-page.component';
 import { TouristMyBlogigngPageComponent } from './tourist-my-blogigng-page/tourist-my-blogigng-page.component';
-
-
 
 export const routes: Routes = [
   { path: '', component: HomeComponent }, // Default route
@@ -89,9 +92,15 @@ export const routes: Routes = [
     component: TouristBlogigngPageComponent,
   }, // tourist blogigng page component route
   {
+
+    path: 'touristprepackagepaytourcomponent',
+    component: TouristPrepackagePayTourComponent,
+  }, // tourist prepackage pay tour component route
+  { path: 'payment', component: PaymentComponent },
+
+
     path: 'touristmyblogigngpagecomponent',
     component: TouristMyBlogigngPageComponent,
   }, // tourist my blogigng page component route
-  
   
 ];

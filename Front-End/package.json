@@ -27,6 +27,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@ng-bootstrap/ng-bootstrap": "^18.0.0",
+    "@react-pdf/renderer": "^4.3.0",
     "@stripe/stripe-js": "^7.4.0",
     "@types/axios": "^0.9.36",
     "@types/stripe": "^8.0.416",
