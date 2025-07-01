@@ -114,6 +114,8 @@ private String UPLOAD_DIRECTORY;
 System.out.println("Creating schedule with price: " + scheduleDTO.getPrice());
 
         schedule.setPrice(scheduleDTO.getPrice());
+        System.out.println("             \n\n\n"+scheduleDTO.getPrice()+"             \n\n\n");
+        
         schedule.setAvailableSeats(scheduleDTO.getAvailableSeats());
 
         try {
@@ -166,6 +168,40 @@ System.out.println("Creating schedule with price: " + scheduleDTO.getPrice());
     public Tour getTourById(Integer tourId) {
         return tourRepository.findById(tourId)
                 .orElseThrow(() -> new RuntimeException("Tour not found"));
+    }
+
+    // Add this method to map Tour to TourRequestDTO
+    public TourRequestDTO getTourDTOById(Integer tourId) {
+        Tour tour = tourRepository.findById(tourId)
+                .orElseThrow(() -> new RuntimeException("Tour not found"));
+
+        TourRequestDTO dto = new TourRequestDTO();
+        dto.setTitle(tour.getTitle());
+        dto.setDescription(tour.getDescription());
+        dto.setDestinationCountry(tour.getDestinationCountry());
+        dto.setCurrency(tour.getCurrency());
+        dto.setTourismTypes(tour.getTourismTypes());
+        dto.setTourProviderId(tour.getTourProvider().getUserId());
+        // Map images (as URLs or IDs)
+        // dto.setImages(
+        //     tour.getImages() != null
+        //         ? tour.getImages().stream().map(img -> img.getImageUrl()).toList()
+        //         : new ArrayList<>()
+        // );
+        // Map available dates (schedules)
+        List<TourSchedule> schedules = tourScheduleRepository.findByTour_TourId(tourId);
+        dto.setAvailableDates(
+            schedules.stream().map(sch -> {
+                TourScheduleDTO schDto = new TourScheduleDTO();
+                schDto.setPrice(sch.getPrice());
+                schDto.setStartDate(sch.getStartDate() != null ? sch.getStartDate().toString() : null);
+                schDto.setEndDate(sch.getEndDate() != null ? sch.getEndDate().toString() : null);
+                schDto.setAvailableSeats(sch.getAvailableSeats());
+                return schDto;
+            }).toList()
+        );
+        // Optionally add more fields as needed
+        return dto;
     }
 
     // ✅ Update a Tour

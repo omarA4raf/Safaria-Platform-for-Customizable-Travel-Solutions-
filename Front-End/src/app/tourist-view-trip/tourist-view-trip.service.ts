@@ -8,16 +8,13 @@ import { Trip, AvailableDate } from './tourist-view-trip.component';
 })
 export class TouristViewTripService {
   private apiUrl = 'http://localhost:8080/api';
-  private useFakeData = true; // Switch to false to use real API
+  private useFakeData = false; // Set to false to use real API
 
   constructor(private http: HttpClient) {}
 
   getTripById(id: number): Observable<Trip> {
-    if (this.useFakeData) {
-      return of(this.getFakeTripData());
-    } else {
-      return this.http.get<Trip>(`${this.apiUrl}/tours/${id}`);
-    }
+    // Always use real API now
+    return this.http.get<Trip>(`${this.apiUrl}/tours/${id}`);
   }
 
   public getFakeTripData(): Trip {
@@ -61,7 +58,7 @@ export class TouristViewTripService {
       freeCancellationDeadline: 30,
       currency: 'USD',
       rating: 4.7,
-      price: 1200,
+      // price: 1200,
     };
   }
 

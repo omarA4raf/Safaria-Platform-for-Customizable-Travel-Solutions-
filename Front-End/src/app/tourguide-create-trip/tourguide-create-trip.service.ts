@@ -23,5 +23,4 @@ export class TourguideCreateTripService {
     return this.http.post(`${this.apiUrl}/draftTrips`, formData);
   }
 }
- 
- 
+

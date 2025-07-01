@@ -25,7 +25,7 @@ export interface Trip {
   destinationCountry: string;
   priceAmount: number;
   priceCurrency: string; // 'USD', 'EUR', 'GBP', etc.
-  
+
   duration?: string;
 }
 
@@ -142,6 +142,21 @@ export class TouristPrepackageShowComponent implements OnInit {
     this.apiService.searchTripsByCountry(query, offset, size).subscribe({
       next: (data: Trip[]) => {
         this.filteredTrips = data;
+         data.forEach((trip, idx) => {
+          this.apiService.getTripImage(trip.tourID).subscribe({
+            next: (blob: Blob) => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                trip.image = reader.result as string;
+                // Optionally trigger change detection or update UI
+              };
+              reader.readAsDataURL(blob);
+            },
+            error: () => {
+              trip.image = ''; // fallback or placeholder
+            }
+          });
+        });
         this.updateDisplayedTrips();
       },
       error: (error) => {
@@ -153,6 +168,7 @@ export class TouristPrepackageShowComponent implements OnInit {
       },
     });
   }
+ 
 
   private fetchTripsFromApi(): void {
     const country = this.searchQuery ? this.searchQuery.toLowerCase() : '';
@@ -226,4 +242,10 @@ export class TouristPrepackageShowComponent implements OnInit {
 
     return starsHtml;
   }
+  goToView(trip: Trip): void {
+    // Navigate to the detailed trip view using the trip's ID
+    this.router.navigate(['/tourist-view-trip', trip.tourID]);
+  }
+
 }
+

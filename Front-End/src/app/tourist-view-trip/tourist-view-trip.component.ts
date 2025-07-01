@@ -27,17 +27,17 @@ export interface Trip {
   id: number;
   title: string;
   images: string[];
-  imageUrl?: string; // Add this optional property
+  imageUrl?: string;
   destinationCountry: string;
   tourismTypes: string[];
   duration: number | null;
-  price: number; // Base price (can be used as fallback)
+  price?: number; // Base price (can be used as fallback)
   availableDates: AvailableDate[];
   description: string;
-  freeCancellationDeadline: number | null; // days before trip
+  freeCancellationDeadline: number | null;
   currency: string;
   rating: number;
-  providerName: string; // 👈 Add this
+  providerName: string;
 }
 
 @Component({
@@ -49,25 +49,25 @@ export interface Trip {
 })
 export class TouristViewTripComponent implements OnInit {
   // Step 2: Add these required properties
-  userId = '123'; // Replace with actual user ID from your auth service
-  userType: 'tourist' | 'guide' | 'company' | 'admin' = 'tourist'; // Replace with actual user type from your auth service
-  trip: Trip = {
-    id: 0,
-    title: '',
-    images: [' '], // Default image
-    destinationCountry: '',
-    tourismTypes: [],
-    duration: null,
-    availableDates: [
-      { startDate: null, endDate: null, availableSeats: null, budget: 0 },
-    ],
-    description: '',
-    freeCancellationDeadline: null,
-    currency: 'USD',
-    rating: 0,
-    price: 0,
-    providerName: '', // Added to fix the error
-  };
+  // userId = '123'; // Replace with actual user ID from your auth service
+  // userType: 'tourist' | 'guide' | 'company' | 'admin' = 'tourist'; // Replace with actual user type from your auth service
+  // trip: Trip = {
+  //   id: 0,
+  //   title: '',
+  //   images: [' '], // Default image
+  //   destinationCountry: '',
+  //   tourismTypes: [],
+  //   duration: null,
+  //   availableDates: [
+  //     { startDate: null, endDate: null, availableSeats: null, budget: 0 },
+  //   ],
+  //   description: '',
+  //   freeCancellationDeadline: null,
+  //   currency: 'USD',
+  //   rating: 0,
+  //   price: 0,
+  //   providerName: '', // Added to fix the error
+  // };
 
   currentImageIndex = 0;
   isLoading = true;
@@ -102,6 +102,11 @@ export class TouristViewTripComponent implements OnInit {
     this.totalPrice = this.getCurrentPrice() * this.memberCount;
   }
 
+  userId: string = '';
+  userType: 'tourist' | 'guide' | 'company' | 'admin' = 'tourist';
+
+  trip!: Trip; // Will be set after fetching from backend
+
   constructor(
     private route: ActivatedRoute,
     private tripService: TouristViewTripService,
@@ -135,28 +140,42 @@ export class TouristViewTripComponent implements OnInit {
   loadTrip(id: number): void {
     this.isLoading = true;
     this.errorMessage = null;
-    this.calculateTotal();
 
     this.tripService.getTripById(id).subscribe({
-      next: (trip: Trip) => {
-        this.trip = trip;
-        // Use the first image from the images array as default
-        if (trip.images && trip.images.length > 0) {
-          this.trip.imageUrl = trip.images[0];
-        }
-        this.isLoading = false;
+      next: (data: any) => {
+        // Map backend data to Trip interface
+        this.trip = {
+          id: data.tourId ?? data.id ?? id,
+          title: data.title,
+          images: (data.images && Array.isArray(data.images))
+            ? data.images.map((img: any) => typeof img === 'string' ? img : img.imageUrl)
+            : [],
+          imageUrl: undefined,
+          destinationCountry: data.destinationCountry,
+          tourismTypes: data.tourismTypes ?? [],
+          duration: data.duration ?? null,
+          availableDates: (data.availableDates || data.schedules || []).map((d: any) => ({
+            startDate: d.startDate ? new Date(d.startDate) : null,
+            endDate: d.endDate ? new Date(d.endDate) : null,
+            availableSeats: d.availableSeats ?? null,
+            budget: d.price ?? d.budget ?? 0,
+          })),
+          description: data.description,
+          freeCancellationDeadline: data.freeCancellationDeadline ?? null,
+          currency: data.currency,
+          rating: data.rating ?? 0,
+          providerName: data.tourProvider?.username || data.providerName || data.tourProviderName || '',
+        };
 
-        // Optional: If you still want to fetch images via blob
-        // this.tripService.getTripImage(id).subscribe({
-        //   next: (image) => {
-        //     this.trip.imageUrl = URL.createObjectURL(image);
-        //     this.isLoading = false;
-        //   },
-        //   error: (err) => {
-        //     console.error('Error loading image:', err);
-        //     this.isLoading = false;
-        //   }
-        // });
+        if (this.trip.images && this.trip.images.length > 0) {
+          this.trip.imageUrl = this.trip.images[0];
+        }
+        this.currentImageIndex = 0;
+        this.selectedDateIndex = null;
+        this.selectedDate = null;
+        this.memberCount = 1;
+        this.calculateTotal();
+        this.isLoading = false;
       },
       error: (err: any) => {
         this.errorMessage =
@@ -237,7 +256,8 @@ export class TouristViewTripComponent implements OnInit {
     if (this.selectedDate) {
       return this.selectedDate.budget;
     }
-    return this.trip.price; // Fallback to base price
+    // fallback: use first available date or 0
+    return this.trip.availableDates?.[0]?.budget ?? 0;
   }
 
   // Step 4: Add this method (replace with your actual auth logic)

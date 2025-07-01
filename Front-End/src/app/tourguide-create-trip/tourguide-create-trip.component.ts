@@ -53,7 +53,7 @@ export class TourguideCreateTripComponent implements OnInit {
     tourismTypes: [] as string[], // New field for tourism types
     duration: null as number | null,
     availableDates: [
-      { startDate: null, endDate: null, availableSeats: null, budget: null },
+      { startDate: null, endDate: null, availableSeats: null, price: null },
     ],
     description: '',
     freeCancellationDeadline: null as number | null, // New field for free cancellation deadline
@@ -325,7 +325,7 @@ export class TourguideCreateTripComponent implements OnInit {
       startDate: null,
       endDate: null,
       availableSeats: null,
-      budget: null,
+      price: null,
     });
   }
 
@@ -392,8 +392,8 @@ export class TourguideCreateTripComponent implements OnInit {
           isValid = false;
           break;
         }
-        if (!dateRange.budget || dateRange.budget <= 0) {
-          this.errorMessages['budget'] = 'Budget must be a positive number.';
+        if (!dateRange.price || dateRange.price <= 0) {
+          this.errorMessages['price'] = 'price must be a positive number.';
           isValid = false;
           break;
         }
@@ -445,7 +445,7 @@ export class TourguideCreateTripComponent implements OnInit {
           dateRange.startDate ||
           dateRange.endDate ||
           dateRange.availableSeats !== null ||
-          dateRange.budget !== null
+          dateRange.price !== null
       ) ||
       this.trip.description ||
       this.trip.freeCancellationDeadline !== null ||
@@ -534,7 +534,7 @@ export class TourguideCreateTripComponent implements OnInit {
           dateRange.startDate ||
           dateRange.endDate ||
           dateRange.availableSeats !== null ||
-          dateRange.budget !== null
+          dateRange.price !== null
       ) ||
       this.trip.description ||
       this.trip.freeCancellationDeadline !== null ||

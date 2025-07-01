@@ -103,5 +103,6 @@ export const routes: Routes = [
     path: 'touristmyblogigngpagecomponent',
     component: TouristMyBlogigngPageComponent,
   }, // tourist my blogigng page component route
+  { path: 'tourist-view-trip/:id', component: TouristViewTripComponent },
 
 ];

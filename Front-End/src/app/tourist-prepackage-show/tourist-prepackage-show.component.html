@@ -43,7 +43,7 @@
 
       <div *ngIf="filteredTrips.length > 0; else noResults" class="trip-results-container">
         <div class="trip-results-grid">
-          <div class="trip-card" *ngFor="let trip of displayedTrips">
+          <div class="trip-card" *ngFor="let trip of displayedTrips" (click)="goToView(trip)">
             <div class="trip-image-container">
               <img [src]="trip.image || '/assets/img/default-trip.jpg'" alt="{{ trip.title }}" class="trip-image">
               <div class="trip-overlay"></div>

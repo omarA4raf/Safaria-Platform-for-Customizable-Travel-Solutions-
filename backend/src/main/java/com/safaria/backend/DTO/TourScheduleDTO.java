@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class TourScheduleDTO {
 //    private Integer duration;
-    private Double price;
+    private Double ;
     private String startDate;
     private String endDate;
     private Integer availableSeats;
