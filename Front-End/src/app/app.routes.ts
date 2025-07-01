@@ -19,8 +19,8 @@ import { TouristCustomizeTourThirdComponent } from './tourist-customize-tour-thi
 import { TouristCustomizeTourFourthComponent } from './tourist-customize-tour-fourth/tourist-customize-tour-fourth.component';
 import { TouristPrepackageShowComponent } from './tourist-prepackage-show/tourist-prepackage-show.component';
 
-import { TouristPrepackageSeeTourComponent } from './tourist-prepackage-see-tour/tourist-prepackage-see-tour.component';
-import { TouristPrepackagePayTourComponent } from './tourist-prepackage-pay-tour/tourist-prepackage-pay-tour.component';
+// import { TouristPrepackageSeeTourComponent } from './tourist-prepackage-see-tour/tourist-prepackage-see-tour.component';
+// import { TouristPrepackagePayTourComponent } from './tourist-prepackage-pay-tour/tourist-prepackage-pay-tour.component';
 import { PaymentComponent } from './payment/payment.component';
 
 import { TouristViewTripComponent } from './tourist-view-trip/tourist-view-trip.component';
@@ -91,16 +91,17 @@ export const routes: Routes = [
     path: 'touristblogigngpagecomponent',
     component: TouristBlogigngPageComponent,
   }, // tourist blogigng page component route
-  {
+  // {
 
-    path: 'touristprepackagepaytourcomponent',
-    component: TouristPrepackagePayTourComponent,
-  }, // tourist prepackage pay tour component route
+  //   path: 'touristprepackagepaytourcomponent',
+  //   component: TouristPrepackagePayTourComponent,
+  // }, // tourist prepackage pay tour component route
   { path: 'payment', component: PaymentComponent },
 
 
+  {
     path: 'touristmyblogigngpagecomponent',
     component: TouristMyBlogigngPageComponent,
   }, // tourist my blogigng page component route
-  
+
 ];

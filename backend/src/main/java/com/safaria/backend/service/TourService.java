@@ -220,22 +220,22 @@ System.out.println("Creating schedule with price: " + scheduleDTO.getPrice());
         }
     }
     // ✅ Get 5 Important Tours
-    public List<TourImportantDTO> getFiveImportantTours() {
-        List<Tour> tours = tourRepository.findAll().stream().limit(5).collect(Collectors.toList());
-        List<TourImportantDTO> tourImportantDTOList = new ArrayList<>();
+    // public List<TourImportantDTO> getFiveImportantTours() {
+    //     List<Tour> tours = tourRepository.findAll().stream().limit(5).collect(Collectors.toList());
+    //     List<TourImportantDTO> tourImportantDTOList = new ArrayList<>();
         
-        for (Tour tour : tours) {
-            TourImportantDTO tourImportantDTO = new TourImportantDTO();
-            tourImportantDTO.setTitle(tour.getTitle());
-            tourImportantDTO.setRating(tour.getRating());
-            tourImportantDTO.setTourID(tour.getTourId().toString());
-            System.out.println(tour.getTourProvider().getUsername());
-            tourImportantDTO.setTourProviderName(tour.getTourProvider().getUsername());
-            tourImportantDTOList.add(tourImportantDTO);
-        }
+    //     for (Tour tour : tours) {
+    //         TourImportantDTO tourImportantDTO = new TourImportantDTO();
+    //         tourImportantDTO.setTitle(tour.getTitle());
+    //         tourImportantDTO.setRating(tour.getRating());
+    //         tourImportantDTO.setTourID(tour.getTourId().toString());
+    //         System.out.println(tour.getTourProvider().getUsername());
+    //         tourImportantDTO.setTourProviderName(tour.getTourProvider().getUsername());
+    //         tourImportantDTOList.add(tourImportantDTO);
+    //     }
         
-        return tourImportantDTOList;
-    }
+    //     return tourImportantDTOList;
+    // }
   // ✅ Get Tours by Country and  with Pagination
     public List<TourSearchDTO> getToursByCountry(String country, int offset, int size) {
         if (country == null || country.trim().isEmpty()) {

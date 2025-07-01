@@ -86,10 +86,10 @@ public class TourController {
         tourService.deleteSchedule(scheduleId);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/important")
-    public ResponseEntity<List<TourImportantDTO>> getFiveImportantTours() {
-        return ResponseEntity.ok(tourService.getFiveImportantTours());
-    }
+    // @GetMapping("/important")
+    // public ResponseEntity<List<TourImportantDTO>> getFiveImportantTours() {
+    //     return ResponseEntity.ok(tourService.getFiveImportantTours());
+    // }
     @GetMapping("/image/{id}")
 public ResponseEntity<byte[]> getImage(@PathVariable Integer id) {
     List<Image> images = imageService.getImagesByTour(id);
