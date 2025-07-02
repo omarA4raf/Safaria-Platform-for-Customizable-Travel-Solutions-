@@ -244,7 +244,7 @@ export class TouristPrepackageShowComponent implements OnInit {
   }
   goToView(trip: Trip): void {
     // Navigate to the detailed trip view using the trip's ID
-    this.router.navigate(['/tourist-view-trip', trip.tourID]);
+    this.router.navigate(['/tourist-view-trip', trip.tourID,trip.tourProviderName]);
   }
 
 }
