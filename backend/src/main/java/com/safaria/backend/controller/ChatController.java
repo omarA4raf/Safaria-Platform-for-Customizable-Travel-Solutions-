@@ -1,5 +1,6 @@
 package com.safaria.backend.controller;
 
+import com.safaria.backend.DTO.ChatDTO;
 import com.safaria.backend.DTO.MessageDTO;
 import com.safaria.backend.DTO.MessageRequestDTO;
 import com.safaria.backend.DTO.UserEditDto;
@@ -25,7 +26,7 @@ public class ChatController {
     }
 
     @GetMapping("/getMessages/")
-    public ResponseEntity<Optional<List<Chat>>> getMessages(@Valid @RequestBody MessageRequestDTO requestDTO){
+    public ResponseEntity<List<MessageDTO>> getMessages(@Valid @RequestBody MessageRequestDTO requestDTO){
         return this.serv.getMessages(requestDTO);
     }
     @PostMapping("/setMessage/")
@@ -35,5 +36,10 @@ public class ChatController {
     @DeleteMapping("/deleteMessage/{message_id}")
     public ResponseEntity<String> deleteMessage(@PathVariable Integer message_id){
         return this.serv.deleteMessage(message_id);
+    }
+    @GetMapping("/getChats/{username}")
+    public ResponseEntity<List<ChatDTO>> getChats(@PathVariable String username){
+        System.out.println("wassssssssssssssssssssssssssal");
+        return this.serv.getChats(username);
     }
 }

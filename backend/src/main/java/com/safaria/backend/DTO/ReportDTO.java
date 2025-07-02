@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
 public class ReportDTO {
     private Integer report_id;
 
-    private Integer reporting_user_id;
+    private String  reporting_user_username;
 
-    private Integer reported_user_id;
+    private String reported_user_username;
 
     private String comment;
 
@@ -30,8 +30,8 @@ public class ReportDTO {
 
     public ReportDTO(Report report){
         this.report_id=report.getReport_id();
-        this.reporting_user_id=report.getReporting_user_id();
-        this.reported_user_id= report.getReported_user_id();
+        this.reporting_user_username=report.getReporting_user_username();
+        this.reported_user_username= report.getReported_user_username();
         this.reporting_user_type=report.getReporting_user_type();
         this.reported_user_type=report.getReported_user_type();
         this.comment=report.getComment();

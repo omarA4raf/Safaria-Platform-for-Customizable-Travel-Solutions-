@@ -231,3 +231,33 @@
 .chat-container * {
   box-sizing: border-box;
 }
+.chat-search {
+  width: 100%;
+  max-width: 400px;
+}
+
+.input-container {
+  position: relative;
+  width: 100%;
+}
+
+.input-container input {
+  width: 100%;
+  padding-right: 80px; /* space for the button */
+  padding-left: 10px;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.input-container .submit-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  padding: 0 15px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 0 4px 4px 0;
+}

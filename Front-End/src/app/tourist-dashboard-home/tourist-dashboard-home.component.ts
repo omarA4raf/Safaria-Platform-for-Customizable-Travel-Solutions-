@@ -65,7 +65,7 @@ export class TouristDashboardHomeComponent implements OnInit {
 
     console.log('Home component initialized with userId:', this.userId);
 
-    this.fetchData();
+    //this.fetchData();
 
     if (isPlatformBrowser(this.platformId)) {
       window.addEventListener('scroll', function () {

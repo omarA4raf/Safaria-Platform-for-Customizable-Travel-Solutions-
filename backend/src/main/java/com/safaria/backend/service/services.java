@@ -361,9 +361,12 @@ public class services implements Iservices {
 
     }
     @Override
-    public ResponseEntity<Optional<List<Chat>> > getMessages(MessageRequestDTO requestDTO){
-        Optional<List<Chat>> messages = Optional.ofNullable(this.chatRepository.findMessagesBetweenUsers(requestDTO.getTourist_id(), requestDTO.getTour_provider_id()));
-        return messages.isPresent() ? ResponseEntity.status(200).body(messages) : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    public ResponseEntity<List<MessageDTO>> getMessages(MessageRequestDTO requestDTO){
+        Optional<List<Chat>> chats = Optional.ofNullable(this.chatRepository.findMessagesBetweenUsers(requestDTO.getUsername1(), requestDTO.getUsername2()));
+        List<MessageDTO> messages = chats.get().stream()
+                .map(chat -> new MessageDTO(chat))
+                .collect(Collectors.toList());
+        return ResponseEntity.status(200).body(messages) ;
     }
     @Override
     public ResponseEntity<String> setMessage(MessageDTO messageDTO){
@@ -445,7 +448,7 @@ public class services implements Iservices {
          this.blogReviewRepository.save(new BlogReview(blogReviewDTO));
          if(blogReviewDTO.getRole().toString()=="Tourist"){
              System.out.println("1");
-             Optional<Reward> reward = Optional.ofNullable(this.rewardRepository.findByTouristId(blogReviewDTO.getUser_id()));
+             Optional<Reward> reward = Optional.ofNullable(this.rewardRepository.findByTouristUsername(blogReviewDTO.getUser_username()));
              if(reward.isPresent()){
                  System.out.println("2");
                  reward.get().setPoints(reward.get().getPoints()+1);
@@ -454,7 +457,7 @@ public class services implements Iservices {
              }
              else{
                  System.out.println("3");
-                 Reward new_reward = new Reward(blogReviewDTO.getUser_id(),Reward.ActivityType.valueOf("Review"),1);
+                 Reward new_reward = new Reward(blogReviewDTO.getUser_username(),Reward.ActivityType.valueOf("Review"),1);
                  this.rewardRepository.save(new_reward);
              }
          }
@@ -470,6 +473,25 @@ public class services implements Iservices {
             return ResponseEntity.status(200).body(dtos);
         }
         return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+     }
+     @Override
+    public ResponseEntity<List<ChatDTO>> getChats(String username){
+         Optional<List<Chat>> chats= Optional.ofNullable(this.chatRepository.findMessagesByUsername(username));
+         List<ChatDTO> dtos=new ArrayList<ChatDTO>();
+         if (chats.isPresent()){
+            HashMap<String,List<Chat>> map=new HashMap<String,List<Chat>>();
+            for (Chat c:chats.get()){
+                String name = c.getSender_username().equals(username) ? c.getReceiver_username() : c.getSender_username();
+                if(map.containsKey(name)) map.get(name).add(c);
+                else map.put(name,new ArrayList<>(List.of(c)));
+            }
+
+             for (Map.Entry<String,List<Chat>> entry : map.entrySet()) {
+                 dtos.add(new ChatDTO(entry.getKey(), entry.getValue()));
+             }
+         }
+         System.out.println(dtos.get(0).getLastMessage());
+         return ResponseEntity.status(200).body(dtos);
      }
 
 }

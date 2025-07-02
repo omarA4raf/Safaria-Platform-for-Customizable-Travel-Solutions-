@@ -23,8 +23,8 @@ public class Blog {
     @Column(name = "blogId")
     private Integer blogId;
 
-    @Column(name = "user_id")
-    private Integer user_id;
+    @Column(name = "user_username")
+    private String user_username;
 
     @Column(name = "content")
     private String content;
@@ -43,7 +43,7 @@ public class Blog {
 
 
     public Blog(BlogDTO blogDTO,String file){
-        this.user_id=blogDTO.getUser_id();
+        this.user_username=blogDTO.getUser_username();
         this.content=blogDTO.getContent();
         this.photo=file;
         this.createdAt=LocalDateTime.now();

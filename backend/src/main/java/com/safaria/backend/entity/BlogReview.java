@@ -21,8 +21,8 @@ public class BlogReview {
     @Column(name = "review_id")
     private Integer review_id;
 
-    @Column(name = "user_id")
-    private Integer user_id;
+    @Column(name = "user_username")
+    private String user_username;
 
     @Column(name = "comment")
     private String comment;
@@ -39,7 +39,7 @@ public class BlogReview {
     private Integer blogId;
 
     public BlogReview(BlogReviewDTO blogReviewDTO){
-        this.user_id=blogReviewDTO.getUser_id();
+        this.user_username=blogReviewDTO.getUser_username();
         this.comment=blogReviewDTO.getComment();
         this.blogId=blogReviewDTO.getBlogId();
         this.role=blogReviewDTO.getRole();

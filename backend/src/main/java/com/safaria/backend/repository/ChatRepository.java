@@ -13,9 +13,15 @@ public interface ChatRepository extends JpaRepository<Chat, Integer> {
     // Add custom query methods if needed, for example:
     // Admin findByEmail(String email);
     @Query("SELECT m FROM Chat m WHERE " +
-            "(m.tourist_id = :tourist_id AND m.tour_provider_id = :tour_provider_id) " +
+            "(m.sender_username = :username1 AND m.receiver_username = :username2) " +
+            "OR (m.sender_username = :username2 AND m.receiver_username = :username1)"+
             "ORDER BY m.id ASC")
-    List<Chat> findMessagesBetweenUsers(@Param("tourist_id") Integer tourist_id, @Param("tour_provider_id") Integer tour_provider_id);
+    List<Chat> findMessagesBetweenUsers(@Param("username1") String username1, @Param("username2") String username2);
+
+    @Query("SELECT m FROM Chat m WHERE " +
+            "(m.sender_username = :username OR m.receiver_username = :username) " +
+            "ORDER BY m.id ASC")
+    List<Chat> findMessagesByUsername(@Param("username") String username);
     @Override
     void deleteById(Integer aLong);
 }

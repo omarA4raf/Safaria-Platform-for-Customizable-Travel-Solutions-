@@ -20,7 +20,7 @@ public class BlogReviewDTO {
     private Integer blogId;
 
 
-    private Integer user_id;
+    private String user_username;
 
     private Role role;
 
@@ -36,7 +36,7 @@ public class BlogReviewDTO {
     }
 
     public BlogReviewDTO(BlogReview blogReview){
-        this.user_id=blogReview.getUser_id();
+        this.user_username=blogReview.getUser_username();
         this.comment=blogReview.getComment();
         this.blogId=blogReview.getBlogId();
         this.role=blogReview.getRole();

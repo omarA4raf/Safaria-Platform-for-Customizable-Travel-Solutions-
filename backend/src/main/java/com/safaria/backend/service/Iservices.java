@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public interface Iservices {
     public List<UserEditDto> getUsers();
     public ResponseEntity<String> updateUser(UserEditDto user,Integer id,Integer role);
     public ResponseEntity<String> addUser(UserEditDto user);
-    public ResponseEntity<Optional<List<Chat>>> getMessages(MessageRequestDTO requestDTO);
+    public ResponseEntity<List<MessageDTO>> getMessages(MessageRequestDTO requestDTO);
     public ResponseEntity<String> setMessage(MessageDTO messageDTO);
     public ResponseEntity<String> deleteMessage(Integer message_id);
 
@@ -38,5 +39,7 @@ public interface Iservices {
 
     public ResponseEntity<String> addReview(BlogReviewDTO blogReviewDTO);
     public ResponseEntity<List<BlogReviewDTO>> getReviews(Integer blog_id);
+
+    public ResponseEntity<List<ChatDTO>> getChats(String username);
 
 }

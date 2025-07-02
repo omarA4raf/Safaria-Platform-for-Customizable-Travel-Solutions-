@@ -19,8 +19,8 @@ public class Reward {
     @Column(name = "RewardId")
     private Integer rewardId;
 
-    @Column(name = "TouristId")
-    private Integer touristId; // Changed from User to Tourist
+    @Column(name = "TouristUsername")
+    private String touristUsername; // Changed from User to Tourist
 
     @Column(name = "Points")
     private Integer points;
@@ -41,8 +41,8 @@ public class Reward {
     public void setActivityType(ActivityType activityType){this.activityType=activityType;}
 
 
-    public Reward(Integer touristId,ActivityType activityType,Integer points){
-        this.touristId=touristId;
+    public Reward(String touristUsername,ActivityType activityType,Integer points){
+        this.touristUsername=touristUsername;
         this.activityType=activityType;
         this.points=points;
         this.timestamp=LocalDateTime.now();

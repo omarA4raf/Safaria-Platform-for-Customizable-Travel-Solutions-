@@ -14,12 +14,14 @@ public class CustomUserDetails implements UserDetails {
     private String username;
     private String password;
     private String role;
+    private String name;
 
-    public CustomUserDetails(Integer id, String username, String password, String role) {
+    public CustomUserDetails(Integer id, String username, String password, String role,String name) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
+        this.name=name;
     }
 
     public Integer getId() {

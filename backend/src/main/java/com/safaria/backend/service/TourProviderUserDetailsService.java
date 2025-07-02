@@ -31,7 +31,7 @@ public class TourProviderUserDetailsService implements UserDetailsService {
 
         
     
-        return new CustomUserDetails(provider.getUserId(), provider.getEmail(), provider.getPassword(), role);
+        return new CustomUserDetails(provider.getUserId(), provider.getEmail(), provider.getPassword(), role, provider.getUsername());
     }
     
 }

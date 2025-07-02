@@ -9,4 +9,5 @@ public class UserLoginDTO {
     String token;
     Integer userId;
     String role;
+    String username;
 }
