@@ -79,6 +79,8 @@ public class TourProvider {
 
     @Column(name = "IsApproved")
     private Boolean isApproved;
+    @Column(name = "StripeAccountId")
+    private String stripeAccountId;
     public TourProvider(TourProviderSignUpDTO dto, String relativeFilePath,Boolean type)  {
 
             this.username = dto.getUsername();
@@ -122,5 +124,10 @@ public class TourProvider {
         this.isApproved=false;
         this.date=new Date();
 
+    }
+
+    public TourProvider orElseThrow(Object object) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
     }
 }

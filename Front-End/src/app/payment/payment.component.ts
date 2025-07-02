@@ -45,12 +45,26 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
   paymentProcessing = false;
   cardError = '';
 
+  tripDetails: any = null;
+  selectedDate: any = null;
+  memberCount: number = 1;
+  bookingResponse: any = null;
+
   constructor(
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
     private router: Router,
     private authService: AuthService
-  ) {}
+  ) {
+    // Read navigation state
+    const nav = this.router.getCurrentNavigation();
+    if (nav?.extras?.state) {
+      this.tripDetails = nav.extras.state['tripDetails'];
+      this.selectedDate = nav.extras.state['selectedDate'];
+      this.memberCount = nav.extras.state['memberCount'];
+      this.bookingResponse = nav.extras.state['bookingResponse'];
+    }
+  }
 
   async ngOnInit() {
     if (
@@ -69,37 +83,38 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       | 'company'
       | 'admin';
 
-    await this.fetchPaymentData();
+    this.setPaymentDataFromBooking(); // <-- Add this line
+
     await this.loadStripeScript();
   }
 
-  async fetchPaymentData() {
-    try {
-      const response = await this.http
-        .get<any>(
-          'http://localhost:8080/api/integration/api/stripe/payment-details'
-        )
-        .toPromise();
+  // async fetchPaymentData() {
+  //   try {
+  //     const response = await this.http
+  //       .get<any>(
+  //         'http://localhost:8080/api/integration/api/stripe/payment-details'
+  //       )
+  //       .toPromise();
 
-      if (response) {
-        this.paymentData = {
-          amount: response.amount || 0,
-          currency: response.currency || 'usd',
-          paymentMethodType: 'card',
-          description: response.description || '',
-        };
-      }
-    } catch (error) {
-      console.error('Error fetching payment data:', error);
-      this.errorMessage = 'Failed to load payment details';
-      this.paymentData = {
-        amount: 1000,
-        currency: 'usd',
-        paymentMethodType: 'card',
-        description: 'Tour Package Payment',
-      };
-    }
-  }
+  //     if (response) {
+  //       this.paymentData = {
+  //         amount: response.amount || 0,
+  //         currency: response.currency || 'usd',
+  //         paymentMethodType: 'card',
+  //         description: response.description || '',
+  //       };
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching payment data:', error);
+  //     this.errorMessage = 'Failed to load payment details';
+  //     this.paymentData = {
+  //       amount: 1000,
+  //       currency: 'usd',
+  //       paymentMethodType: 'card',
+  //       description: 'Tour Package Payment',
+  //     };
+  //   }
+  // }
 
   ngAfterViewInit() {
     setTimeout(() => {
@@ -191,6 +206,31 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private setPaymentDataFromBooking() {
+    // Prefer backend-calculated totalPrice if available
+    if (this.bookingResponse && this.bookingResponse.totalPrice) {
+      this.paymentData = {
+        amount: Math.round(this.bookingResponse.totalPrice * 100), // Stripe expects cents
+        currency: this.tripDetails?.currency || 'usd',
+        paymentMethodType: 'card',
+        description: `Payment for ${this.tripDetails?.title || 'Tour'}`,
+      };
+    } else if (this.selectedDate && this.memberCount) {
+      // Fallback: calculate from selectedDate and memberCount
+      this.paymentData = {
+        amount: Math.round(
+          (this.selectedDate.budget || 0) * this.memberCount * 100
+        ),
+        currency: this.tripDetails?.currency || 'usd',
+        paymentMethodType: 'card',
+        description: `Payment for ${this.tripDetails?.title || 'Tour'}`,
+      };
+    } else {
+      // Fallback to default
+      alert("there is a problem in handling the payment data");
+    }
+  }
+
   async makePayment() {
     if (this.paymentProcessing) return;
     if (!this.stripe || !this.cardElement) {
@@ -203,15 +243,17 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
     this.cdr.detectChanges();
 
     try {
+      const payload = {
+        scheduleId: this.selectedDate?.id,
+        numberOfSeats: this.memberCount,
+        userId: this.userId,
+        description: this.paymentData.description,
+      };
+
       const response = await this.http
         .post<any>(
           'http://localhost:8080/api/integration/api/stripe/create-payment-intent',
-          {
-            amount: this.paymentData.amount,
-            currency: this.paymentData.currency,
-            description: this.paymentData.description,
-            userId: this.userId,
-          }
+          payload
         )
         .toPromise();
 
@@ -232,6 +274,13 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cardError = result.error.message || 'Payment failed';
         this.router.navigate(['/touristpaymentfailedcomponent']);
       } else if (result.paymentIntent?.status === 'succeeded') {
+        // Confirm booking in backend
+        try {
+          await this.confirmBookingPayment(this.bookingResponse.id);
+        } catch (err) {
+          console.error('Failed to confirm booking after payment:', err);
+          // Optionally show a warning or handle error
+        }
         this.router.navigate(['/touristpaymentsuccesscomponent'], {
           state: {
             paymentData: this.paymentData,
@@ -250,5 +299,12 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy {
       this.paymentProcessing = false;
       this.cdr.detectChanges();
     }
+  }
+
+  // Call this after Stripe payment is successful
+  confirmBookingPayment(bookingId: number) {
+    return this.http
+      .put(`http://localhost:8080/api/tours/bookings/${bookingId}/confirm-payment`, {})
+      .toPromise();
   }
 }

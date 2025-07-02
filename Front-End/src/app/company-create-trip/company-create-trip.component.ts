@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import { CompanyCreateTripService } from './company-create-trip.service';
 import { ChatComponent } from '../shared/chat/chat.component';
+import { getData } from 'country-list';
 
 // shared/models/user-type.enum.ts
 export enum UserType {
@@ -23,7 +24,7 @@ export enum UserType {
   styleUrls: ['./company-create-trip.component.css'],
 })
 export class CompanyCreateTripComponent implements OnInit {
- // Step 2: Add these required properties
+  // Step 2: Add these required properties
   userId = '123'; // Replace with actual user ID from your auth service
   userType: 'tourist' | 'guide' | 'company' | 'admin' = 'tourist'; // Replace with actual user type from your auth service
 
@@ -195,78 +196,37 @@ export class CompanyCreateTripComponent implements OnInit {
       | 'guide'
       | 'company'
       | 'admin';
+
+    this.checkStripeAccount();
+  }
+
+  checkStripeAccount(): void {
+    const providerId = this.authService.getUserId();
+    this.http
+      .get<any>(
+        `http://localhost:8080/api/integration/api/stripe/provider-stripe-status/${providerId}`
+      )
+      .subscribe((status) => {
+        if (!status.hasStripeAccount) {
+          // Start onboarding
+          this.http
+            .post<any>(
+              'http://localhost:8080/api/integration/api/stripe/create-account',
+              { email: status.email, country: status.country.encode }
+            )
+            .subscribe((onboarding) => {
+              // Redirect to Stripe onboarding
+              window.location.href = onboarding.onboardingUrl;
+            });
+        }
+        // else: allow trip creation as normal
+      });
   }
 
   // Initialize the list of countries
   initializeCountries(): void {
-    this.countries = [
-      'Afghanistan',
-      'Albania',
-      'Algeria',
-      'Andorra',
-      'Angola',
-      'Argentina',
-      'Armenia',
-      'Australia',
-      'Austria',
-      'Azerbaijan',
-      'Bahrain',
-      'Bangladesh',
-      'Belgium',
-      'Brazil',
-      'Canada',
-      'China',
-      'Colombia',
-      'Denmark',
-      'Egypt',
-      'Finland',
-      'France',
-      'Germany',
-      'Greece',
-      'India',
-      'Indonesia',
-      'Iran',
-      'Iraq',
-      'Ireland',
-      'Italy',
-      'Japan',
-      'Jordan',
-      'Kenya',
-      'Kuwait',
-      'Lebanon',
-      'Malaysia',
-      'Mexico',
-      'Morocco',
-      'Netherlands',
-      'New Zealand',
-      'Nigeria',
-      'Norway',
-      'Oman',
-      'Pakistan',
-      'Palestine',
-      'Philippines',
-      'Poland',
-      'Portugal',
-      'Qatar',
-      'Romania',
-      'Russia',
-      'Saudi Arabia',
-      'South Africa',
-      'Spain',
-      'Sudan',
-      'Sweden',
-      'Switzerland',
-      'Syria',
-      'Thailand',
-      'Tunisia',
-      'Turkey',
-      'UAE',
-      'UK',
-      'Ukraine',
-      'USA',
-      'Vietnam',
-      'Yemen',
-    ];
+    const countries = getData();
+    this.countries = countries.map((country) => country.name);
   }
 
   // Toggle tourism type selection
@@ -527,7 +487,7 @@ export class CompanyCreateTripComponent implements OnInit {
 
   private prepareFormData(): FormData {
     const formData = new FormData();
-  
+
     // Create the tourData object exactly as per your trip structure
     const tourData = {
       title: this.trip.title,
@@ -540,13 +500,13 @@ export class CompanyCreateTripComponent implements OnInit {
       currency: this.trip.currency,
       tourProviderId:this.authService.getUserId()
     };
-  
+
     // Append tourData as JSON blob (important for Spring's @RequestPart)
     formData.append(
       'tourData',
       new Blob([JSON.stringify(tourData)], { type: 'application/json' })
     );
-  
+
     // Append all image files with the same key "images"
     this.images.forEach((image, index) => {
       if (image.file) {
@@ -554,11 +514,11 @@ export class CompanyCreateTripComponent implements OnInit {
         formData.append('images', image.file, `image_${index}.${fileExtension}`);
       }
     });
-  
+
     return formData;
   }
-  
-  
+
+
 
   private showSuccessMessage(message: string): void {
     // You can replace this with a toast notification or other UI feedback
