@@ -6,7 +6,6 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { LoginServices } from '../services/login_services';
 import { UserRole } from '../services/login_services';
-
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -29,7 +28,8 @@ export class LoginComponent {
     private loginServices: LoginServices,
     private authService: AuthService,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    
   ) {}
   // Method to update the selected user kind
   selectUserKind(kind: string) {
@@ -101,13 +101,12 @@ export class LoginComponent {
             this.errorMessage = 'Login failed. Please check your credentials.';
           } else {
             console.log('Login successful:', response);
-
             // Store token using AuthService if available
             if (response.token) {
             this.authService.setSession({token:response.token,
               userId:response.userId,
-              userType:response.role
-
+              userType:response.role,
+              username:response.username
 
             })
             }

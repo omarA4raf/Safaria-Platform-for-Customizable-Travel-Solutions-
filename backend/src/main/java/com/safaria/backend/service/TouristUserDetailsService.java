@@ -21,7 +21,7 @@ public class TouristUserDetailsService implements UserDetailsService {
         Tourist tourist = touristRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Tourist not found"));
 
-                return new CustomUserDetails(tourist.getUserId(), tourist.getEmail(), tourist.getPassword(), "TOURIST");
+                return new CustomUserDetails(tourist.getUserId(), tourist.getEmail(), tourist.getPassword(), "TOURIST",tourist.getUsername());
 
     }
 }

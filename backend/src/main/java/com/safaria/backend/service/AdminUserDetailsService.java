@@ -22,7 +22,7 @@ public class AdminUserDetailsService implements UserDetailsService {
         Admin admin = adminRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Admin not found"));
 
-        return new CustomUserDetails(admin.getUserId(), admin.getEmail(), admin.getPassword(), "ADMIN");
+        return new CustomUserDetails(admin.getUserId(), admin.getEmail(), admin.getPassword(), "ADMIN", admin.getUsername());
 
     }
 }

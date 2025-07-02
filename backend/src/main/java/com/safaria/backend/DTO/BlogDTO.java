@@ -18,7 +18,7 @@ public class BlogDTO {
 
     private Integer blogId;
 
-    private Integer user_id;
+    private String user_username;
 
     private String content;
 
@@ -37,7 +37,7 @@ public class BlogDTO {
         Admin, Tourist, TourProvider
     }
     public BlogDTO(Blog blog){
-        this.user_id=blog.getUser_id();
+        this.user_username=blog.getUser_username();
         this.content=blog.getContent();
         this.photo_path=blog.getPhoto();
         this.createdAt=blog.getCreatedAt();

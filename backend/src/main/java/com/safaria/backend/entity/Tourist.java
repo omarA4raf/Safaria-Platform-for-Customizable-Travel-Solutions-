@@ -23,7 +23,7 @@ public class Tourist {
     @Column(name = "UserID")
     private Integer userId;
 
-    @Column(name = "Username")
+    @Column(name = "Username", unique = true)
     private String username;
 
     @Column(name = "Password")

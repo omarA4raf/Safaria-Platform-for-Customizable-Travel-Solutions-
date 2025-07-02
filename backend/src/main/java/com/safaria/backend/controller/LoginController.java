@@ -73,7 +73,7 @@ public class LoginController {
             // dto.setType("Tourist");
             // dto.setToken(token);
     
-            return ResponseEntity.ok(new UserLoginDTO(token,userDetails.getId(),userDetails.getRole()));
+            return ResponseEntity.ok(new UserLoginDTO(token,userDetails.getId(),userDetails.getRole(), userDetails.getName()));
     
         } catch (UsernameNotFoundException ex) {
             return ResponseEntity.status(404).body("User not found");
@@ -103,7 +103,7 @@ public ResponseEntity<?> tourProviderLogin(@RequestBody UserLoginRecieveDTO user
         String token = jwtService.generateToken(userDetails.getUsername(), "PROVIDER");
         
 
-        return ResponseEntity.ok(new UserLoginDTO(token,userDetails.getId(),userDetails.getRole()));
+        return ResponseEntity.ok(new UserLoginDTO(token,userDetails.getId(),userDetails.getRole(), userDetails.getName()));
 
     } catch (UsernameNotFoundException ex) {
         return ResponseEntity.status(404).body("Provider not found");
@@ -142,7 +142,7 @@ public ResponseEntity<?> tourProviderLogin(@RequestBody UserLoginRecieveDTO user
             // dto.setType("Tourist");
             // dto.setToken(token);
 
-            return ResponseEntity.ok(new UserLoginDTO(token,userDetails.getId(),userDetails.getRole()));
+            return ResponseEntity.ok(new UserLoginDTO(token,userDetails.getId(),userDetails.getRole(), userDetails.getName()));
 
         } catch (UsernameNotFoundException ex) {
             return ResponseEntity.status(404).body("User not found");

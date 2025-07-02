@@ -12,6 +12,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 public class MessageRequestDTO {
-    private Integer tourist_id;
-    private Integer tour_provider_id;
+    private String username1;
+    private String username2;
 }

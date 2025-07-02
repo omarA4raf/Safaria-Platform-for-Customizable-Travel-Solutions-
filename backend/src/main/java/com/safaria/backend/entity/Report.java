@@ -20,11 +20,11 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "report_id")
     private Integer report_id;
-    @Column(name = "reporting_user_id")
-    private Integer reporting_user_id;
+    @Column(name = "reporting_user_username")
+    private String reporting_user_username;
 
-    @Column(name = "reported_user_id")
-    private Integer reported_user_id;
+    @Column(name = "reported_user_username")
+    private String reported_user_username;
 
     @Column(name = "comment")
     private String comment;
@@ -40,8 +40,8 @@ public class Report {
     private Boolean reported_user_type;
 
     public Report(ReportDTO reportDTO){
-        this.reporting_user_id=reportDTO.getReporting_user_id();
-        this.reported_user_id= reportDTO.getReported_user_id();
+        this.reporting_user_username=reportDTO.getReporting_user_username();
+        this.reported_user_username= reportDTO.getReported_user_username();
         this.reporting_user_type=reportDTO.getReporting_user_type();
         this.reported_user_type=reportDTO.getReported_user_type();
         this.comment=reportDTO.getComment();

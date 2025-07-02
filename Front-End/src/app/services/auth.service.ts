@@ -9,6 +9,7 @@ export class AuthService {
   private readonly TOKEN_KEY = 'safaria_auth_token';
   private readonly USER_ID_KEY = 'user_id';
   private readonly USER_TYPE_KEY = 'user_type';
+  private readonly USERNAME_KEY= 'username'
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -20,11 +21,13 @@ export class AuthService {
     token: string;
     userId: string;
     userType: UserType;
+    username: string;
   }): void {
     if (this.isBrowser()) {
       localStorage.setItem(this.TOKEN_KEY, authResult.token);
       localStorage.setItem(this.USER_ID_KEY, authResult.userId);
       localStorage.setItem(this.USER_TYPE_KEY, authResult.userType);
+      localStorage.setItem(this.USERNAME_KEY,authResult.username);
     }
   }
 
@@ -35,7 +38,9 @@ export class AuthService {
   getUserId(): string | null {
     return this.isBrowser() ? localStorage.getItem(this.USER_ID_KEY) : null;
   }
-
+  getUsername(): string | null{
+    return this.isBrowser() ? localStorage.getItem(this.USERNAME_KEY) : null;
+  }
   
 
   getCurrentUser(): { userId: string; userType: UserType } | null {
