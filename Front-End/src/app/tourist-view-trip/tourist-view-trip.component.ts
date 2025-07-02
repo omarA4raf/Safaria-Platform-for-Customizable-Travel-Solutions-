@@ -124,7 +124,8 @@ export class TouristViewTripComponent implements OnInit {
 
     this.route.params.subscribe((params) => {
       const tripId = +params['id']; // Get ID from route
-      this.loadTrip(tripId);
+      const tripProviderName = params['tourProvider']; // Get provider name from route
+      this.loadTrip(tripId,tripProviderName);
     });
     // Step 3: Initialize user data (replace with your actual auth logic)
     const currentUser = this.getCurrentUser();
@@ -137,45 +138,120 @@ export class TouristViewTripComponent implements OnInit {
   }
 
   // Add to your component
-  loadTrip(id: number): void {
+  loadTrip(id: number,tripProviderName: string): void {
     this.isLoading = true;
     this.errorMessage = null;
 
     this.tripService.getTripById(id).subscribe({
       next: (data: any) => {
-        // Map backend data to Trip interface
-        this.trip = {
-          id: data.tourId ?? data.id ?? id,
-          title: data.title,
-          images: (data.images && Array.isArray(data.images))
-            ? data.images.map((img: any) => typeof img === 'string' ? img : img.imageUrl)
-            : [],
-          imageUrl: undefined,
-          destinationCountry: data.destinationCountry,
-          tourismTypes: data.tourismTypes ?? [],
-          duration: data.duration ?? null,
-          availableDates: (data.availableDates || data.schedules || []).map((d: any) => ({
-            startDate: d.startDate ? new Date(d.startDate) : null,
-            endDate: d.endDate ? new Date(d.endDate) : null,
-            availableSeats: d.availableSeats ?? null,
-            budget: d.price ?? d.budget ?? 0,
-          })),
-          description: data.description,
-          freeCancellationDeadline: data.freeCancellationDeadline ?? null,
-          currency: data.currency,
-          rating: data.rating ?? 0,
-          providerName: data.tourProvider?.username || data.providerName || data.tourProviderName || '',
-        };
+        // Fetch image blob from backend
+        this.tripService.getTripImage(id).subscribe({
+          next: (imgBlob: Blob) => {
+            if (imgBlob && imgBlob.size > 0) {
+              const reader = new FileReader();
+              reader.onload = () => {
+                const imageDataUrl = reader.result as string;
+                this.trip = {
+                  id: data.tourId ?? data.id ?? id,
+                  title: data.title,
+                  images: [imageDataUrl],
+                  imageUrl: imageDataUrl,
+                  destinationCountry: data.destinationCountry,
+                  tourismTypes: data.tourismTypes ?? [],
+                  duration: data.duration ?? null,
+                  availableDates: (data.availableDates || data.schedules || []).map((d: any) => ({
+                    startDate: d.startDate ? new Date(d.startDate) : null,
+                    endDate: d.endDate ? new Date(d.endDate) : null,
+                    availableSeats: d.availableSeats ?? null,
+                    budget: d.price ?? d.budget ?? 0,
+                  })),
+                  description: data.description,
+                  freeCancellationDeadline: data.freeCancellationDeadline ?? null,
+                  currency: data.currency,
+                  rating: data.rating ?? 0,
+                  providerName: tripProviderName,
+                };
 
-        if (this.trip.images && this.trip.images.length > 0) {
-          this.trip.imageUrl = this.trip.images[0];
-        }
-        this.currentImageIndex = 0;
-        this.selectedDateIndex = null;
-        this.selectedDate = null;
-        this.memberCount = 1;
-        this.calculateTotal();
-        this.isLoading = false;
+                this.currentImageIndex = 0;
+                this.selectedDateIndex = null;
+                this.selectedDate = null;
+                this.memberCount = 1;
+                this.calculateTotal();
+                this.isLoading = false;
+              };
+              reader.readAsDataURL(imgBlob);
+            } else {
+              // fallback if blob is empty
+              this.trip = {
+                id: data.tourId ?? data.id ?? id,
+                title: data.title,
+                images: (data.images && Array.isArray(data.images))
+                  ? data.images.map((img: any) => typeof img === 'string' ? img : img.imageUrl)
+                  : [],
+                imageUrl: undefined,
+                destinationCountry: data.destinationCountry,
+                tourismTypes: data.tourismTypes ?? [],
+                duration: data.duration ?? null,
+                availableDates: (data.availableDates || data.schedules || []).map((d: any) => ({
+                  startDate: d.startDate ? new Date(d.startDate) : null,
+                  endDate: d.endDate ? new Date(d.endDate) : null,
+                  availableSeats: d.availableSeats ?? null,
+                  budget: d.price ?? d.budget ?? 0,
+                })),
+                description: data.description,
+                freeCancellationDeadline: data.freeCancellationDeadline ?? null,
+                currency: data.currency,
+                rating: data.rating ?? 0,
+                providerName:  tripProviderName,
+              };
+
+              if (this.trip.images && this.trip.images.length > 0) {
+                this.trip.imageUrl = this.trip.images[0];
+              }
+              this.currentImageIndex = 0;
+              this.selectedDateIndex = null;
+              this.selectedDate = null;
+              this.memberCount = 1;
+              this.calculateTotal();
+              this.isLoading = false;
+            }
+          },
+          error: () => {
+            // fallback if image fetch fails
+            this.trip = {
+              id: data.tourId ?? data.id ?? id,
+              title: data.title,
+              images: (data.images && Array.isArray(data.images))
+                ? data.images.map((img: any) => typeof img === 'string' ? img : img.imageUrl)
+                : [],
+              imageUrl: undefined,
+              destinationCountry: data.destinationCountry,
+              tourismTypes: data.tourismTypes ?? [],
+              duration: data.duration ?? null,
+              availableDates: (data.availableDates || data.schedules || []).map((d: any) => ({
+                startDate: d.startDate ? new Date(d.startDate) : null,
+                endDate: d.endDate ? new Date(d.endDate) : null,
+                availableSeats: d.availableSeats ?? null,
+                budget: d.price ?? d.budget ?? 0,
+              })),
+              description: data.description,
+              freeCancellationDeadline: data.freeCancellationDeadline ?? null,
+              currency: data.currency,
+              rating: data.rating ?? 0,
+              providerName:  tripProviderName,
+            };
+
+            if (this.trip.images && this.trip.images.length > 0) {
+              this.trip.imageUrl = this.trip.images[0];
+            }
+            this.currentImageIndex = 0;
+            this.selectedDateIndex = null;
+            this.selectedDate = null;
+            this.memberCount = 1;
+            this.calculateTotal();
+            this.isLoading = false;
+          }
+        });
       },
       error: (err: any) => {
         this.errorMessage =

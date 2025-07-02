@@ -78,7 +78,7 @@ export class TouristViewTripService {
       // Create a mock blob (you might want to use a real image)
       return of(new Blob());
     } else {
-      return this.http.get(`${this.apiUrl}/tours/${tripId}/image`, {
+      return this.http.get(`${this.apiUrl}/tours/image/${tripId}`, {
         responseType: 'blob',
       });
     }
