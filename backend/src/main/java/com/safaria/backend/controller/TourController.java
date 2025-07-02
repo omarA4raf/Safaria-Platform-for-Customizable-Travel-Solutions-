@@ -21,10 +21,13 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.safaria.backend.DTO.BookingRequestDTO;
+import com.safaria.backend.DTO.BookingResponseDTO;
 import com.safaria.backend.DTO.TourImportantDTO;
 import com.safaria.backend.DTO.TourRequestDTO;
 import com.safaria.backend.DTO.TourScheduleDTO;
 import com.safaria.backend.DTO.TourSearchDTO;
+import com.safaria.backend.entity.Booking;
 import com.safaria.backend.entity.Image;
 import com.safaria.backend.entity.Tour;
 import com.safaria.backend.service.FileSystemService;
@@ -119,4 +122,32 @@ public ResponseEntity<byte[]> getImage(@PathVariable Integer id) {
         return ResponseEntity.ok(tours);
     }
 
+    @PostMapping("/bookings")
+public ResponseEntity<BookingResponseDTO> bookTour(@RequestBody BookingRequestDTO bookingRequest) {
+    Booking booking = tourService.createBooking(
+        bookingRequest.getScheduleId(),
+        bookingRequest.getNumberOfSeats(),
+        bookingRequest.getUserId()
+    );
+    BookingResponseDTO dto = new BookingResponseDTO();
+    dto.setId(booking.getId());
+    dto.setNumberOfSeats(booking.getNumberOfSeats());
+    dto.setBookingTime(booking.getBookingTime());
+    dto.setScheduleId(booking.getSchedule().getTourScheduleID());
+    dto.setUserId(booking.getUser().getId());
+    dto.setStatus(booking.getStatus().name());
+    dto.setTotalPrice(booking.getTotalPrice()); // Or booking.getTotalPrice() if you have a getter
+
+    return ResponseEntity.ok(dto);
+}
+@PutMapping("/bookings/{bookingId}/confirm-payment")
+public ResponseEntity<?> confirmBookingPayment(@PathVariable Long bookingId) {
+    Booking booking = tourService.getBookingById(bookingId);
+    if (booking == null) {
+        return ResponseEntity.notFound().build();
+    }
+    booking.setStatus(Booking.BookingStatus.CONFIRMED);
+    tourService.saveBooking(booking);
+    return ResponseEntity.ok().build();
+}
 }

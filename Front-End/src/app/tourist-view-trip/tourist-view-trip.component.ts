@@ -17,6 +17,7 @@ export enum UserType {
 }
 
 export interface AvailableDate {
+  id: number; // Add this line
   startDate: Date | null;
   endDate: Date | null;
   availableSeats: number | null;
@@ -128,13 +129,8 @@ export class TouristViewTripComponent implements OnInit {
       this.loadTrip(tripId,tripProviderName);
     });
     // Step 3: Initialize user data (replace with your actual auth logic)
-    const currentUser = this.getCurrentUser();
-    this.userId = currentUser.id;
-    this.userType = currentUser.type as
-      | 'tourist'
-      | 'guide'
-      | 'company'
-      | 'admin';
+    this.userId = this.authService.getUserId() || '';
+    this.userType = this.authService.getSafeUserType();
   }
 
   // Add to your component
@@ -160,6 +156,7 @@ export class TouristViewTripComponent implements OnInit {
                   tourismTypes: data.tourismTypes ?? [],
                   duration: data.duration ?? null,
                   availableDates: (data.availableDates || data.schedules || []).map((d: any) => ({
+                    id: d.id, // Add this line
                     startDate: d.startDate ? new Date(d.startDate) : null,
                     endDate: d.endDate ? new Date(d.endDate) : null,
                     availableSeats: d.availableSeats ?? null,
@@ -193,6 +190,7 @@ export class TouristViewTripComponent implements OnInit {
                 tourismTypes: data.tourismTypes ?? [],
                 duration: data.duration ?? null,
                 availableDates: (data.availableDates || data.schedules || []).map((d: any) => ({
+                  id: d.id, // Add this line
                   startDate: d.startDate ? new Date(d.startDate) : null,
                   endDate: d.endDate ? new Date(d.endDate) : null,
                   availableSeats: d.availableSeats ?? null,
@@ -229,6 +227,7 @@ export class TouristViewTripComponent implements OnInit {
               tourismTypes: data.tourismTypes ?? [],
               duration: data.duration ?? null,
               availableDates: (data.availableDates || data.schedules || []).map((d: any) => ({
+                id: d.id, // Add this line
                 startDate: d.startDate ? new Date(d.startDate) : null,
                 endDate: d.endDate ? new Date(d.endDate) : null,
                 availableSeats: d.availableSeats ?? null,
@@ -319,12 +318,33 @@ export class TouristViewTripComponent implements OnInit {
       return;
     }
 
-    this.router.navigate(['/touristpaytripcomponent'], {
-      state: {
-        tripDetails: this.trip,
-        selectedDate: this.selectedDate,
-        memberCount: this.memberCount,
+    const scheduleId = this.selectedDate.id;
+    if (!scheduleId) {
+      alert('Schedule ID not found for selected date.');
+      return;
+    }
+
+    const token = this.authService.getToken() ?? '';
+    // console.log('JWT Token before booking:', token); // <-- This will show the token in the browser console
+
+    this.tripService.bookTrip(scheduleId, this.memberCount, Number(this.userId), token).subscribe({
+      next: (response) => {
+        this.router.navigate(['/payment'], {
+          state: {
+            tripDetails: this.trip,
+            selectedDate: this.selectedDate,
+            memberCount: this.memberCount,
+            bookingResponse: response,
+          },
+        });
       },
+      error: (err) => {
+        if(this.selectedDate && this.selectedDate.availableSeats !== null && this.selectedDate.availableSeats < this.memberCount) {
+          alert('Not enough seats available for the selected date.');
+          return;
+        }
+        alert('Booking failed. Please try again.');
+      }
     });
   }
 
@@ -339,8 +359,8 @@ export class TouristViewTripComponent implements OnInit {
   // Step 4: Add this method (replace with your actual auth logic)
   getCurrentUser() {
     return {
-      id: '123', // Get from JWT token or session storage
-      type: 'tourist', // Get from your authentication service
+      id: this.userId , // Get from JWT token or session storage
+      type: this.userType, // Get from your authentication service
     };
   }
 }

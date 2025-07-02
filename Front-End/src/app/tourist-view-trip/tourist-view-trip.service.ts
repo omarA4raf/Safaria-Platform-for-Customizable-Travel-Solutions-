@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { Trip, AvailableDate } from './tourist-view-trip.component';
 
@@ -34,19 +34,9 @@ export class TouristViewTripService {
       duration: 7,
       providerName: 'Desert Adventures Co.', // 👈 Add provider
       availableDates: [
+
         {
-          startDate: new Date('2024-06-15'),
-          endDate: new Date('2024-06-22'),
-          availableSeats: 12,
-          budget: 200,
-        },
-        {
-          startDate: new Date('2024-07-15'),
-          endDate: new Date('2024-07-22'),
-          availableSeats: 9,
-          budget: 1000,
-        },
-        {
+          id: 1, // Assuming this is the schedule ID
           startDate: new Date('2024-08-15'),
           endDate: new Date('2024-08-22'),
           availableSeats: 20,
@@ -82,5 +72,16 @@ export class TouristViewTripService {
         responseType: 'blob',
       });
     }
+  }
+
+  bookTrip(scheduleId: number, numberOfSeats: number, userId: number, token: string) {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    return this.http.post(`${this.apiUrl}/tours/bookings`, {
+      scheduleId,
+      numberOfSeats,
+      userId,
+    }, { headers });
   }
 }

@@ -7,17 +7,24 @@ import com.safaria.backend.DTO.TourScheduleDTO;
 import com.safaria.backend.DTO.TourSearchDTO;
 import com.safaria.backend.entity.Tour;
 import com.safaria.backend.entity.TourSchedule;
+import com.safaria.backend.entity.Tourist;
 import com.safaria.backend.entity.TourProvider;
 import com.safaria.backend.repository.TourRepository;
 import com.safaria.backend.repository.TourScheduleRepository;
 import com.safaria.backend.repository.TourProviderRepository;
+import com.safaria.backend.repository.BookingRepository;
+import com.safaria.backend.repository.TouristRepository; // Or TouristRepository
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.safaria.backend.entity.Booking;
 import com.safaria.backend.entity.Image;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,12 +33,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Duration;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@EnableScheduling
 @Service
 public class TourService {
     // Directory for storing images
@@ -193,6 +203,7 @@ System.out.println("Creating schedule with price: " + scheduleDTO.getPrice());
         dto.setAvailableDates(
             schedules.stream().map(sch -> {
                 TourScheduleDTO schDto = new TourScheduleDTO();
+                schDto.setId(sch.getTourScheduleID()); // Assuming you have a getter for TourScheduleID
                 schDto.setPrice(sch.getPrice());
                 schDto.setStartDate(sch.getStartDate() != null ? sch.getStartDate().toString() : null);
                 schDto.setEndDate(sch.getEndDate() != null ? sch.getEndDate().toString() : null);
@@ -287,5 +298,86 @@ System.out.println("Creating schedule with price: " + scheduleDTO.getPrice());
         
         List<TourSearchDTO> result = tourRepository.findToursByCountryWithPagination(country.trim(), offset, size);
         return result != null ? result : new ArrayList<>();
+    }
+
+    @Autowired
+    private BookingRepository bookingRepository;
+
+    // Removed duplicate declaration of tourScheduleRepository
+    @Autowired
+    private TouristRepository touristRepository;
+   
+    @Transactional
+    public Booking createBooking(Integer scheduleId, Integer numberOfSeats, Integer userId) {
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+
+        System.out.println("scheduleId "+scheduleId);
+
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+        System.out.println("--------------------------------");
+
+        TourSchedule schedule = tourScheduleRepository.findById(scheduleId)
+            .orElseThrow(() -> new RuntimeException("Schedule not found"));
+
+        if (schedule.getAvailableSeats() < numberOfSeats) {
+            throw new RuntimeException("Not enough seats available");
+        }
+
+        // Reduce available seats
+        schedule.setAvailableSeats(schedule.getAvailableSeats() - numberOfSeats);
+        tourScheduleRepository.save(schedule);
+
+        Booking booking = new Booking();
+        booking.setSchedule(schedule);
+        booking.setNumberOfSeats(numberOfSeats);
+
+        // Set user
+        System.out.println("------------------------------------");
+        System.out.println("------------------------------------");
+        System.out.println("------------------------------------");
+        System.out.println("userId "+userId);
+        System.out.println("------------------------------------");
+        System.out.println("------------------------------------");
+        System.out.println("------------------------------------");
+
+
+        Tourist tourist = touristRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        booking.setUser(tourist);
+        booking.setBookingTime(java.time.LocalDateTime.now());
+        booking.setTotalPrice(  numberOfSeats,schedule.getPrice());
+        booking.setStatus(Booking.BookingStatus.PENDING); // Set initial status");
+        return bookingRepository.save(booking);
+    }
+
+    // Method to expire old pending bookings
+    public void expireOldPendingBookings(long minutesThreshold) {
+        LocalDateTime cutoff = LocalDateTime.now().minusMinutes(minutesThreshold);
+        List<Booking> oldPending = bookingRepository.findByStatusAndBookingTimeBefore(Booking.BookingStatus.PENDING, cutoff);
+        for (Booking booking : oldPending) {
+            booking.setStatus(Booking.BookingStatus.CANCELLED);
+            // Optionally, restore seats to the schedule:
+            TourSchedule schedule = booking.getSchedule();
+            schedule.setAvailableSeats(schedule.getAvailableSeats() + booking.getNumberOfSeats());
+            tourScheduleRepository.save(schedule);
+            bookingRepository.save(booking);
+        }
+    }
+
+    @Scheduled(fixedRate = 300000) // every 5 minutes
+    public void expirePendingBookingsTask() {
+        expireOldPendingBookings(15); // 15 minutes threshold
+    }
+
+    public Booking getBookingById(Long bookingId) {
+        return bookingRepository.findById(bookingId).orElse(null);
+    }
+
+    public Booking saveBooking(Booking booking) {
+        return bookingRepository.save(booking);
     }
 }

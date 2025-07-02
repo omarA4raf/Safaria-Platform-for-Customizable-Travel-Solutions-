@@ -31,7 +31,7 @@ export class TouristPaymentFailedComponent {
   }
 
   retryPayment() {
-    this.router.navigate(['/touristpaytripcomponent'], {
+    this.router.navigate(['/home'], {
       state: history.state, // Preserve booking data
     });
   }

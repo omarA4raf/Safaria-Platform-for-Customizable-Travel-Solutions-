@@ -14,7 +14,7 @@ public interface TourProviderRepository extends JpaRepository<TourProvider, Inte
     // List<TourGuide> findByCountry(String country);
 
     Optional<TourProvider> findByUsername(String username);
-    Optional<TourProvider> findByEmail(String email);
+    TourProvider findByEmail(String email);
 
     Boolean existsByEmail(String email );
     Optional<List<TourProvider>> findByIsApproved(Boolean isApproved);

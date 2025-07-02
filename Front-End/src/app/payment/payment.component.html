@@ -84,19 +84,39 @@
         </div>
         <div class="card-body">
           <h5 class="card-title">Payment</h5>
-          
+
           <hr>
-          
+
           <div class="d-flex justify-content-between mb-2">
             <span>Amount:</span>
             <span>{{ paymentData.amount / 100 | currency:paymentData.currency }}</span>
           </div>
-          
+
           <hr>
-          
+
           <div class="d-flex justify-content-between fw-bold fs-5">
             <span>Total:</span>
             <span class="text-success">{{ paymentData.amount / 100 | currency:paymentData.currency }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tour Details Card - New Addition -->
+      <div class="card booking-summary mt-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Tour Details</h5>
+        </div>
+        <div class="card-body" *ngIf="tripDetails">
+          <div><strong>Title:</strong> {{ tripDetails.title }}</div>
+          <div><strong>Destination:</strong> {{ tripDetails.destinationCountry }}</div>
+          <div><strong>Date:</strong>
+            {{ selectedDate?.startDate | date:'mediumDate' }}
+            <span *ngIf="selectedDate?.endDate"> - {{ selectedDate.endDate | date:'mediumDate' }}</span>
+          </div>
+          <div><strong>Members:</strong> {{ memberCount }}</div>
+          <div><strong>Total Price:</strong> {{ paymentData.amount / 100 | currency:paymentData.currency }}</div>
+          <div *ngIf="tripDetails.imageUrl">
+            <img [src]="tripDetails.imageUrl" alt="Tour Image" class="img-fluid mt-2" style="max-height:120px;">
           </div>
         </div>
       </div>

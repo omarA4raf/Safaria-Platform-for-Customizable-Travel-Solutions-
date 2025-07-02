@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import { TourguideCreateTripService } from './tourguide-create-trip.service';
 import { ChatComponent } from '../shared/chat/chat.component';
+import { getData } from 'country-list';
 
 // shared/models/user-type.enum.ts
 export enum UserType {
@@ -204,78 +205,37 @@ export class TourguideCreateTripComponent implements OnInit {
       | 'guide'
       | 'company'
       | 'admin';
+
+    this.checkStripeAccount();
+  }
+
+  checkStripeAccount(): void {
+    const providerId = this.authService.getUserId();
+    this.http
+      .get<any>(
+        `http://localhost:8080/api/integration/api/stripe/provider-stripe-status/${providerId}`
+      )
+      .subscribe((status) => {
+        if (!status.hasStripeAccount) {
+          // Start onboarding
+          this.http
+            .post<any>(
+              'http://localhost:8080/api/integration/api/stripe/create-account',
+              { email: status.email, country: status.country.encode }
+            )
+            .subscribe((onboarding) => {
+              // Redirect to Stripe onboarding
+              window.location.href = onboarding.onboardingUrl;
+            });
+        }
+        // else: allow trip creation as normal
+      });
   }
 
   // Initialize the list of countries
   initializeCountries(): void {
-    this.countries = [
-      'Afghanistan',
-      'Albania',
-      'Algeria',
-      'Andorra',
-      'Angola',
-      'Argentina',
-      'Armenia',
-      'Australia',
-      'Austria',
-      'Azerbaijan',
-      'Bahrain',
-      'Bangladesh',
-      'Belgium',
-      'Brazil',
-      'Canada',
-      'China',
-      'Colombia',
-      'Denmark',
-      'Egypt',
-      'Finland',
-      'France',
-      'Germany',
-      'Greece',
-      'India',
-      'Indonesia',
-      'Iran',
-      'Iraq',
-      'Ireland',
-      'Italy',
-      'Japan',
-      'Jordan',
-      'Kenya',
-      'Kuwait',
-      'Lebanon',
-      'Malaysia',
-      'Mexico',
-      'Morocco',
-      'Netherlands',
-      'New Zealand',
-      'Nigeria',
-      'Norway',
-      'Oman',
-      'Pakistan',
-      'Palestine',
-      'Philippines',
-      'Poland',
-      'Portugal',
-      'Qatar',
-      'Romania',
-      'Russia',
-      'Saudi Arabia',
-      'South Africa',
-      'Spain',
-      'Sudan',
-      'Sweden',
-      'Switzerland',
-      'Syria',
-      'Thailand',
-      'Tunisia',
-      'Turkey',
-      'UAE',
-      'UK',
-      'Ukraine',
-      'USA',
-      'Vietnam',
-      'Yemen',
-    ];
+    const countries = getData();
+    this.countries = countries.map((country: { name: string }) => country.name);
   }
 
   // Toggle tourism type selection

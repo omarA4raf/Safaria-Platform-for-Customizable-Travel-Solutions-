@@ -19,8 +19,10 @@ public class TourProviderUserDetailsService implements UserDetailsService {
     
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        TourProvider provider = tourProviderRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Tour provider not found"));
+        TourProvider provider = tourProviderRepository.findByEmail(email);
+        if (provider == null) {
+            throw new UsernameNotFoundException("Tour provider not found");
+        }
     
         String role;
         if(!provider.getType())
