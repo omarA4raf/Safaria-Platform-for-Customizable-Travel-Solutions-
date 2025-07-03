@@ -1,0 +1,299 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top shadow-sm custom-navbar p-2">
+    <div class="container">
+        <!-- Brand Name -->
+        <a class="navbar-brand" href="#">Safaria</a>
+
+        <!-- Toggle Button for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link " href="/touristdashboardhome">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/touristdashboardprofile">Profile</a></li>
+                <li class="nav-item"><a class="nav-link active" href="#">Prepackage Tours</a></li>
+                <li class="nav-item"><a class="nav-link" href="/touristcustomizetourfirstcomponent">Custom Plans</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="#">Tour guide assistant</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Support</a></li>
+                <li class="nav-item">
+                    <a class="nav-link logout-link" href="/">Log out <i
+                            class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="main-wrapper">
+    <div class="main-container">
+        <div class="container">
+            <div class="row">
+                <!-- Main Content -->
+                <div class="col-lg-8 mx-auto">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="mb-0">My Blog</h2>
+                        <div>
+                            <button class="btn btn-primary" routerLink="/blog/for-you">Browse Posts</button>
+                        </div>
+                    </div>
+
+                    <!-- Create Post -->
+                    <div class="create-post-card mb-4 p-3 rounded">
+                        <h5 class="mb-3">Share Your Adventure</h5>
+                        <textarea class="form-control mb-3" rows="3" placeholder="What's on your mind?"
+                            [(ngModel)]="newPostContent"></textarea>
+
+                        <!-- Image Preview -->
+                        <div class="mb-3" *ngIf="newPostImages.length > 0">
+                            <div class="row g-2">
+                                <div class="col-6 col-md-4" *ngFor="let img of newPostImages; let i = index">
+                                    <div class="position-relative">
+                                        <img [src]="img" alt="Preview" class="img-fluid rounded">
+                                        <button class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+                                            (click)="newPostImages.splice(i, 1)">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <label class="btn btn-sm btn-outline-primary mb-0">
+                                    <i class="fas fa-image me-1"></i> Add Photos
+                                    <input type="file" accept="image/*" multiple (change)="onImageUpload($event)"
+                                        style="display: none;">
+                                </label>
+                            </div>
+                            <button class="btn btn-primary" (click)="createPost()"
+                                [disabled]="!newPostContent.trim()">Post</button>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success position-fixed top-0 end-0 m-3" *ngIf="showShareSuccess"
+                        style="z-index: 1100;">
+                        Link copied to clipboard!
+                    </div>
+
+                    <!-- Add this edit modal near the top of your template -->
+                    <div class="modal fade" [class.show]="editingPost" [style.display]="editingPost ? 'block' : 'none'">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Edit Post</h5>
+                                    <button type="button" class="btn-close" (click)="cancelEditing()"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <textarea class="form-control mb-3" rows="5"
+                                        [(ngModel)]="editPostContent"></textarea>
+
+                                    <!-- Image Preview for Edit -->
+                                    <div class="mb-3" *ngIf="editPostImages.length > 0">
+                                        <div class="row g-2">
+                                            <div class="col-6 col-md-4"
+                                                *ngFor="let img of editPostImages; let i = index">
+                                                <div class="position-relative">
+                                                    <img [src]="img" alt="Preview" class="img-fluid rounded">
+                                                    <button
+                                                        class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+                                                        (click)="editPostImages.splice(i, 1)">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between">
+                                        <label class="btn btn-sm btn-outline-primary mb-0">
+                                            <i class="fas fa-image me-1"></i> Change Photos
+                                            <input type="file" accept="image/*" multiple
+                                                (change)="onImageUpload($event, true)" style="display: none;">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        (click)="cancelEditing()">Cancel</button>
+                                    <button type="button" class="btn btn-primary" (click)="saveEditedPost()"
+                                        [disabled]="!editPostContent.trim()">
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-backdrop fade" [class.show]="editingPost"
+                        [style.display]="editingPost ? 'block' : 'none'"></div>
+
+                    <!-- My Posts -->
+                    <div class="blog-post-card mb-4" *ngFor="let post of myPosts">
+                        <!-- Post Header -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center">
+                                <img [src]="post.userAvatar" alt="User avatar" class="rounded-circle me-2" width="40"
+                                    height="40">
+                                <div>
+                                    <h6 class="mb-0">{{ post.userName }}</h6>
+                                    <small class="text-muted">{{ post.date | date:'mediumDate' }}</small>
+                                    <div class="rating">
+                                        <span *ngFor="let star of [1,2,3,4,5]">
+                                            <i class="fas fa-star"
+                                                [ngClass]="{'text-warning': star <= post.userRating, 'text-muted': star > post.userRating}"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm" type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="#"
+                                            (click)="startEditing(post); $event.preventDefault()">
+                                            <i class="fas fa-edit me-2"></i> Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="#"
+                                            (click)="deletePost(post); $event.preventDefault()">
+                                            <i class="fas fa-trash me-2"></i> Delete
+                                        </a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#"
+                                            (click)="copyPostLink(post); $event.preventDefault()">
+                                            <i class="fas fa-share me-2"></i> Share
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Post Content -->
+                        <div class="mb-3">
+                            <p>{{ post.content }}</p>
+                        </div>
+
+                        <!-- Post Images -->
+                        <div class="mb-3" *ngIf="post.images.length > 0">
+                            <div class="row g-2">
+                                <div class="col-12" *ngIf="post.images.length === 1">
+                                    <img [src]="post.images[0]" alt="Post image" class="img-fluid rounded">
+                                </div>
+                                <ng-container *ngIf="post.images.length === 2">
+                                    <div class="col-6" *ngFor="let img of post.images">
+                                        <img [src]="img" alt="Post image" class="img-fluid rounded">
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+
+                        <!-- Post Actions -->
+                        <div class="d-flex justify-content-between mb-3">
+                            <button class="btn btn-sm like-button" (click)="toggleLike(post)">
+                                <i class="fas fa-heart me-1" [class.text-danger]="post.isLiked"
+                                    [class.text-secondary]="!post.isLiked"></i>
+                                {{ post.likes }} Likes
+                            </button>
+                            <button class="btn btn-sm">
+                                <i class="fas fa-comment me-1"></i>
+                                {{ post.comments.length }} Comments
+                            </button>
+                        </div>
+
+                        <!-- Comments Section -->
+                        <div class="comments-section" *ngIf="post.comments.length > 0">
+                            <div class="comment mb-2" *ngFor="let comment of post.comments">
+                                <div class="d-flex">
+                                    <img [src]="comment.userAvatar" alt="User avatar" class="rounded-circle me-2"
+                                        width="32" height="32">
+                                    <div class="comment-content bg-light p-2 rounded">
+                                        <strong>{{ comment.userName }}</strong>
+                                        <p class="mb-0">{{ comment.content }}</p>
+                                        <small class="text-muted">{{ comment.date | date:'shortTime' }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add Comment -->
+                        <div class="add-comment mt-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Write a comment..." #commentInput>
+                                <button class="btn btn-primary" type="button"
+                                    (click)="addComment(post, commentInput.value); commentInput.value = ''">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="text-white py-4 custom-footer" style="background-color: #71a7b8">
+    <div class="container">
+        <div class="row">
+            <!-- Left Side - Brand & Social Icons -->
+            <div class="col-md-4">
+                <h4>Safaria</h4>
+                <div class="social-icons mt-3">
+                    <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-youtube fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+                </div>
+            </div>
+
+            <!-- Center & Right Side - Topics -->
+            <div class="col-md-8">
+                <div class="row">
+                    <!-- Column 1 -->
+                    <div class="col-md-4">
+                        <h5>Explore</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Destinations</a></li>
+                            <li><a href="#" class="text-white">Tours</a></li>
+                            <li><a href="#" class="text-white">Experiences</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 2 -->
+                    <div class="col-md-4">
+                        <h5>Company</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">About Us</a></li>
+                            <li><a href="#" class="text-white">Careers</a></li>
+                            <li><a href="#" class="text-white">Blog</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 3 -->
+                    <div class="col-md-4">
+                        <h5>Support</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Contact Us</a></li>
+                            <li><a href="#" class="text-white">FAQs</a></li>
+                            <li><a href="#" class="text-white">Help Center</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Line -->
+        <hr class="mt-4 mb-2 border-white" />
+        <p class="text-center mb-0">© 2025 Safaria. All rights reserved.</p>
+    </div>
+</footer>

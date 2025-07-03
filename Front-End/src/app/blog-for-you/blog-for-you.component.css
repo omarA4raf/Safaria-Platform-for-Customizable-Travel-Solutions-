@@ -1,0 +1,232 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Base Styles */
+body {
+  background-color: #d0dedf;
+  color: #040a15;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Layout Structure */
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 70px; /* Space for fixed navbar */
+}
+
+.main-container {
+  flex: 1;
+  padding: 20px 0;
+  margin-bottom: 20px;
+}
+
+/* Navbar Styles */
+.custom-navbar {
+  background-color: rgba(113, 168, 184, 0.83);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 0.5rem 0;
+}
+
+.custom-navbar .navbar-brand {
+  color: #fb921d;
+  font-weight: bold;
+  font-size: 1.6rem;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.334);
+}
+
+.custom-navbar .nav-link {
+  color: white !important;
+  font-weight: 500;
+  margin-left: 15px;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.custom-navbar .nav-link:hover {
+  color: #fb921d !important;
+}
+
+.custom-navbar .nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 2px;
+  background-color: #fb921d;
+}
+
+.custom-navbar .logout-link {
+  color: #d9534f !important;
+}
+
+/* Blog Post Cards */
+.blog-post-card,
+.create-post-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.create-post-card {
+  background-color: #f8f9fa;
+  border: 1px dashed #71a7b8;
+}
+
+/* Like Button Styles */
+.like-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+.like-button .fa-heart {
+  transition: color 0.2s ease;
+}
+
+/* When liked - red color */
+.like-button .fa-heart.text-danger {
+  color: #dc3545 !important;
+}
+
+/* When not liked - gray color */
+.like-button .fa-heart.text-secondary {
+  color: #6c757d !important;
+}
+
+/* Hover state - only red if not already liked */
+.like-button:hover .fa-heart.text-secondary {
+  color: #dc3545 !important;
+}
+
+/* Keep red when liked and hovering */
+.like-button:hover .fa-heart.text-danger {
+  color: #dc3545 !important;
+}
+
+/* Rating Stars */
+.rating {
+  font-size: 0.8rem;
+}
+
+.rating .fa-star.text-warning {
+  color: #fb921d !important;
+}
+
+.rating .fa-star.text-muted {
+  color: #6c757d !important;
+}
+
+/* Comments Section */
+.comment-content {
+  background-color: #f0f2f5;
+  border-radius: 18px;
+  padding: 8px 12px;
+  max-width: 80%;
+}
+
+/* Images Grid */
+.blog-post-images {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.blog-post-images img {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+  height: 100%;
+  max-height: 300px;
+}
+
+/* Different grid layouts based on number of images */
+.blog-post-images.single-image {
+  grid-template-columns: 1fr;
+}
+
+.blog-post-images.two-images {
+  grid-template-columns: 1fr 1fr;
+}
+
+.blog-post-images.three-images {
+  grid-template-columns: 1fr 1fr;
+}
+
+.blog-post-images.three-images img:first-child {
+  grid-column: span 2;
+}
+
+.blog-post-images.four-images {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: #fb921d;
+  border-color: #fb921d;
+}
+
+.btn-primary:hover {
+  background-color: #e07e0a;
+  border-color: #e07e0a;
+}
+
+.btn-outline-primary {
+  color: #fb921d;
+  border-color: #fb921d;
+}
+
+.btn-outline-primary:hover {
+  background-color: #fb921d;
+  color: white;
+}
+
+/* Footer */
+.custom-footer {
+  background-color: #71a7b8;
+  width: 100%;
+  padding: 20px 0;
+  margin-top: auto;
+}
+
+.custom-footer ul li a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+
+  .main-wrapper {
+    padding-top: 60px;
+  }
+
+  .custom-navbar .navbar-brand {
+    font-size: 1.4rem;
+  }
+
+  .blog-post-images img {
+    max-height: 200px;
+  }
+}
