@@ -20,6 +20,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
@@ -403,28 +404,46 @@ public class services implements Iservices {
          this.reportRepository.deleteById(reportId);
          return ResponseEntity.status(200).body("report deleted");
     }
+    public String [] saveBlogPhotos(MultipartFile[] photos){
+        String directory = "Documents/Blogs";
+        String [] relativeFilePaths =new String[photos.length];
+        int index=0;
+        for (MultipartFile photo : photos) {
+            String uniqueFileName = this.fileSystemService.generateUniqueFileName(directory, "jpg");
+            String relativeFilePath = Paths.get(directory, uniqueFileName).toString();
+
+            try {
+
+                this.fileSystemService.storeFile(photo.getBytes(), relativeFilePath);
+
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            relativeFilePaths[index++]=relativeFilePath;
+        }
+        return relativeFilePaths;
+    }
 
     @Override
     public ResponseEntity<String> addBlog(BlogDTO blogDTO){
+         if(blogDTO.getBlogId() != null){
+             Optional<Blog> blog=this.blogRepository.findById(blogDTO.getBlogId());
+             if(blog.isPresent()){
+                 if(blogDTO.getContent()!=null) blog.get().setContent(blogDTO.getContent());
+                 if(blogDTO.getPhoto()!=null) blog.get().setPhoto(saveBlogPhotos(blogDTO.getPhoto()));
+                 this.blogRepository.save(blog.get());
+                 return ResponseEntity.status(200).body("blog edited");
+
+             }
+         }
         if(blogDTO.getPhoto()==null) {
             this.blogRepository.save(new Blog(blogDTO,null));
             return ResponseEntity.status(200).body("blog saved");
         }
-        String directory = "Documents/Blogs";
-        String uniqueFileName = this.fileSystemService.generateUniqueFileName(directory, "jpg");
-        String relativeFilePath = Paths.get(directory, uniqueFileName).toString();
-
-        try {
-
-            this.fileSystemService.storeFile(blogDTO.getPhoto().getBytes() ,relativeFilePath);
-
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
 
 
-        this.blogRepository.save(new Blog(blogDTO,relativeFilePath));
+        this.blogRepository.save(new Blog(blogDTO,saveBlogPhotos(blogDTO.getPhoto())));
 
         return ResponseEntity.status(200).body("blog saved");
 
@@ -448,7 +467,7 @@ public class services implements Iservices {
          this.blogReviewRepository.save(new BlogReview(blogReviewDTO));
          if(blogReviewDTO.getRole().toString()=="Tourist"){
              System.out.println("1");
-             Optional<Reward> reward = Optional.ofNullable(this.rewardRepository.findByTouristUsername(blogReviewDTO.getUser_username()));
+             Optional<Reward> reward = Optional.ofNullable(this.rewardRepository.findByTouristUsername(blogReviewDTO.getUsername()));
              if(reward.isPresent()){
                  System.out.println("2");
                  reward.get().setPoints(reward.get().getPoints()+1);
@@ -457,7 +476,7 @@ public class services implements Iservices {
              }
              else{
                  System.out.println("3");
-                 Reward new_reward = new Reward(blogReviewDTO.getUser_username(),Reward.ActivityType.valueOf("Review"),1);
+                 Reward new_reward = new Reward(blogReviewDTO.getUsername(),Reward.ActivityType.valueOf("Review"),1);
                  this.rewardRepository.save(new_reward);
              }
          }
@@ -490,8 +509,20 @@ public class services implements Iservices {
                  dtos.add(new ChatDTO(entry.getKey(), entry.getValue()));
              }
          }
-         System.out.println(dtos.get(0).getLastMessage());
          return ResponseEntity.status(200).body(dtos);
+     }
+     @Override
+     public ResponseEntity<List<BlogDTO>> getUserBlogs(String username){
+         Optional<List<Blog>> blogs = Optional.ofNullable(this.blogRepository.findByUsername(username));
+         List<BlogDTO> blogDTOs = blogs.get().stream()
+                 .map(blog -> new BlogDTO( blog))
+                 .collect(Collectors.toList());
+         return ResponseEntity.status(200).body(blogDTOs);
+     }
+     @Override
+     public ResponseEntity<String> deleteBlog(Integer blog_id){
+         this.blogRepository.deleteById(blog_id);
+         return  ResponseEntity.status(200).body("blog deleted");
      }
 
 }

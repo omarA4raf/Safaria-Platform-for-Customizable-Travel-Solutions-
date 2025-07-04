@@ -1,8 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { BlogPost, Comment } from '../../app/models/blog-post.model';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { HttpClient } from '@angular/common/http';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+
+export interface Blog{
+    blogId : string;
+    username : string;
+    content : string;
+    role : 'Tourist';
+    createdAt : string;
+    photo_path : string[];
+  }
+export interface Review{
+  username: string;
+  role : 'Tourist';
+  createdAt : string;
+  comment : string
+}
 
 @Component({
   selector: 'app-blog-my-blog',
@@ -11,7 +30,87 @@ import { RouterModule } from '@angular/router';
   templateUrl: './my-blog.component.html',
   styleUrls: ['./my-blog.component.css'],
 })
+
+
+
 export class BlogMyBlogComponent {
+  @ViewChild('idDocumentInput') idDocumentInput!: ElementRef;
+  
+constructor(private http: HttpClient,private authService:AuthService,private sanitizer: DomSanitizer
+){}
+
+
+private myblogs : Blog[] =[]
+ myPosts: BlogPost[]=[]
+
+ ngOnInit(){
+
+  this.http.get<Blog[]>(`${this.baseUrl}/getUserBlogs/${this.authService.getUsername()}`).subscribe({
+    next: (data) =>{ this.myblogs=data;
+        console.log(data)
+        this.myblogs.forEach(b => {
+        const imgs :SafeResourceUrl [] =[];
+        b.photo_path.forEach(p => {imgs.push(this.getUrl(p))})
+let reviews : Review[] = [];
+        const comts : Comment[] = [];
+        this.http.get<Review[]>(`http://localhost:8080/auth/blogReview/getReviews/${b.blogId}`).subscribe({
+          next : (blog_reviews) =>{
+            reviews=blog_reviews;
+            let index=0;
+            reviews.forEach(r => {
+              const comment : Comment={
+                id: index.toString(),
+                userId: r.username,
+                userName: r.username,
+                userAvatar:'https://i.pravatar.cc/150?img=11' ,
+                content: r.comment,
+                date: new Date(r.createdAt),
+              }
+              comts.push(comment);
+            })
+          },
+    
+          error: (err) => console.error('Failed to load chats', err)
+        });
+        const blog : BlogPost={
+          id : b.blogId,
+          userId : b.username,
+          userName : b.username,
+          userAvatar : 'https://i.pravatar.cc/150?img=11',
+          userRating: 4.0,
+          date: new Date(b.createdAt),
+          content : b.content,
+          images :imgs,
+          likes: 15,
+          isLiked: false,
+          location: 'Swiss Alps, Switzerland',
+          comments: comts,
+    }
+    this.myPosts.push(blog);
+       
+});
+    },
+    
+    error: (err) => console.error('Failed to load chats', err)
+  });
+
+  
+
+ }
+  getUrl(path: string): SafeResourceUrl {
+    
+    const generatedUrl =
+      'http://localhost:8080/auth/files/Blogs/' +
+      path.substring(
+        path.lastIndexOf('\\') + 1
+      );
+    const imageUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+      generatedUrl
+    );
+    return imageUrl;
+  }
+
+/*
   myPosts: BlogPost[] = [
     {
       id: '5',
@@ -60,12 +159,15 @@ export class BlogMyBlogComponent {
       comments: [],
     },
   ];
+  */
+  private baseUrl = 'http://localhost:8080/auth/blog';
+
 
   // Add these new properties to your component class
   editingPost: BlogPost | null = null;
   editPostContent: string = '';
-  editPostImages: string[] = [];
-
+  editPostImages: SafeResourceUrl[] = [];
+  postImages: File[] =[];
   // Add these new methods
   startEditing(post: BlogPost): void {
     this.editingPost = { ...post };
@@ -77,6 +179,7 @@ export class BlogMyBlogComponent {
     this.editingPost = null;
     this.editPostContent = '';
     this.editPostImages = [];
+
   }
 
   saveEditedPost(): void {
@@ -91,7 +194,26 @@ export class BlogMyBlogComponent {
           images: this.editPostImages,
           date: new Date(), // Update the edit date
         };
+        const formData = new FormData();
+        formData.append('blogId',this.myPosts[index].id);
+        formData.append('username', this.authService.getUsername()!);
+        formData.append('content',this.editPostContent);
+        formData.append('role','Tourist');
+      for (let i = 0; i < this.postImages.length; i++) {
+          formData.append(`photo[${i}]`, this.postImages[i]);
+        }
+        const options = { responseType: 'text' as const };
+        this.http.post(`${this.baseUrl}/addBlog`,formData,options).subscribe({
+      next: (response: any) => {
+        console.log('Success:', response);
+        
+      },
+      error: (error: any) => {
+        console.error('Error:', error);
       }
+    });
+      }
+
       this.cancelEditing();
     }
   }
@@ -100,6 +222,12 @@ export class BlogMyBlogComponent {
     if (confirm('Are you sure you want to delete this post?')) {
       this.myPosts = this.myPosts.filter((p) => p.id !== post.id);
     }
+    this.http.delete(`${this.baseUrl}/deleteBlog/${post.id}`).subscribe({
+      next : (response: any) =>{},
+      error: (error: any) => {
+        console.error('Error:', error);
+      }
+    });
   }
 
   // Update your existing onImageUpload method to work with edits
@@ -112,12 +240,18 @@ export class BlogMyBlogComponent {
         `https://picsum.photos/id/${Math.floor(Math.random() * 1000)}/800/600`
       );
     }
+      const input = event.target as HTMLInputElement;
 
     if (isEdit) {
       this.editPostImages = images;
     } else {
       this.newPostImages = images;
     }
+    if (input.files && input.files.length > 0) {
+    for (let i = 0; i < input.files.length; i++) {
+      this.postImages.push(input.files[i]);
+    }   
+   } 
   }
   newPostContent: string = '';
   newPostImages: string[] = [];
@@ -138,10 +272,28 @@ export class BlogMyBlogComponent {
       isLiked: false,
       comments: [],
     };
-
+    const formData = new FormData();
+    formData.append('username', this.authService.getUsername()!);
+    formData.append('content',this.newPostContent);
+    formData.append('role','Tourist');
+  for (let i = 0; i < this.postImages.length; i++) {
+      formData.append(`photo[${i}]`, this.postImages[i]);
+    }
+    const options = { responseType: 'text' as const };
+    this.http.post(`${this.baseUrl}/addBlog`,formData,options).subscribe({
+  next: (response: any) => {
+    console.log('Success:', response);
+    
+  },
+  error: (error: any) => {
+    console.error('Error:', error);
+  }
+});
     this.myPosts.unshift(newPost);
     this.newPostContent = '';
     this.newPostImages = [];
+    this.postImages = [];
+
   }
 
   toggleLike(post: BlogPost): void {
@@ -155,7 +307,7 @@ export class BlogMyBlogComponent {
     const newComment: Comment = {
       id: `c${post.comments.length + 1}`,
       userId: 'currentUser',
-      userName: 'You',
+      userName: this.authService.getUsername()!,
       userAvatar: 'https://i.pravatar.cc/150?img=11',
       content: commentContent,
       date: new Date(),

@@ -1,3 +1,5 @@
+import { SafeResourceUrl } from "@angular/platform-browser";
+
 export interface BlogPost {
   id: string;
   userId: string;
@@ -6,7 +8,7 @@ export interface BlogPost {
   userRating: number;
   date: Date;
   content: string;
-  images: string[];
+  images: SafeResourceUrl[];
   likes: number;
   isLiked: boolean;
   comments: Comment[];

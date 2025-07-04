@@ -18,7 +18,7 @@ public class BlogDTO {
 
     private Integer blogId;
 
-    private String user_username;
+    private String username;
 
     private String content;
 
@@ -27,9 +27,9 @@ public class BlogDTO {
     private LocalDateTime createdAt;
 
 
-    private MultipartFile photo;
+    private MultipartFile[] photo;
 
-    private String photo_path;
+    private String[] photo_path;
 
 
 
@@ -37,9 +37,9 @@ public class BlogDTO {
         Admin, Tourist, TourProvider
     }
     public BlogDTO(Blog blog){
-        this.user_username=blog.getUser_username();
+        this.username=blog.getUsername();
         this.content=blog.getContent();
-        this.photo_path=blog.getPhoto();
+        if(blog.getPhoto() != null) this.photo_path=blog.getPhoto().clone();
         this.createdAt=blog.getCreatedAt();
         this.role=blog.getRole();
         this.blogId=blog.getBlogId();

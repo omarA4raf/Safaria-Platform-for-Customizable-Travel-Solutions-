@@ -23,8 +23,8 @@ public class Blog {
     @Column(name = "blogId")
     private Integer blogId;
 
-    @Column(name = "user_username")
-    private String user_username;
+    @Column(name = "username")
+    private String username;
 
     @Column(name = "content")
     private String content;
@@ -37,16 +37,17 @@ public class Blog {
     private LocalDateTime createdAt;
 
     @Column(name = "photo")
-    private String photo;
+    private String[] photo;
 
 
 
 
-    public Blog(BlogDTO blogDTO,String file){
-        this.user_username=blogDTO.getUser_username();
+    public Blog(BlogDTO blogDTO,String[] file){
+        this.username=blogDTO.getUsername();
         this.content=blogDTO.getContent();
-        this.photo=file;
+        if(file != null) this.photo=file.clone();
         this.createdAt=LocalDateTime.now();
         this.role=blogDTO.getRole();
+        if( blogDTO.getBlogId()!=null) this.blogId=blogDTO.getBlogId();
     }
 }

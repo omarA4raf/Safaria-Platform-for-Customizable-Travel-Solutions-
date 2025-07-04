@@ -23,8 +23,14 @@ public class BlogController {
     public ResponseEntity<List<BlogDTO>> getBlogs(){
         return this.serv.getBlogs();
     }
-    @PostMapping("/addBlog/")
-    public ResponseEntity<String> addBlog(@Valid @RequestBody BlogDTO blogDTO){
+    @GetMapping("/getUserBlogs/{username}")
+    public ResponseEntity<List<BlogDTO>> getUserBlogs(@PathVariable String username){
+        return this.serv.getUserBlogs(username);
+    }
+    @DeleteMapping("/deleteBlog/{blog_id}")
+    public ResponseEntity<String> deleteBlog(@PathVariable Integer blog_id){ return this.serv.deleteBlog(blog_id);}
+    @PostMapping(value = "/addBlog", consumes = "multipart/form-data")
+    public ResponseEntity<String> addBlog(@Valid @ModelAttribute BlogDTO blogDTO){
         return this.serv.addBlog(blogDTO);
     }
 
