@@ -94,7 +94,7 @@ export class AdminDashboardTourproviderComponent implements OnInit {
   viewDocument(request: TourProviderRequest): void {
     this.selectedRequest = request;
     this.generatedUrl =
-      'http://localhost:8080/auth/files/' +
+      'http://localhost:8080/auth/files/TourProvider/' +
       this.selectedRequest.documentUrl.substring(
         this.selectedRequest.documentUrl.lastIndexOf('\\') + 1
       );
