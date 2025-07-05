@@ -71,6 +71,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             .cors(cors -> {}) // Enables CORS with default settings
             .authorizeHttpRequests(authz -> authz
                     .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/api/chatBot").permitAll()
                     .anyRequest().authenticated()
             )
         .sessionManagement(session -> 
