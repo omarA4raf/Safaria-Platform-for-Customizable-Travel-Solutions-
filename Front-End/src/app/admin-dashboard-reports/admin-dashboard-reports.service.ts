@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
-
 interface ReportedUser {
   id: number;
   name: string;
@@ -33,14 +32,24 @@ interface PostDetails {
   imageUrl?: string;
   createdAt: Date;
 }
+interface Report {
+  report_id :number;
+  reporting_user_username :string;
+  reported_user_username : string;
+  comment : string;
+  createdAt : string;
+  reporting_user_type : boolean;
+  reported_user_type : boolean;
+
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminDashboardReportedusersService {
   private apiUrl = 'http://localhost:8080/auth/admin';
-  private useFakeData = true;
-
+  private useFakeData = false;
+  reportedUsers$!: Observable<ReportedUser[]>;
   private fakeReportedUsers: ReportedUser[] = [
     {
       id: 1,
@@ -128,7 +137,34 @@ export class AdminDashboardReportedusersService {
     if (this.useFakeData) {
       return of([...this.fakeReportedUsers]).pipe(delay(500));
     }
-    return this.http.get<ReportedUser[]>(`${this.apiUrl}/reported-users`);
+    const reports : ReportedUser[]=[];
+    let result : Report[]=[]; 
+    this.http.get<Report[]>(`${this.apiUrl}/getReports`).subscribe({
+              next : (response) =>{
+                result=response;
+                
+                result.forEach(r => {
+                  let reportedUserType = '';
+                  if(r.reported_user_type)  reportedUserType = 'guide';
+                  else reportedUserType = 'tourist';
+                  const report : ReportedUser={
+                    id: r.report_id,
+                    name: r.reported_user_username,
+                    email: r.reported_user_username,
+                    type: reportedUserType as 'tourist' | 'guide' | 'company',
+                    reportCount: result.filter(u => u.reported_user_username === r.reported_user_username).length,
+                    status: 'pending_review',
+                    lastReportedAt: new Date(r.createdAt),
+                  }
+                  reports.push(report);
+                })
+              },
+        
+              error: (err) => console.error('Failed to load chats', err)
+            });
+            
+            this.reportedUsers$ = of(reports);
+           return this.reportedUsers$;
   }
 
   getReportRequests(): Observable<ReportRequest[]> {
@@ -177,10 +213,11 @@ export class AdminDashboardReportedusersService {
       }
       return of(undefined).pipe(delay(500));
     }
-    return this.http.post(`${this.apiUrl}/reports/${reportId}/reject`, null);
+    return this.http.delete(`${this.apiUrl}/deleteReport/${reportId}`);
   }
 
   suspendUser(userId: number): Observable<any> {
+    
     if (this.useFakeData) {
       const user = this.fakeReportedUsers.find(u => u.id === userId);
       if (user) {

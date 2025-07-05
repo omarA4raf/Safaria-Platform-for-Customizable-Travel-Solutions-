@@ -39,7 +39,6 @@ public class ChatController {
     }
     @GetMapping("/getChats/{username}")
     public ResponseEntity<List<ChatDTO>> getChats(@PathVariable String username){
-        System.out.println("wassssssssssssssssssssssssssal");
         return this.serv.getChats(username);
     }
 }

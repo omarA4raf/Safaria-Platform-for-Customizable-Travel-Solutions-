@@ -7,7 +7,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-
+import { UserType } from '../shared/chat/user-types';
 export interface Blog{
     blogId : string;
     username : string;
@@ -171,6 +171,25 @@ private baseUrl = 'http://localhost:8080/auth/blog';
   submitReport() {
     if (this.reportReason.trim() && this.currentReportPost) {
       // In a real app, you would send this to your backend
+          
+          const report ={
+          reporting_user_username : this.authService.getUsername(),
+          reported_user_username : this.currentReportPost.userName,
+          comment : this.reportReason.trim(),
+          reporting_user_type : this.authService.getUserType() === UserType.GUIDE,
+          reported_user_type : 0,
+    }
+    this.http.post<any>(`http://localhost:8080/auth/admin/addReport/`,report, {
+
+}).subscribe({
+  next: (response: any) => {
+    console.log('Success:', response);
+    
+  },
+  error: (error: any) => {
+    console.error('Error:', error);
+  }
+});
       console.log(
         `Reported post ${this.currentReportPost.id}: ${this.reportReason}`
       );
@@ -180,5 +199,6 @@ private baseUrl = 'http://localhost:8080/auth/blog';
       // Show success message
       alert('Thank you for your report. We will review this post.');
     }
+
   }
 }
