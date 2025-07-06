@@ -178,6 +178,7 @@ private baseUrl = 'http://localhost:8080/auth/blog';
           comment : this.reportReason.trim(),
           reporting_user_type : this.authService.getUserType() === UserType.GUIDE,
           reported_user_type : 0,
+          blogId : this.currentReportPost.id,
     }
     this.http.post<any>(`http://localhost:8080/auth/admin/addReport/`,report, {
 

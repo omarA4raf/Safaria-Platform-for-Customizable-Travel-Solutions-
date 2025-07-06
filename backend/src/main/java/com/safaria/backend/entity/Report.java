@@ -28,7 +28,8 @@ public class Report {
 
     @Column(name = "comment")
     private String comment;
-
+    @Column(name = "blogId")
+    private Integer blogId;
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -46,5 +47,6 @@ public class Report {
         this.reported_user_type=reportDTO.getReported_user_type();
         this.comment=reportDTO.getComment();
         this.createdAt=LocalDateTime.now();
+        this.blogId=reportDTO.getBlogId();
     }
 }

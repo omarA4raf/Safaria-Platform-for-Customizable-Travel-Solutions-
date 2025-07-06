@@ -9,6 +9,7 @@ import { AuthService } from '../services/auth.service';
 import { AdminDashboardReportedusersService } from './admin-dashboard-reports.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ChatComponent } from '../shared/chat/chat.component';
+import { Observable, of } from 'rxjs';
 
 interface ReportedUser {
   id: number;
@@ -31,7 +32,21 @@ interface ReportRequest {
   status: 'pending' | 'approved' | 'rejected';
   createdAt: Date;
 }
-
+interface PostDetails {
+  id: number;
+  authorName: string;
+  content: string;
+  imageUrl?: SafeResourceUrl;
+  createdAt: Date;
+}
+interface Blog{
+    blogId : string;
+    username : string;
+    content : string;
+    role : 'Tourist';
+    createdAt : string;
+    photo_path : string[];
+  }
 @Component({
   selector: 'app-admin-dashboard-reportedusers',
   standalone: true,
@@ -47,7 +62,7 @@ export class AdminDashboardReportsComponent implements OnInit {
   reportedUsers: ReportedUser[] = [];
   reportRequests: ReportRequest[] = [];
   selectedReport: ReportRequest | null = null;
-  selectedPost: any = null;
+  selectedPost: any;
   searchTerm: string = '';
   showReportModal = false;
   showPostModal = false;
@@ -94,6 +109,18 @@ export class AdminDashboardReportsComponent implements OnInit {
       }
     });
   }
+    getUrl(path: string): SafeResourceUrl {
+    
+    const generatedUrl =
+      'http://localhost:8080/auth/files/Blogs/' +
+      path.substring(
+        path.lastIndexOf('\\') + 1
+      );
+    const imageUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+      generatedUrl
+    );
+    return imageUrl;
+  }
 
   viewReportDetails(report: ReportRequest): void {
     this.selectedReport = report;
@@ -102,18 +129,25 @@ export class AdminDashboardReportsComponent implements OnInit {
 
   viewPost(postId: number): void {
     this.isLoading = true;
+    let blog : any;
+    let postDetails : PostDetails;
     this.service.getPostDetails(postId).subscribe({
-      next: (post) => {
-        this.selectedPost = post;
-        this.showPostModal = true;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching post:', err);
-        this.errorMessage = 'Failed to load post details.';
-        this.isLoading = false;
-      }
-    });
+  next: (response) => {
+      blog = response;
+      this.selectedPost = {
+      id: Number(blog.blogId),
+      authorName: blog.username,
+      content: blog.content,
+      imageUrl: this.getUrl(blog.photo_path[0]),
+      createdAt: new Date(blog.createdAt),
+    };
+
+  },
+  error: (err) => console.log(err),
+});
+    this.showPostModal = true;
+    this.isLoading = false;
+
   }
 
   approveReport(reportId: number): void {

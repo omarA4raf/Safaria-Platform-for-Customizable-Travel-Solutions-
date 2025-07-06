@@ -28,6 +28,8 @@ public class ReportDTO {
 
     private Boolean reported_user_type;
 
+    private Integer blogId;
+
     public ReportDTO(Report report){
         this.report_id=report.getReport_id();
         this.reporting_user_username=report.getReporting_user_username();
@@ -36,6 +38,7 @@ public class ReportDTO {
         this.reported_user_type=report.getReported_user_type();
         this.comment=report.getComment();
         this.createdAt=report.getCreatedAt();
+        this.blogId=report.getBlogId();
     }
     public ReportDTO() {}
 }

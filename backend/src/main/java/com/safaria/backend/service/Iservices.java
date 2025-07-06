@@ -44,5 +44,6 @@ public interface Iservices {
     public ResponseEntity<List<ChatDTO>> getChats(String username);
     public ResponseEntity<List<BlogDTO>> getUserBlogs(String username);
     public ResponseEntity<String> deleteBlog(Integer blog_id);
+    public ResponseEntity<BlogDTO> getBlog(Integer blog_id);
 
 }

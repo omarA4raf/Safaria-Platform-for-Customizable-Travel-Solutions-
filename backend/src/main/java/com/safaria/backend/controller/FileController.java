@@ -33,6 +33,7 @@ public class FileController {
     }
     @GetMapping("/files/{foldername}/{filename:.+}")
     public ResponseEntity<Resource> getFile(@PathVariable String foldername,@PathVariable String filename) {
+        System.out.println("wassssssssssssal");
         try {
             Path filePath = Paths.get("backend/src/main/resources/Upload/Documents").resolve(foldername).resolve(filename).normalize();
             UrlResource urlResource = new UrlResource(filePath.toUri());

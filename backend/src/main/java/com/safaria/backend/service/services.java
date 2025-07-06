@@ -524,6 +524,15 @@ public class services implements Iservices {
          this.blogRepository.deleteById(blog_id);
          return  ResponseEntity.status(200).body("blog deleted");
      }
+     @Override
+     public ResponseEntity<BlogDTO> getBlog(Integer blog_ig){
+         Optional<Blog> blog = this.blogRepository.findById(blog_ig);
+         if (blog.isPresent()){
+             BlogDTO blogDTO = new BlogDTO(blog.get());
+             return ResponseEntity.status(200).body(blogDTO);
+         }
+         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+     }
 
 }
 

@@ -1,8 +1,9 @@
 // admin-dashboard-reportedusers.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 interface ReportedUser {
   id: number;
   name: string;
@@ -29,9 +30,17 @@ interface PostDetails {
   id: number;
   authorName: string;
   content: string;
-  imageUrl?: string;
+  imageUrl?: SafeResourceUrl;
   createdAt: Date;
 }
+interface Blog{
+    blogId : string;
+    username : string;
+    content : string;
+    role : 'Tourist';
+    createdAt : string;
+    photo_path : string[];
+  }
 interface Report {
   report_id :number;
   reporting_user_username :string;
@@ -40,7 +49,7 @@ interface Report {
   createdAt : string;
   reporting_user_type : boolean;
   reported_user_type : boolean;
-
+  blogId : number,
 }
 
 @Injectable({
@@ -50,6 +59,8 @@ export class AdminDashboardReportedusersService {
   private apiUrl = 'http://localhost:8080/auth/admin';
   private useFakeData = false;
   reportedUsers$!: Observable<ReportedUser[]>;
+  postDetails$! : Observable<PostDetails>;
+  reportRequest$! : Observable<ReportRequest[]>;
   private fakeReportedUsers: ReportedUser[] = [
     {
       id: 1,
@@ -131,7 +142,7 @@ export class AdminDashboardReportedusersService {
     }
   ];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,private sanitizer: DomSanitizer) {}
 
   getReportedUsers(): Observable<ReportedUser[]> {
     if (this.useFakeData) {
@@ -171,11 +182,49 @@ export class AdminDashboardReportedusersService {
     if (this.useFakeData) {
       return of([...this.fakeReportRequests]).pipe(delay(500));
     }
-    return this.http.get<ReportRequest[]>(`${this.apiUrl}/report-requests`);
+    let reportRequests : ReportRequest[]=[];
+    let reports : Report[] = [];
+    this.http.get<Report[]>(`${this.apiUrl}/getReports`).subscribe({
+              next : (response) =>{
+                reports=response;                
+                reports.forEach(r => {
+                  const reportRequest : ReportRequest={
+                      id: r.report_id,
+                      reporterId : 1,
+                      reportedUserId : 2,
+                      status : 'pending',
+                      reporterName: r.reporting_user_username,
+                      reportedUserName: r.reported_user_username,
+                      postId: r.blogId,
+                      comment: r.comment,
+                      createdAt: new Date(r.createdAt),
+                  }
+                  reportRequests.push(reportRequest);
+                })
+              },
+        
+              error: (err) => console.error('Failed to load chats', err)
+            });
+            this.reportRequest$! = of(reportRequests);
+            return this.reportRequest$;
+            
+  }
+  getUrl(path: string): SafeResourceUrl {
+    
+    const generatedUrl =
+      'http://localhost:8080/auth/files/Blogs/' +
+      path.substring(
+        path.lastIndexOf('\\') + 1
+      );
+    const imageUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+      generatedUrl
+    );
+    return imageUrl;
   }
 
-  getPostDetails(postId: number): Observable<PostDetails> {
-    if (this.useFakeData) {
+   getPostDetails(postId: number) : Observable<Blog> {
+
+    /*if (this.useFakeData) {
       const post = this.fakePosts.find(p => p.id === postId);
       return of(post ? {...post} : {
         id: postId,
@@ -184,7 +233,31 @@ export class AdminDashboardReportedusersService {
         createdAt: new Date()
       }).pipe(delay(300));
     }
-    return this.http.get<PostDetails>(`${this.apiUrl}/posts/${postId}`);
+    */
+    let blog :Blog = {
+          blogId : '',
+          username : '',
+          content : '',
+          role : 'Tourist',
+          createdAt : '',
+          photo_path : [],
+
+    }
+
+ 
+    let postDetails : PostDetails = {
+          id: 0,
+          authorName: '',
+          content: '',
+          imageUrl:'',
+          createdAt: new Date(''),
+    };
+     
+  return this.http.get<Blog>(`http://localhost:8080/auth/blog/getBlog/${postId}`);
+  
+
+    //this.postDetails$ = of(postDetails);
+    //return this.postDetails$;
   }
 
   approveReport(reportId: number): Observable<any> {

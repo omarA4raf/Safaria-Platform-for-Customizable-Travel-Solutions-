@@ -34,4 +34,7 @@ public class BlogController {
         return this.serv.addBlog(blogDTO);
     }
 
+    @GetMapping("/getBlog/{blog_id}")
+    public ResponseEntity<BlogDTO> getBlog(@PathVariable Integer blog_id){return this.serv.getBlog(blog_id);}
+
 }
