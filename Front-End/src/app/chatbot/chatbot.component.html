@@ -1,0 +1,24 @@
+<!-- Floating chat icon -->
+<button class="chatbot-fab" (click)="togglePopup()">
+  🤖
+</button>
+
+<!-- Popup window -->
+<div class="chatbot-popup" *ngIf="showPopup">
+  <div class="chatbot-header">
+    <span>Chatbot</span>
+    <button class="close-btn" (click)="togglePopup()">&times;</button>
+  </div>
+  <div class="chatbot-container">
+    <div class="messages">
+      <div *ngFor="let msg of messages" [ngClass]="msg.from">
+        <span [innerHTML]="msg.html"></span>
+      </div>
+      <div *ngIf="loading" class="bot">Typing...</div>
+    </div>
+    <form (ngSubmit)="send()" class="input-area">
+      <input [(ngModel)]="userInput" name="userInput" autocomplete="off" placeholder="Type your message..." required />
+      <button type="submit" [disabled]="loading || !userInput.trim()">Send</button>
+    </form>
+  </div>
+</div>

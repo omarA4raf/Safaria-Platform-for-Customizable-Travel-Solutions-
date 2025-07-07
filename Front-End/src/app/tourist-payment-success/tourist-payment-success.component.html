@@ -45,25 +45,7 @@
                 Your booking reference is: <strong>{{ bookingDetails?.bookingReference }}</strong>
             </p>
 
-            <div class="booking-details mb-4 text-start">
-                <h5 class="mb-3">Booking Details</h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Provider:</strong> {{ tripDetails?.providerName }}</p>
-                        <p><strong>Trip:</strong> {{ tripDetails?.title }}</p>
-                        <p><strong>Destination:</strong> {{ tripDetails?.destinationCountry }}</p>
-                        <p><strong>Duration:</strong> {{ tripDetails?.duration }} days</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Travel Dates:</strong>
-                            {{ bookingDetails?.date?.startDate | date }} - {{ bookingDetails?.date?.endDate | date }}
-                        </p>
-                        <p><strong>Travelers:</strong> {{ bookingDetails?.memberCount }}</p>
-                        <p><strong>Total Paid:</strong> {{ bookingDetails?.totalPrice | currency:tripDetails?.currency
-                            }}</p>
-                    </div>
-                </div>
-            </div>
+
 
             <p class="text-muted mb-4">
                 A confirmation email has been sent to your registered email address.

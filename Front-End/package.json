@@ -40,6 +40,7 @@
     "html2pdf.js": "^0.10.3",
     "jspdf": "^3.0.1",
     "leaflet": "^1.9.4",
+    "marked": "^16.0.0",
     "ngx-extended-pdf-viewer": "^23.1.1",
     "rxjs": "~7.8.0",
     "stripe": "^18.2.1",
