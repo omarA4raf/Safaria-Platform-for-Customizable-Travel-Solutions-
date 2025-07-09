@@ -92,4 +92,8 @@ export const routes: Routes = [
     path: 'admindashboardreports',
     component: AdminDashboardReportsComponent,
   }, // Admin Dashboard Reports route
+  {
+    path: 'tourist-view-trip/:id/:tourProvider',
+    component: TouristViewTripComponent,
+  },
 ];
