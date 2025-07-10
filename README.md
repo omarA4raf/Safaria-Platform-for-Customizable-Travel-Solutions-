@@ -30,3 +30,6 @@ Docker | GitHub Actions | SonarQube | PMD
 - Node.js 18+
 - MySQL 8.0+
 - Maven
+
+
+## 📄 [Project Report](https://drive.google.com/file/d/1CDCIj8eMiCY-SmLZYuBPXRjU75b13wbt/view?usp=drive_link)
