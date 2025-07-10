@@ -34,17 +34,15 @@ public class BlogReview {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-
     @Column(name = "blogId")
     private Integer blogId;
 
-    public BlogReview(BlogReviewDTO blogReviewDTO){
-        this.username=blogReviewDTO.getUsername();
-        this.comment=blogReviewDTO.getComment();
-        this.blogId=blogReviewDTO.getBlogId();
-        this.role=blogReviewDTO.getRole();
-        this.createdAt=LocalDateTime.now();
+    public BlogReview(BlogReviewDTO blogReviewDTO) {
+        this.username = blogReviewDTO.getUsername();
+        this.comment = blogReviewDTO.getComment();
+        this.blogId = blogReviewDTO.getBlogId();
+        this.role = blogReviewDTO.getRole();
+        this.createdAt = LocalDateTime.now();
     }
-
 
 }

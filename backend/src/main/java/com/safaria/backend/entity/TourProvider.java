@@ -5,22 +5,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import com.safaria.backend.DTO.TourProviderSignUpDTO;
-
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.OptionalInt;
-
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "TourProvider") // Explicitly set the table name
+@Table(name = "TourProvider")
 @Data
 public class TourProvider {
-   
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +38,7 @@ public class TourProvider {
     private String phone;
 
     @Column(name = "ProfilePhoto")
-    private String profilePhoto; // Assuming URL is stored as a String
+    private String profilePhoto;
 
     @ElementCollection
     @CollectionTable(name = "tourProvider_tourism_types", joinColumns = @JoinColumn(name = "UserID"))
@@ -60,74 +55,58 @@ public class TourProvider {
 
     @Column(name = "Date")
     private Date date;
-    // @Column(name = "aboutme" , nullable = true)
-    //  private boolean aboutMe;
-
-    public String getPassword() {
-        return password;
-    }
-
-    public Boolean getApproved() {
-        return isApproved;
-    }
-    public void setIsApproved(Boolean Approvement){this.isApproved=Approvement;}
-    public String getUsername(){return this.username;}
-    public String getEmail(){return this.email;}
-    public String getPhone(){return this.phone;}
-    public String getCountry(){return this.country;}
-    public List<String> getTourismTypes(){return this.tourismTypes;}
 
     @Column(name = "IsApproved")
     private Boolean isApproved;
     @Column(name = "StripeAccountId")
     private String stripeAccountId;
-    public TourProvider(TourProviderSignUpDTO dto, String relativeFilePath,Boolean type)  {
 
-            this.username = dto.getUsername();
-            this.email = dto.getEmail();
-            this.password = dto.getPassword();
-            this.country = dto.getCountry();
-            this.approvalDocumentPath=  relativeFilePath ; 
-            this.type=type;
-            this.phone = dto.getPhone();
+    public TourProvider(TourProviderSignUpDTO dto, String relativeFilePath, Boolean type) {
 
-            this.isApproved=dto.getIsApproved();
-            this.date=new Date();
-            this.tourismTypes=dto.getTourismTypes();
+        this.username = dto.getUsername();
+        this.email = dto.getEmail();
+        this.password = dto.getPassword();
+        this.country = dto.getCountry();
+        this.approvalDocumentPath = relativeFilePath;
+        this.type = type;
+        this.phone = dto.getPhone();
+
+        this.isApproved = dto.getIsApproved();
+        this.date = new Date();
+        this.tourismTypes = dto.getTourismTypes();
     }
-    public TourProvider(Tourist tourist,Boolean type){
+
+    public TourProvider(Tourist tourist, Boolean type) {
         this.username = tourist.getUsername();
         this.email = tourist.getEmail();
         this.password = tourist.getPassword();
         this.country = tourist.getCountry();
-        this.type=type;
+        this.type = type;
         this.phone = tourist.getPhone();
-        this.isApproved=false;
-        this.tourismTypes=new ArrayList<>(tourist.getTourismTypes());
-        this.profilePhoto=tourist.getProfilePhoto();
-        this.date=new Date();
+        this.isApproved = false;
+        this.tourismTypes = new ArrayList<>(tourist.getTourismTypes());
+        this.profilePhoto = tourist.getProfilePhoto();
+        this.date = new Date();
     }
-    public TourProvider(Admin admin,Boolean type){
+
+    public TourProvider(Admin admin, Boolean type) {
         this.username = admin.getUsername();
         this.email = admin.getEmail();
         this.password = admin.getPassword();
         this.phone = admin.getPhone();
-        this.isApproved=false;
-        this.profilePhoto=admin.getProfilePhoto();
-        this.type=type;
-        this.date=new Date();
+        this.isApproved = false;
+        this.profilePhoto = admin.getProfilePhoto();
+        this.type = type;
+        this.date = new Date();
 
     }
-    public TourProvider(UserEditDto user){
-        this.username=user.getName();
+
+    public TourProvider(UserEditDto user) {
+        this.username = user.getName();
         this.password = user.getName() + "Password@123";
-        this.isApproved=false;
-        this.date=new Date();
+        this.isApproved = false;
+        this.date = new Date();
 
     }
 
-    public TourProvider orElseThrow(Object object) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
-    }
 }

@@ -1,4 +1,5 @@
 package com.safaria.backend.entity;
+
 import jakarta.persistence.*;
 import lombok.*;
 import java.sql.Timestamp;
@@ -26,6 +27,5 @@ public class TourBooking {
 
     @Column(name = "TotalCost")
     private double totalCost;
-
 
 }

@@ -7,5 +7,6 @@ import java.util.List;
 
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Integer> {
-    List<Image> findByTour_TourId(Integer tourId); // Fetch images for a specific tour
+
+    List<Image> findByTour_TourId(Integer tourId);
 }

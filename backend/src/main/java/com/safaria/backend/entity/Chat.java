@@ -1,7 +1,6 @@
 package com.safaria.backend.entity;
 
 import com.safaria.backend.DTO.MessageDTO;
-import com.safaria.backend.DTO.UserEditDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Chat") // Explicitly set the table name
+@Table(name = "Chat")
 public class Chat {
 
     @Id
@@ -34,13 +33,10 @@ public class Chat {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    // tourist --> tour_provider : 0
-
-
-    public Chat(MessageDTO messageDTO){
-        this.sender_username=messageDTO.getSender_username();
-        this.receiver_username= messageDTO.getReceiver_username();
-        this.content=messageDTO.getContent();
-        this.createdAt=LocalDateTime.now();
+    public Chat(MessageDTO messageDTO) {
+        this.sender_username = messageDTO.getSender_username();
+        this.receiver_username = messageDTO.getReceiver_username();
+        this.content = messageDTO.getContent();
+        this.createdAt = LocalDateTime.now();
     }
 }

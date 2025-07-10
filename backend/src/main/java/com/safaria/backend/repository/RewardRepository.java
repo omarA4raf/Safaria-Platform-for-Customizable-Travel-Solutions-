@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RewardRepository extends JpaRepository<Reward, Integer> {
-    // You can add custom query methods here if needed
+
     Reward findByTouristUsername(String touristUsername);
 }

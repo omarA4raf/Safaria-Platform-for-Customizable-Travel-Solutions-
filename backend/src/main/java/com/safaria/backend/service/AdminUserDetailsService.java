@@ -1,15 +1,13 @@
 package com.safaria.backend.service;
+
 import com.safaria.backend.repository.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import com.safaria.backend.DTO.CustomUserDetails;
 import com.safaria.backend.entity.Admin;
-
-
 
 @Service("adminUserDetailsService")
 public class AdminUserDetailsService implements UserDetailsService {
@@ -26,4 +24,3 @@ public class AdminUserDetailsService implements UserDetailsService {
 
     }
 }
-

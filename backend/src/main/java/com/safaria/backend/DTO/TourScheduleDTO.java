@@ -1,15 +1,11 @@
 package com.safaria.backend.DTO;
 
+import lombok.Data;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import java.time.LocalDate;
-
-@Getter
-@Setter
+@Data
 public class TourScheduleDTO {
-    private Integer id; // or tourScheduleID
+
+    private Integer id;
     private Double price;
     private String startDate;
     private String endDate;

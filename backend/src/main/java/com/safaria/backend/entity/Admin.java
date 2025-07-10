@@ -5,11 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.persistence.*;
+
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Admin") // Explicitly set the table name
+@Table(name = "Admin")
 public class Admin {
 
     @Id
@@ -37,22 +38,24 @@ public class Admin {
         return password;
     }
 
-    public Admin(Tourist tourist){
+    public Admin(Tourist tourist) {
         this.username = tourist.getUsername();
         this.email = tourist.getEmail();
         this.password = tourist.getPassword();
         this.phone = tourist.getPhone();
-        this.profilePhoto=tourist.getProfilePhoto();
+        this.profilePhoto = tourist.getProfilePhoto();
     }
-    public Admin(TourProvider provider){
+
+    public Admin(TourProvider provider) {
         this.username = provider.getUsername();
         this.email = provider.getEmail();
         this.password = provider.getPassword();
         this.phone = provider.getPhone();
-        this.profilePhoto=provider.getProfilePhoto();
+        this.profilePhoto = provider.getProfilePhoto();
     }
-    public Admin(UserEditDto user){
-        this.username=user.getName();
+
+    public Admin(UserEditDto user) {
+        this.username = user.getName();
         this.password = user.getName() + "Password@123";
     }
 }

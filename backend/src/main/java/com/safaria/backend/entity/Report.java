@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -40,13 +39,13 @@ public class Report {
     @Column(name = "reported_user_type")
     private Boolean reported_user_type;
 
-    public Report(ReportDTO reportDTO){
-        this.reporting_user_username=reportDTO.getReporting_user_username();
-        this.reported_user_username= reportDTO.getReported_user_username();
-        this.reporting_user_type=reportDTO.getReporting_user_type();
-        this.reported_user_type=reportDTO.getReported_user_type();
-        this.comment=reportDTO.getComment();
-        this.createdAt=LocalDateTime.now();
-        this.blogId=reportDTO.getBlogId();
+    public Report(ReportDTO reportDTO) {
+        this.reporting_user_username = reportDTO.getReporting_user_username();
+        this.reported_user_username = reportDTO.getReported_user_username();
+        this.reporting_user_type = reportDTO.getReporting_user_type();
+        this.reported_user_type = reportDTO.getReported_user_type();
+        this.comment = reportDTO.getComment();
+        this.createdAt = LocalDateTime.now();
+        this.blogId = reportDTO.getBlogId();
     }
 }

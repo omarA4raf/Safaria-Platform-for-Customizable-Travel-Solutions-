@@ -5,8 +5,6 @@ import lombok.*;
 
 @Entity
 @Table(name = "Image")
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Image {
@@ -19,10 +17,10 @@ public class Image {
     @Column(name = "ImageUrl", nullable = false)
     private String imageUrl;
 
-    @Column(name = "Description", columnDefinition = "TEXT") // Optional field for description
+    @Column(name = "Description", columnDefinition = "TEXT")
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "TourID", nullable = false) // Foreign key linking to Tour
+    @JoinColumn(name = "TourID", nullable = false)
     private Tour tour;
 }

@@ -1,16 +1,14 @@
 package com.safaria.backend.repository;
 
 import java.util.List;
-
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import com.safaria.backend.DTO.TourSearchDTO;
 import com.safaria.backend.entity.Tour;
 
 public interface TourRepository extends JpaRepository<Tour, Integer> {
+
     @Query(value = """
             SELECT 
                 t.tourid AS tourID,
@@ -29,9 +27,8 @@ public interface TourRepository extends JpaRepository<Tour, Integer> {
             LIMIT :limit OFFSET :offset
             """, nativeQuery = true)
     List<TourSearchDTO> findToursByCountryWithPagination(
-        @Param("country") String country,
-        @Param("offset") int offset,
-        @Param("limit") int limit
+            @Param("country") String country,
+            @Param("offset") int offset,
+            @Param("limit") int limit
     );
 }
-

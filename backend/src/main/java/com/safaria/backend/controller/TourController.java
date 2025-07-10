@@ -3,7 +3,6 @@ package com.safaria.backend.controller;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,10 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.safaria.backend.DTO.BookingRequestDTO;
 import com.safaria.backend.DTO.BookingResponseDTO;
-import com.safaria.backend.DTO.TourImportantDTO;
 import com.safaria.backend.DTO.TourRequestDTO;
 import com.safaria.backend.DTO.TourScheduleDTO;
 import com.safaria.backend.DTO.TourSearchDTO;
@@ -38,17 +35,16 @@ import com.safaria.backend.service.TourService;
 @RestController
 @RequestMapping("/api/tours")
 public class TourController {
-    @Autowired
-    private  TourService tourService;
-    @Autowired
-     private  FileSystemService fileService;
-     @Autowired
-     private  ImageService imageService;
 
-   
+    @Autowired
+    private TourService tourService;
+    @Autowired
+    private FileSystemService fileService;
+    @Autowired
+    private ImageService imageService;
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String, String>> createTour( @RequestPart("tourData")  TourRequestDTO tourdto, @RequestPart("images") List<MultipartFile> images) {
+    public ResponseEntity<Map<String, String>> createTour(@RequestPart("tourData") TourRequestDTO tourdto, @RequestPart("images") List<MultipartFile> images) {
         System.out.println();
         System.out.println();
         System.out.println();
@@ -89,65 +85,64 @@ public class TourController {
         tourService.deleteSchedule(scheduleId);
         return ResponseEntity.noContent().build();
     }
-    // @GetMapping("/important")
-    // public ResponseEntity<List<TourImportantDTO>> getFiveImportantTours() {
-    //     return ResponseEntity.ok(tourService.getFiveImportantTours());
-    // }
+
     @GetMapping("/image/{id}")
-public ResponseEntity<byte[]> getImage(@PathVariable Integer id) {
-    List<Image> images = imageService.getImagesByTour(id);
-    
-    if (images == null || images.isEmpty()) {
-        return ResponseEntity.notFound().build(); // Return 404 if no image found
+    public ResponseEntity<byte[]> getImage(@PathVariable Integer id) {
+        List<Image> images = imageService.getImagesByTour(id);
+
+        if (images == null || images.isEmpty()) {
+            return ResponseEntity.notFound().build(); // Return 404 if no image found
+        }
+
+        String imagePath = images.get(0).getImageUrl(); // Get the first image
+        try {
+            byte[] imageData = fileService.getFileBytesFromPath(imagePath);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(imageData);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Return 500
+        }
     }
 
-    String imagePath = images.get(0).getImageUrl(); // Get the first image
-    try {
-        byte[] imageData = fileService.getFileBytesFromPath(imagePath);
-        return ResponseEntity.ok()
-            .contentType(MediaType.IMAGE_JPEG)
-            .body(imageData);
-    } catch (IOException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Return 500
-    }
-}
-  @GetMapping("/country/{country}")
+    @GetMapping("/country/{country}")
     public ResponseEntity<List<TourSearchDTO>> getToursByCountry(
             @PathVariable String country,
             @RequestParam int offset,
             @RequestParam int size) {
         String sanitizedCountry = country.trim();
         List<TourSearchDTO> tours = tourService.getToursByCountry(sanitizedCountry, offset, size);
-        // Always return 200 with the list (possibly empty)
+
         return ResponseEntity.ok(tours);
     }
 
     @PostMapping("/bookings")
-public ResponseEntity<BookingResponseDTO> bookTour(@RequestBody BookingRequestDTO bookingRequest) {
-    Booking booking = tourService.createBooking(
-        bookingRequest.getScheduleId(),
-        bookingRequest.getNumberOfSeats(),
-        bookingRequest.getUserId()
-    );
-    BookingResponseDTO dto = new BookingResponseDTO();
-    dto.setId(booking.getId());
-    dto.setNumberOfSeats(booking.getNumberOfSeats());
-    dto.setBookingTime(booking.getBookingTime());
-    dto.setScheduleId(booking.getSchedule().getTourScheduleID());
-    dto.setUserId(booking.getUser().getId());
-    dto.setStatus(booking.getStatus().name());
-    dto.setTotalPrice(booking.getTotalPrice()); // Or booking.getTotalPrice() if you have a getter
+    public ResponseEntity<BookingResponseDTO> bookTour(@RequestBody BookingRequestDTO bookingRequest) {
+        Booking booking = tourService.createBooking(
+                bookingRequest.getScheduleId(),
+                bookingRequest.getNumberOfSeats(),
+                bookingRequest.getUserId()
+        );
+        BookingResponseDTO dto = new BookingResponseDTO();
+        dto.setId(booking.getId());
+        dto.setNumberOfSeats(booking.getNumberOfSeats());
+        dto.setBookingTime(booking.getBookingTime());
+        dto.setScheduleId(booking.getSchedule().getTourScheduleID());
+        dto.setUserId(booking.getUser().getId());
+        dto.setStatus(booking.getStatus().name());
+        dto.setTotalPrice(booking.getTotalPrice());
 
-    return ResponseEntity.ok(dto);
-}
-@PutMapping("/bookings/{bookingId}/confirm-payment")
-public ResponseEntity<?> confirmBookingPayment(@PathVariable Long bookingId) {
-    Booking booking = tourService.getBookingById(bookingId);
-    if (booking == null) {
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(dto);
     }
-    booking.setStatus(Booking.BookingStatus.CONFIRMED);
-    tourService.saveBooking(booking);
-    return ResponseEntity.ok().build();
-}
+
+    @PutMapping("/bookings/{bookingId}/confirm-payment")
+    public ResponseEntity<?> confirmBookingPayment(@PathVariable Long bookingId) {
+        Booking booking = tourService.getBookingById(bookingId);
+        if (booking == null) {
+            return ResponseEntity.notFound().build();
+        }
+        booking.setStatus(Booking.BookingStatus.CONFIRMED);
+        tourService.saveBooking(booking);
+        return ResponseEntity.ok().build();
+    }
 }
