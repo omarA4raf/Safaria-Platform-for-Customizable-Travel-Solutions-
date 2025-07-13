@@ -30,7 +30,6 @@ public class SignUpController {
 
     @PostMapping(value = "/companysignup", consumes = "multipart/form-data")
     public ResponseEntity<String> companySignUp(@Valid @ModelAttribute TourProviderSignUpDTO data) {
-        System.out.println(data.getUsername() + ", " + data.getEmail() + ", " + data.getPassword());
         return serv.saveTourProvider(data, false);
     }
 

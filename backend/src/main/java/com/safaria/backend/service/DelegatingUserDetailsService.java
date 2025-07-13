@@ -1,13 +1,10 @@
 package com.safaria.backend.service;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import com.safaria.backend.DTO.CustomUserDetails;
-import com.safaria.backend.service.TourProviderUserDetailsService;
-import com.safaria.backend.service.TouristUserDetailsService;
 
 @Service
 public class DelegatingUserDetailsService implements UserDetailsService {
@@ -29,11 +26,10 @@ public class DelegatingUserDetailsService implements UserDetailsService {
         } else if (username.startsWith("provider:")) {
             String actualUsername = username.substring("provider:".length());
             return providerUserDetailsService.loadUserByUsername(actualUsername);
-        }
-        else if(username.startsWith("admin:")){
+        } else if (username.startsWith("admin:")) {
             String actualUsername = username.substring("admin:".length());
             return adminUserDetailsService.loadUserByUsername(actualUsername);
         }
         throw new UsernameNotFoundException("User must start with 'tourist:' or 'provider:'");
     }
-    }
+}

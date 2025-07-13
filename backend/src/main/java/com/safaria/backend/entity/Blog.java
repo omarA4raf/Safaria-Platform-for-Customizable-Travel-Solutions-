@@ -1,7 +1,7 @@
 package com.safaria.backend.entity;
 
 import com.safaria.backend.DTO.BlogDTO;
-import com.safaria.backend.DTO.BlogReviewDTO;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,6 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Data
@@ -39,15 +38,16 @@ public class Blog {
     @Column(name = "photo")
     private String[] photo;
 
-
-
-
-    public Blog(BlogDTO blogDTO,String[] file){
-        this.username=blogDTO.getUsername();
-        this.content=blogDTO.getContent();
-        if(file != null) this.photo=file.clone();
-        this.createdAt=LocalDateTime.now();
-        this.role=blogDTO.getRole();
-        if( blogDTO.getBlogId()!=null) this.blogId=blogDTO.getBlogId();
+    public Blog(BlogDTO blogDTO, String[] file) {
+        this.username = blogDTO.getUsername();
+        this.content = blogDTO.getContent();
+        if (file != null) {
+            this.photo = file.clone();
+        }
+        this.createdAt = LocalDateTime.now();
+        this.role = blogDTO.getRole();
+        if (blogDTO.getBlogId() != null) {
+            this.blogId = blogDTO.getBlogId();
+        }
     }
 }

@@ -6,20 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
 import java.net.MalformedURLException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.io.IOException;
-import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/auth")
 public class FileController {
-    @Autowired
-    private FileSystemService fileSystemService;
+
     private MediaType getMediaTypeForFileName(String filename) {
         if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
             return MediaType.IMAGE_JPEG;
@@ -31,9 +26,9 @@ public class FileController {
             return MediaType.APPLICATION_PDF;
         }
     }
+
     @GetMapping("/files/{foldername}/{filename:.+}")
-    public ResponseEntity<Resource> getFile(@PathVariable String foldername,@PathVariable String filename) {
-        System.out.println("wassssssssssssal");
+    public ResponseEntity<Resource> getFile(@PathVariable String foldername, @PathVariable String filename) {
         try {
             Path filePath = Paths.get("backend/src/main/resources/Upload/Documents").resolve(foldername).resolve(filename).normalize();
             UrlResource urlResource = new UrlResource(filePath.toUri());
@@ -56,6 +51,5 @@ public class FileController {
             return ResponseEntity.badRequest().build();
         }
     }
-
 
 }

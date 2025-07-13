@@ -6,6 +6,7 @@ import java.time.Instant;
 
 @Data
 public class TourProviderRequestDTO {
+
     private Integer id;
     private String name;
     private String email;
@@ -14,4 +15,3 @@ public class TourProviderRequestDTO {
     private String status; // "pending", "approved", or "rejected"
     private Instant submittedAt; // or LocalDateTime if you prefer
 }
-
