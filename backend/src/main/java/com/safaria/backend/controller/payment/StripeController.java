@@ -19,9 +19,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class StripeController {
 
-    private final TourProviderRepository tourProviderRepository;
     @Autowired
-    private final StripeService stripeService;
+    private TourProviderRepository tourProviderRepository;
+    @Autowired
+    private StripeService stripeService;
 
     @PostMapping("/create-account")
     public SellerOnboardingResponse createSellerAccount(@RequestBody SellerOnboardingRequest request) throws StripeException {

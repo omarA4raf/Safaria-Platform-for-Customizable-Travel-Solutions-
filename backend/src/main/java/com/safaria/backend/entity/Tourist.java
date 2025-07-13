@@ -19,7 +19,7 @@ public class Tourist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "UserID")
-    private Integer userId;
+    private Integer Id;
 
     @Column(name = "Username", unique = true)
     private String username;

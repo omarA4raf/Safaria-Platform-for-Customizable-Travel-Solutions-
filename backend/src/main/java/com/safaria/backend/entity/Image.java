@@ -7,6 +7,7 @@ import lombok.*;
 @Table(name = "Image")
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class Image {
 
     @Id

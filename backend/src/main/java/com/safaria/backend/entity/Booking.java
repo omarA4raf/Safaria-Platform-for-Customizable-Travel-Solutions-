@@ -32,6 +32,6 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
 
-    private double TotalPrice;
+    private Double TotalPrice;
 
 }

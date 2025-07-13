@@ -305,7 +305,7 @@ public class TourService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         booking.setUser(tourist);
         booking.setBookingTime(java.time.LocalDateTime.now());
-        booking.setTotalPrice(numberOfSeats, schedule.getPrice());
+        booking.setTotalPrice(numberOfSeats * schedule.getPrice());
         booking.setStatus(Booking.BookingStatus.PENDING); // Set initial status");
         return bookingRepository.save(booking);
     }
