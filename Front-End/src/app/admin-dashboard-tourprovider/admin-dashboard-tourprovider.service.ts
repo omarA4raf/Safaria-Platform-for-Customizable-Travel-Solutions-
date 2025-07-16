@@ -17,7 +17,7 @@ interface TourProviderRequest {
   providedIn: 'root'
 })
 export class AdminDashboardTourproviderService {
-  private apiUrl = 'http://localhost:8080/auth/admin';
+  private apiUrl = 'http://localhost:8080/admin';
   private fakeRequests: TourProviderRequest[] = [
     {
       id: 1,
@@ -59,7 +59,7 @@ export class AdminDashboardTourproviderService {
 
   private useFakeData = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getRequests(): Observable<TourProviderRequest[]> {
     if (this.useFakeData) {
@@ -76,7 +76,7 @@ export class AdminDashboardTourproviderService {
       }
       return of(undefined).pipe(delay(500));
     }
-    return this.http.post(`${this.apiUrl}/tour-providers/approve${id}`,null, { responseType: 'text'});
+    return this.http.post(`${this.apiUrl}/tour-providers/approve${id}`, null, { responseType: 'text' });
   }
 
   rejectRequest(id: number): Observable<any> {
@@ -84,7 +84,7 @@ export class AdminDashboardTourproviderService {
       this.fakeRequests = this.fakeRequests.filter(r => r.id !== id);
       return of(undefined).pipe(delay(500));
     }
-    return this.http.delete(`${this.apiUrl}/tour-providers/reject${id}`,{responseType :'text'});
+    return this.http.delete(`${this.apiUrl}/tour-providers/reject${id}`, { responseType: 'text' });
   }
 
   deleteRequest(id: number): Observable<void> {

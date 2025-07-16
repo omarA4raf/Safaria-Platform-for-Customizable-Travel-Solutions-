@@ -8,19 +8,19 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UserType } from '../shared/chat/user-types';
-export interface Blog{
-    blogId : string;
-    username : string;
-    content : string;
-    role : 'Tourist';
-    createdAt : string;
-    photo_path : string[];
-  }
-export interface Review{
+export interface Blog {
+  blogId: string;
   username: string;
-  role : 'Tourist';
-  createdAt : string;
-  comment : string
+  content: string;
+  role: 'Tourist';
+  createdAt: string;
+  photo_path: string[];
+}
+export interface Review {
+  username: string;
+  role: 'Tourist';
+  createdAt: string;
+  comment: string
 }
 
 @Component({
@@ -38,72 +38,73 @@ export interface Review{
 })
 export class BlogForYouComponent {
   @ViewChild('idDocumentInput') idDocumentInput!: ElementRef;
-  
-constructor(private http: HttpClient,private authService:AuthService,private sanitizer: DomSanitizer
-){}
+
+  constructor(private http: HttpClient, private authService: AuthService, private sanitizer: DomSanitizer
+  ) { }
 
 
-private myblogs : Blog[] =[]
-posts: BlogPost[]=[]
-private baseUrl = 'http://localhost:8080/auth/blog';
- ngOnInit(){
+  private myblogs: Blog[] = []
+  posts: BlogPost[] = []
+  private baseUrl = 'http://localhost:8080/blog';
+  ngOnInit() {
 
-  this.http.get<Blog[]>(`${this.baseUrl}/getBlogs/`).subscribe({
-    next: (data) =>{ this.myblogs=data;
+    this.http.get<Blog[]>(`${this.baseUrl}/getBlogs/`).subscribe({
+      next: (data) => {
+        this.myblogs = data;
         console.log(data)
         this.myblogs.forEach(b => {
-        const imgs :SafeResourceUrl [] =[];
-        b.photo_path.forEach(p => {imgs.push(this.getUrl(p))})
-        let reviews : Review[] = [];
-        const comts : Comment[] = [];
-        this.http.get<Review[]>(`http://localhost:8080/auth/blogReview/getReviews/${b.blogId}`).subscribe({
-          next : (blog_reviews) =>{
-            reviews=blog_reviews;
-            let index=0;
-            reviews.forEach(r => {
-              const comment : Comment={
-                id: index.toString(),
-                userId: r.username,
-                userName: r.username,
-                userAvatar:'https://i.pravatar.cc/150?img=11' ,
-                content: r.comment,
-                date: new Date(r.createdAt),
-              }
-              comts.push(comment);
-            })
-          },
-    
-          error: (err) => console.error('Failed to load chats', err)
+          const imgs: SafeResourceUrl[] = [];
+          b.photo_path.forEach(p => { imgs.push(this.getUrl(p)) })
+          let reviews: Review[] = [];
+          const comts: Comment[] = [];
+          this.http.get<Review[]>(`http://localhost:8080/blogReview/getReviews/${b.blogId}`).subscribe({
+            next: (blog_reviews) => {
+              reviews = blog_reviews;
+              let index = 0;
+              reviews.forEach(r => {
+                const comment: Comment = {
+                  id: index.toString(),
+                  userId: r.username,
+                  userName: r.username,
+                  userAvatar: 'https://i.pravatar.cc/150?img=11',
+                  content: r.comment,
+                  date: new Date(r.createdAt),
+                }
+                comts.push(comment);
+              })
+            },
+
+            error: (err) => console.error('Failed to load chats', err)
+          });
+          const blog: BlogPost = {
+            id: b.blogId,
+            userId: b.username,
+            userName: b.username,
+            userAvatar: 'https://i.pravatar.cc/150?img=11',
+            userRating: 4.0,
+            date: new Date(b.createdAt),
+            content: b.content,
+            images: imgs,
+            likes: 15,
+            isLiked: false,
+            location: 'Swiss Alps, Switzerland',
+            comments: comts,
+          }
+          this.posts.push(blog);
+
         });
-        const blog : BlogPost={
-          id : b.blogId,
-          userId : b.username,
-          userName : b.username,
-          userAvatar : 'https://i.pravatar.cc/150?img=11',
-          userRating: 4.0,
-          date: new Date(b.createdAt),
-          content : b.content,
-          images :imgs,
-          likes: 15,
-          isLiked: false,
-          location: 'Swiss Alps, Switzerland',
-          comments:comts,
-    }
-    this.posts.push(blog);
-       
-});
-    },
-    
-    error: (err) => console.error('Failed to load chats', err)
-  });
+      },
 
-  
+      error: (err) => console.error('Failed to load chats', err)
+    });
 
- }
+
+
+  }
   getUrl(path: string): SafeResourceUrl {
-    
+
     const generatedUrl =
-      'http://localhost:8080/auth/files/Blogs/' +
+      'http://localhost:8080/files/Blogs/' +
       path.substring(
         path.lastIndexOf('\\') + 1
       );
@@ -131,23 +132,23 @@ private baseUrl = 'http://localhost:8080/auth/blog';
     };
 
     post.comments.unshift(newComment);
-    const review ={
-        blogId :post.id,
-        username: this.authService.getUsername(),
-        role : 'Tourist',
-        comment : commentContent,
+    const review = {
+      blogId: post.id,
+      username: this.authService.getUsername(),
+      role: 'Tourist',
+      comment: commentContent,
     }
-    this.http.post<any>(`http://localhost:8080/auth/blogReview/addReview/`,review, {
+    this.http.post<any>(`http://localhost:8080/blogReview/addReview/`, review, {
 
-}).subscribe({
-  next: (response: any) => {
-    console.log('Success:', response);
-    
-  },
-  error: (error: any) => {
-    console.error('Error:', error);
-  }
-});
+    }).subscribe({
+      next: (response: any) => {
+        console.log('Success:', response);
+
+      },
+      error: (error: any) => {
+        console.error('Error:', error);
+      }
+    });
   }
   // Add these new methods to your component class
   showShareSuccess: boolean = false;
@@ -171,26 +172,26 @@ private baseUrl = 'http://localhost:8080/auth/blog';
   submitReport() {
     if (this.reportReason.trim() && this.currentReportPost) {
       // In a real app, you would send this to your backend
-          
-          const report ={
-          reporting_user_username : this.authService.getUsername(),
-          reported_user_username : this.currentReportPost.userName,
-          comment : this.reportReason.trim(),
-          reporting_user_type : this.authService.getUserType() === UserType.GUIDE,
-          reported_user_type : 0,
-          blogId : this.currentReportPost.id,
-    }
-    this.http.post<any>(`http://localhost:8080/auth/admin/addReport/`,report, {
 
-}).subscribe({
-  next: (response: any) => {
-    console.log('Success:', response);
-    
-  },
-  error: (error: any) => {
-    console.error('Error:', error);
-  }
-});
+      const report = {
+        reporting_user_username: this.authService.getUsername(),
+        reported_user_username: this.currentReportPost.userName,
+        comment: this.reportReason.trim(),
+        reporting_user_type: this.authService.getUserType() === UserType.GUIDE,
+        reported_user_type: 0,
+        blogId: this.currentReportPost.id,
+      }
+      this.http.post<any>(`http://localhost:8080/admin/addReport/`, report, {
+
+      }).subscribe({
+        next: (response: any) => {
+          console.log('Success:', response);
+
+        },
+        error: (error: any) => {
+          console.error('Error:', error);
+        }
+      });
       console.log(
         `Reported post ${this.currentReportPost.id}: ${this.reportReason}`
       );

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-@RequestMapping("/api/chatBot")
+@RequestMapping("/auth/api/chatBot")
 @CrossOrigin(origins = "http://localhost:4200") // Allow requests from Angular frontend
 @RestController
 public class ChatBotController {

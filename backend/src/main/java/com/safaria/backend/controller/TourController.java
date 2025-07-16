@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +44,7 @@ public class TourController {
     @Autowired
     private ImageService imageService;
 
+    @PreAuthorize("hasRole('PROVIDER')")
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> createTour(@RequestPart("tourData") TourRequestDTO tourdto, @RequestPart("images") List<MultipartFile> images) {
         System.out.println();
@@ -64,22 +66,26 @@ public class TourController {
         return ResponseEntity.ok(tourService.getTourDTOById(tourId));
     }
 
+    @PreAuthorize("hasRole('PROVIDER')")
     @PutMapping("/{tourId}")
     public ResponseEntity<Tour> updateTour(@PathVariable Integer tourId, @RequestBody TourRequestDTO dto) {
         return ResponseEntity.ok(tourService.updateTour(tourId, dto));
     }
 
+    @PreAuthorize("hasRole('PROVIDER')")
     @DeleteMapping("/{tourId}")
     public ResponseEntity<Void> deleteTour(@PathVariable Integer tourId) {
         tourService.deleteTour(tourId);
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('PROVIDER')")
     @PostMapping("/{tourId}/schedules")
     public ResponseEntity<String> addSchedulesToTour(@PathVariable Integer tourId, @RequestBody List<TourScheduleDTO> scheduleDTOs) {
         return ResponseEntity.ok(tourService.addSchedulesToTour(tourId, scheduleDTOs));
     }
 
+    @PreAuthorize("hasRole('PROVIDER')")
     @DeleteMapping("/schedule/{scheduleId}")
     public ResponseEntity<Void> deleteSchedule(@PathVariable Integer scheduleId) {
         tourService.deleteSchedule(scheduleId);

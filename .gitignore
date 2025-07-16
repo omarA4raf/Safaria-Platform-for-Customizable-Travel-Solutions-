@@ -4,3 +4,4 @@
 *.png
 .vscode
 /backend/src/main/resources/Upload/
+/backend/lib/

@@ -10,7 +10,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
-@RequestMapping("/auth/blogReview")
+@RequestMapping("/blogReview")
 public class BlogReviewController {
 
     @Autowired

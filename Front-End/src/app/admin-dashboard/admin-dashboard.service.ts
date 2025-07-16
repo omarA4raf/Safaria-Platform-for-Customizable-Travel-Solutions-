@@ -14,7 +14,7 @@ interface User {
   providedIn: 'root'
 })
 export class AdminDashboardService {
-  private apiUrl = 'http://localhost:8080/auth/admin';
+  private apiUrl = 'http://localhost:8080/admin';
   private fakeUsers: User[] = [
     { id: 1, name: 'John Doe', email: 'john@example.com', role: 1 },
     { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 2 },
@@ -25,7 +25,7 @@ export class AdminDashboardService {
 
   private useFakeData = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getUsers(): Observable<User[]> {
     if (this.useFakeData) {
@@ -34,14 +34,14 @@ export class AdminDashboardService {
     return this.http.get<User[]>(`${this.apiUrl}/getUsers`);
   }
 
-  deleteUser(id: number,role: string): Observable<void> {
+  deleteUser(id: number, role: string): Observable<void> {
     if (this.useFakeData) {
       this.fakeUsers = this.fakeUsers.filter(user => user.id !== id);
       return of(undefined).pipe(delay(500));
     }
-    if( role == "Tourist"){return this.http.delete<void>(`${this.apiUrl}/tourist/delete${id}`); }
-    else{return this.http.delete<void>(`${this.apiUrl}/tour-providers/reject${id}`);}
-    
+    if (role == "Tourist") { return this.http.delete<void>(`${this.apiUrl}/tourist/delete${id}`); }
+    else { return this.http.delete<void>(`${this.apiUrl}/tour-providers/reject${id}`); }
+
   }
 
   addUser(user: User): Observable<User> {
@@ -54,7 +54,7 @@ export class AdminDashboardService {
     return this.http.post<User>(`${this.apiUrl}/addUser/`, user);
   }
 
-  updateUser(oldUser: any,newUser : User): Observable<any> {
+  updateUser(oldUser: any, newUser: User): Observable<any> {
     if (this.useFakeData) {
       const index = this.fakeUsers.findIndex(u => u.id === newUser.id);
       if (index !== -1) {
@@ -68,7 +68,7 @@ export class AdminDashboardService {
       }
       return of(newUser).pipe(delay(500));
     }
-    return this.http.put(`${this.apiUrl}/UpdateUser/${oldUser.id}/${oldUser.role}`,newUser,{responseType : 'text'});
+    return this.http.put(`${this.apiUrl}/UpdateUser/${oldUser.id}/${oldUser.role}`, newUser, { responseType: 'text' });
 
   }
 }

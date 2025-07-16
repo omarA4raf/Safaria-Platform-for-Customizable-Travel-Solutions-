@@ -33,34 +33,34 @@ interface PostDetails {
   imageUrl?: SafeResourceUrl;
   createdAt: Date;
 }
-interface Blog{
-    blogId : string;
-    username : string;
-    content : string;
-    role : 'Tourist';
-    createdAt : string;
-    photo_path : string[];
-  }
+interface Blog {
+  blogId: string;
+  username: string;
+  content: string;
+  role: 'Tourist';
+  createdAt: string;
+  photo_path: string[];
+}
 interface Report {
-  report_id :number;
-  reporting_user_username :string;
-  reported_user_username : string;
-  comment : string;
-  createdAt : string;
-  reporting_user_type : boolean;
-  reported_user_type : boolean;
-  blogId : number,
+  report_id: number;
+  reporting_user_username: string;
+  reported_user_username: string;
+  comment: string;
+  createdAt: string;
+  reporting_user_type: boolean;
+  reported_user_type: boolean;
+  blogId: number,
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminDashboardReportedusersService {
-  private apiUrl = 'http://localhost:8080/auth/admin';
+  private apiUrl = 'http://localhost:8080/admin';
   private useFakeData = false;
   reportedUsers$!: Observable<ReportedUser[]>;
-  postDetails$! : Observable<PostDetails>;
-  reportRequest$! : Observable<ReportRequest[]>;
+  postDetails$!: Observable<PostDetails>;
+  reportRequest$!: Observable<ReportRequest[]>;
   private fakeReportedUsers: ReportedUser[] = [
     {
       id: 1,
@@ -142,75 +142,75 @@ export class AdminDashboardReportedusersService {
     }
   ];
 
-  constructor(private http: HttpClient,private sanitizer: DomSanitizer) {}
+  constructor(private http: HttpClient, private sanitizer: DomSanitizer) { }
 
   getReportedUsers(): Observable<ReportedUser[]> {
     if (this.useFakeData) {
       return of([...this.fakeReportedUsers]).pipe(delay(500));
     }
-    const reports : ReportedUser[]=[];
-    let result : Report[]=[]; 
+    const reports: ReportedUser[] = [];
+    let result: Report[] = [];
     this.http.get<Report[]>(`${this.apiUrl}/getReports`).subscribe({
-              next : (response) =>{
-                result=response;
-                
-                result.forEach(r => {
-                  let reportedUserType = '';
-                  if(r.reported_user_type)  reportedUserType = 'guide';
-                  else reportedUserType = 'tourist';
-                  const report : ReportedUser={
-                    id: r.report_id,
-                    name: r.reported_user_username,
-                    email: r.reported_user_username,
-                    type: reportedUserType as 'tourist' | 'guide' | 'company',
-                    reportCount: result.filter(u => u.reported_user_username === r.reported_user_username).length,
-                    status: 'pending_review',
-                    lastReportedAt: new Date(r.createdAt),
-                  }
-                  reports.push(report);
-                })
-              },
-        
-              error: (err) => console.error('Failed to load chats', err)
-            });
-            
-            this.reportedUsers$ = of(reports);
-           return this.reportedUsers$;
+      next: (response) => {
+        result = response;
+
+        result.forEach(r => {
+          let reportedUserType = '';
+          if (r.reported_user_type) reportedUserType = 'guide';
+          else reportedUserType = 'tourist';
+          const report: ReportedUser = {
+            id: r.report_id,
+            name: r.reported_user_username,
+            email: r.reported_user_username,
+            type: reportedUserType as 'tourist' | 'guide' | 'company',
+            reportCount: result.filter(u => u.reported_user_username === r.reported_user_username).length,
+            status: 'pending_review',
+            lastReportedAt: new Date(r.createdAt),
+          }
+          reports.push(report);
+        })
+      },
+
+      error: (err) => console.error('Failed to load chats', err)
+    });
+
+    this.reportedUsers$ = of(reports);
+    return this.reportedUsers$;
   }
 
   getReportRequests(): Observable<ReportRequest[]> {
     if (this.useFakeData) {
       return of([...this.fakeReportRequests]).pipe(delay(500));
     }
-    let reportRequests : ReportRequest[]=[];
-    let reports : Report[] = [];
+    let reportRequests: ReportRequest[] = [];
+    let reports: Report[] = [];
     this.http.get<Report[]>(`${this.apiUrl}/getReports`).subscribe({
-              next : (response) =>{
-                reports=response;                
-                reports.forEach(r => {
-                  const reportRequest : ReportRequest={
-                      id: r.report_id,
-                      reporterId : 1,
-                      reportedUserId : 2,
-                      status : 'pending',
-                      reporterName: r.reporting_user_username,
-                      reportedUserName: r.reported_user_username,
-                      postId: r.blogId,
-                      comment: r.comment,
-                      createdAt: new Date(r.createdAt),
-                  }
-                  reportRequests.push(reportRequest);
-                })
-              },
-        
-              error: (err) => console.error('Failed to load chats', err)
-            });
-            this.reportRequest$! = of(reportRequests);
-            return this.reportRequest$;
-            
+      next: (response) => {
+        reports = response;
+        reports.forEach(r => {
+          const reportRequest: ReportRequest = {
+            id: r.report_id,
+            reporterId: 1,
+            reportedUserId: 2,
+            status: 'pending',
+            reporterName: r.reporting_user_username,
+            reportedUserName: r.reported_user_username,
+            postId: r.blogId,
+            comment: r.comment,
+            createdAt: new Date(r.createdAt),
+          }
+          reportRequests.push(reportRequest);
+        })
+      },
+
+      error: (err) => console.error('Failed to load chats', err)
+    });
+    this.reportRequest$! = of(reportRequests);
+    return this.reportRequest$;
+
   }
   getUrl(path: string): SafeResourceUrl {
-    
+
     const generatedUrl =
       'http://localhost:8080/auth/files/Blogs/' +
       path.substring(
@@ -222,7 +222,7 @@ export class AdminDashboardReportedusersService {
     return imageUrl;
   }
 
-   getPostDetails(postId: number) : Observable<Blog> {
+  getPostDetails(postId: number): Observable<Blog> {
 
     /*if (this.useFakeData) {
       const post = this.fakePosts.find(p => p.id === postId);
@@ -234,27 +234,27 @@ export class AdminDashboardReportedusersService {
       }).pipe(delay(300));
     }
     */
-    let blog :Blog = {
-          blogId : '',
-          username : '',
-          content : '',
-          role : 'Tourist',
-          createdAt : '',
-          photo_path : [],
+    let blog: Blog = {
+      blogId: '',
+      username: '',
+      content: '',
+      role: 'Tourist',
+      createdAt: '',
+      photo_path: [],
 
     }
 
- 
-    let postDetails : PostDetails = {
-          id: 0,
-          authorName: '',
-          content: '',
-          imageUrl:'',
-          createdAt: new Date(''),
+
+    let postDetails: PostDetails = {
+      id: 0,
+      authorName: '',
+      content: '',
+      imageUrl: '',
+      createdAt: new Date(''),
     };
-     
-  return this.http.get<Blog>(`http://localhost:8080/auth/blog/getBlog/${postId}`);
-  
+
+    return this.http.get<Blog>(`http://localhost:8080/auth/blog/getBlog/${postId}`);
+
 
     //this.postDetails$ = of(postDetails);
     //return this.postDetails$;
@@ -290,7 +290,7 @@ export class AdminDashboardReportedusersService {
   }
 
   suspendUser(userId: number): Observable<any> {
-    
+
     if (this.useFakeData) {
       const user = this.fakeReportedUsers.find(u => u.id === userId);
       if (user) {

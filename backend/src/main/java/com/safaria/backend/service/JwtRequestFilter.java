@@ -29,6 +29,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Qualifier("tourProviderUserDetailsService")
     private UserDetailsService tourProviderUserDetailsService;
 
+    @Autowired
+    @Qualifier("adminUserDetailsService")
+    private UserDetailsService adminUserDetailsService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
@@ -65,6 +69,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             userDetails = touristUserDetailsService.loadUserByUsername(username); // Load tourist user details
         } else if ("PROVIDER".equals(role)) {
             userDetails = tourProviderUserDetailsService.loadUserByUsername(username); // Load provider user details
+        } else if ("ADMIN".equals(role)) {
+            userDetails = adminUserDetailsService.loadUserByUsername(username); // Load admin user details
         } else {
             // Handle unsupported role if needed
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Role.");
