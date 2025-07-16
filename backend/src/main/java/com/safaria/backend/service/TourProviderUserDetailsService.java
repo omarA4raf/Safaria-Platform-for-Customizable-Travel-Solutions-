@@ -22,12 +22,7 @@ public class TourProviderUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Tour provider not found");
         }
 
-        String role;
-        if (!provider.getType()) {
-            role = "COMPANY"; 
-        }else {
-            role = "TOUR_GUIDE";
-        }
+        String role = "PROVIDER";
 
         return new CustomUserDetails(provider.getUserId(), provider.getEmail(), provider.getPassword(), role, provider.getUsername());
     }

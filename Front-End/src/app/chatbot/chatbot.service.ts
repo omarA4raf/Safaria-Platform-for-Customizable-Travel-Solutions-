@@ -4,9 +4,9 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ChatbotService {
-  private apiUrl = 'http://localhost:8080/api/chatBot';
+  private apiUrl = 'http://localhost:8080/auth/api/chatBot';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   sendMessage(message: string): Observable<{ reply: string }> {
     return this.http.post<{ reply: string }>(this.apiUrl, { message });

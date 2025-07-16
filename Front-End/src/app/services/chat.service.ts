@@ -28,10 +28,10 @@ export class ChatService {
   selectedChat: any = null;
   private chats: any[] = [];
   private initialized = false; // Track if chats have been initialized
-  private messages : Chat[] =[];
-  private apiUrl = 'http://localhost:8080/auth/chat';
+  private messages: Chat[] = [];
+  private apiUrl = 'http://localhost:8080/chat';
 
-  constructor(private http: HttpClient,private authService:AuthService) {
+  constructor(private http: HttpClient, private authService: AuthService) {
     this.initializeMockChats();
   }
 
@@ -51,7 +51,7 @@ export class ChatService {
             time: 'now',
             senderId: 'Safaria',
           },
-          
+
         ],
       },
     ];
@@ -66,7 +66,7 @@ export class ChatService {
       this.selectedChat = null;
     }
   }
- getToggledChat() : any[]{return this.chats;}
+  getToggledChat(): any[] { return this.chats; }
   selectChat(chat: any) {
     // Find the current version of this chat in our array
     const currentChat = this.chats.find((c) => c.id === chat.id);
@@ -79,29 +79,30 @@ export class ChatService {
     // Return a copy of the current chats array
     console.log('Getting chats for user:', userId, 'type:', userType);
     this.http.get<Chat[]>(`${this.apiUrl}/getChats/${userId}`).subscribe({
-    next: (data) =>{ this.messages=data;
+      next: (data) => {
+        this.messages = data;
         let index = 2;
         this.messages.forEach(m => {
-        index++;
-        m.id = index.toString();
-        m.avatar='/assets/img/tourguide.jpg';
-        this.chats.push(m);
-});
-    },
-    
-    error: (err) => console.error('Failed to load chats', err)
-  });
-console.log(this.messages)
-interface msg{
-        text: any;
-        time : any;
-        senderId : any;
+          index++;
+          m.id = index.toString();
+          m.avatar = '/assets/img/tourguide.jpg';
+          this.chats.push(m);
+        });
+      },
+
+      error: (err) => console.error('Failed to load chats', err)
+    });
+    console.log(this.messages)
+    interface msg {
+      text: any;
+      time: any;
+      senderId: any;
     }
 
     return [...this.chats];
   }
 
-  sendMessage(senderId: string |null, chatId: string, text: string) {
+  sendMessage(senderId: string | null, chatId: string, text: string) {
     if (!text.trim()) return;
 
     const newMsg = {
@@ -131,41 +132,41 @@ interface msg{
       }
 
       console.log('Message sent:', newMsg);
-      const message={
-      sender_username: senderId, 
-      receiver_username:this.chats[chatIndex].name ,
-      content: text.trim(),
-     
-    }
-    
-  this.http.post<any>(`${this.apiUrl}/setMessage/`, message, {
+      const message = {
+        sender_username: senderId,
+        receiver_username: this.chats[chatIndex].name,
+        content: text.trim(),
 
-}).subscribe({
-  next: (response: any) => {
-    console.log('Success:', response);
-    
-  },
-  error: (error: any) => {
-    console.error('Error:', error);
-  }
-});
+      }
+
+      this.http.post<any>(`${this.apiUrl}/setMessage/`, message, {
+
+      }).subscribe({
+        next: (response: any) => {
+          console.log('Success:', response);
+
+        },
+        error: (error: any) => {
+          console.error('Error:', error);
+        }
+      });
 
     }
 
     setTimeout(() => this.scrollToBottom(), 100);
   }
-  addChat(username:string){
+  addChat(username: string) {
     const chat: Chat = {
-    id: (this.chats.length+1).toString(),
-    avatar: '/assets/img/tourguide.jpg',
-    name: username,
-    lastMessage: '',
-    time: '',
-    messages: [
-      
-    ]
-  };
-  this.chats.push(chat);
+      id: (this.chats.length + 1).toString(),
+      avatar: '/assets/img/tourguide.jpg',
+      name: username,
+      lastMessage: '',
+      time: '',
+      messages: [
+
+      ]
+    };
+    this.chats.push(chat);
   }
 
   private getCurrentTime(): string {

@@ -5,6 +5,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
@@ -12,7 +13,7 @@ import java.nio.file.Paths;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
-@RequestMapping("/auth")
+@PreAuthorize("hasRole('ADMIN')")
 public class FileController {
 
     private MediaType getMediaTypeForFileName(String filename) {
